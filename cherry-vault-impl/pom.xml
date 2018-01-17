@@ -62,6 +62,12 @@
     	<artifactId>mhu-lib-karaf</artifactId>
     	<version>${mhulib.version}</version>
     </dependency>
+
+    <dependency>
+    	<groupId>de.mhus.osgi</groupId>
+    	<artifactId>mhu-karaf-mongo</artifactId>
+    	<version>${osgitools.version}</version>
+    </dependency>
     
     <dependency>
     	<groupId>de.mhus.osgi</groupId>
