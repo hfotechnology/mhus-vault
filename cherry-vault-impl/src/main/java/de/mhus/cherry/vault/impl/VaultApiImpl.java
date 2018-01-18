@@ -12,9 +12,12 @@ import aQute.bnd.annotation.component.Component;
 import de.mhus.cherry.vault.api.CherryVaultApi;
 import de.mhus.cherry.vault.api.ifc.SecretContent;
 import de.mhus.cherry.vault.api.ifc.SecretGenerator;
+import de.mhus.cherry.vault.api.ifc.TargetCondition;
+import de.mhus.cherry.vault.api.ifc.TargetProcessor;
 import de.mhus.cherry.vault.api.model.VaultEntry;
 import de.mhus.cherry.vault.api.model.VaultGroup;
 import de.mhus.cherry.vault.api.model.VaultTarget;
+import de.mhus.cherry.vault.api.model.WritableEntry;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MString;
@@ -162,7 +165,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 	}
 
 	private void processGroupTargets(VaultGroup group, IProperties properties, String secretId, SecretContent secret,
-	        LinkedList<VaultEntry> entriesToSave) throws NotFoundException {
+	        LinkedList<VaultEntry> entriesToSave) throws MException {
 		VaultGroup ever = getMustHaveGroup(group.getName());
 		if (ever != null) {
 			for (String targetName : group.getTargets()) {
@@ -191,14 +194,37 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		return null;
 	}
 
-	private VaultEntry processTarget(VaultGroup group, IProperties properties, VaultTarget target, String secretId, SecretContent secret) {
-		// TODO Auto-generated method stub
-		return null;
+	private VaultEntry processTarget(VaultGroup group, IProperties properties, VaultTarget target, String secretId, SecretContent secret) throws MException {
+		String processorName = target.getProcessorName();
+		TargetProcessor processor = getProcessor(processorName);
+		
+		WritableEntry entry = new WritableEntry();
+		processor.process(properties, target.getProcessorConfig(), secret, entry);
+		
+		entry.setGroup(group.getName());
+		entry.setTarget(target.getName());
+		entry.setSecretId(secretId);
+		
+		return new VaultEntry(entry);
 	}
 
-	public boolean checkProcessConditions(VaultGroup group, IProperties properties, VaultTarget target) {
-		// TODO
-		return false;
+	public TargetProcessor getProcessor(String processorName) throws NotFoundException {
+		return MOsgi.getService(TargetProcessor.class, "(name=" + processorName + ")");
+	}
+
+	public boolean checkProcessConditions(VaultGroup group, IProperties properties, VaultTarget target) throws NotFoundException {
+		String conditions = target.getConditionNames();
+		if (conditions == null) return false;
+		String[] parts = conditions.split(",");
+		for (String part : parts) {
+			TargetCondition c = getConditionCheck(part);
+			if (!c.check(properties,target.getConditionConfig(part))) return false;
+		}
+		return true;
+	}
+
+	public TargetCondition getConditionCheck(String conditionName) throws NotFoundException {
+		return MOsgi.getService(TargetCondition.class, "(name=" + conditionName + ")");
 	}
 
 	@Override

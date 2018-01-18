@@ -68,6 +68,12 @@
     	<artifactId>mhu-karaf-mongo</artifactId>
     	<version>${osgitools.version}</version>
     </dependency>
+
+    <dependency>
+    	<groupId>de.mhus.osgi</groupId>
+    	<artifactId>mhu-osgi-crypt-api</artifactId>
+    	<version>${osgitools.version}</version>
+    </dependency>
     
     <dependency>
     	<groupId>de.mhus.osgi</groupId>

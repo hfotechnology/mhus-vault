@@ -1,9 +1,16 @@
 package de.mhus.cherry.vault.api.model;
 
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 import java.util.Date;
+
+import org.mongodb.morphia.annotations.PrePersist;
 
 import de.mhus.lib.core.IReadProperties;
 import de.mhus.lib.core.MProperties;
+import de.mhus.lib.core.util.ReadOnlyException;
 import de.mhus.lib.mongo.MoMetadata;
 
 public class VaultEntry extends MoMetadata {
@@ -16,6 +23,8 @@ public class VaultEntry extends MoMetadata {
 	protected MProperties meta;
 	protected Date validFrom;
 	protected Date validTo;
+	
+	private String checksum;
 	
 	// constructor for morphia
 	public VaultEntry() {}
@@ -32,17 +41,27 @@ public class VaultEntry extends MoMetadata {
 		validTo = clone.getValidTo();
 	}
 	
-	// Constructor for secret create
-	public VaultEntry(String target, String group, String secretKeyId, String secret, String secretId, IReadProperties meta) {
-		super();
-		this.target = target;
-		this.group = group;
-		this.secretKeyId = secretKeyId;
-		this.secret = secret;
-		this.secretId = secretId;
-		this.meta = new MProperties(meta);
-	}
+	@PrePersist
+	public void preChecksum() throws NoSuchAlgorithmException, UnsupportedEncodingException, ReadOnlyException {
+		MessageDigest md = MessageDigest.getInstance("SHA-256");
 
+		md.update(secret.getBytes("UTF-8"));
+		md.update(secretKeyId.getBytes("UTF-8"));
+		md.update(secretId.getBytes("UTF-8"));
+		md.update(target.getBytes("UTF-8"));
+		md.update(group.getBytes("UTF-8"));
+
+		byte[] digest = md.digest();
+		String cs = Base64.getEncoder().encodeToString(digest);
+		
+		if (checksum == null)
+			checksum = cs;
+		else
+		if (!cs.equals(checksum))
+			throw new ReadOnlyException("VautlEntry data are read only",getObjectId());
+		
+	}
+	
 	public String getTarget() {
 		return target;
 	}
