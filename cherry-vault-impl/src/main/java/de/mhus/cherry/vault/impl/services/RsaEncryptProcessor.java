@@ -22,7 +22,7 @@ import de.mhus.osgi.crypt.api.CryptaApi;
 import de.mhus.osgi.crypt.api.cipher.CipherProvider;
 
 @Component(properties="name=pgp")
-public class PgpEncryptProcessor implements TargetProcessor {
+public class RsaEncryptProcessor implements TargetProcessor {
 
 	@Override
 	public void process(IProperties properties, IReadProperties processorConfig, SecretContent secret,
@@ -31,7 +31,7 @@ public class PgpEncryptProcessor implements TargetProcessor {
 		UUID keyId = UUID.fromString(processorConfig.getString("keyId"));
 		
 		CryptaApi api = MApi.lookup(CryptaApi.class);
-		CipherProvider cipher = api.getCipher(CryptaApi.CIPHER_PGP);
+		CipherProvider cipher = api.getCipher("RSA-1");
 		
 		MVault vault = MVaultUtil.loadDefault();
 		de.mhus.lib.core.vault.VaultEntry keyValue = vault.getEntry(keyId);

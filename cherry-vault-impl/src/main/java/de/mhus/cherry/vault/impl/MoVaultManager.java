@@ -24,7 +24,7 @@ public class MoVaultManager extends MoManagerServiceImpl {
 
 	@Override
 	public String getServiceName() {
-		return "test";
+		return "cherryvault";
 	}
 
 	@Override

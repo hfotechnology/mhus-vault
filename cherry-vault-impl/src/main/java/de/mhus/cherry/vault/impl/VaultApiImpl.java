@@ -258,7 +258,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		return res.get(0).getGroup();
 	}
 
-	private void updateEntriesValidTo(String secretId, Date validTo) {
+	private void updateEntriesValidTo(String secretId, Date validTo) throws MException {
 		Date now = new Date();
 		MoManager manager = MoVaultManager.instance.getManager();
 		MorphiaIterator<VaultEntry, VaultEntry> res = manager.createQuery(VaultEntry.class)
@@ -270,7 +270,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		for (VaultEntry entry : res) {
 			log().t("Update validTo",entry.getObjectId(),entry.getValidTo(),validTo);
 			entry.setValidTo(validTo);
-			manager.save(entry);
+			entry.save();
 		}
 		
 	}

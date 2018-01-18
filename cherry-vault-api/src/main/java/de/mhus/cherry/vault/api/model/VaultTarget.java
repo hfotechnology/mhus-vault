@@ -6,6 +6,7 @@ import java.util.Map;
 
 import de.mhus.lib.core.IReadProperties;
 import de.mhus.lib.core.MProperties;
+import de.mhus.lib.core.util.PropertiesSubset;
 import de.mhus.lib.mongo.MoMetadata;
 
 public class VaultTarget extends MoMetadata {
@@ -14,7 +15,7 @@ public class VaultTarget extends MoMetadata {
 	private String processorName;
 	private MProperties processorConfig;
 	private String conditionNames;
-	private HashMap<String, MProperties> conditionConfigs;
+	private MProperties conditionConfigs;
 	private boolean enabled;
 	
 	public String getName() {
@@ -31,13 +32,8 @@ public class VaultTarget extends MoMetadata {
 		return conditionNames;
 	}
 	public synchronized IReadProperties getConditionConfig(String name) {
-		if (conditionConfigs == null) conditionConfigs = new HashMap<>();
-		MProperties out = conditionConfigs.get(name);
-		if (out == null) {
-			out = new MProperties();
-			conditionConfigs.put(name, out);
-		}
-		return out;
+		if (conditionConfigs == null) conditionConfigs = new MProperties();
+		return new PropertiesSubset(conditionConfigs,name + ".");
 	}
 	public boolean isEnabled() {
 		return enabled;
