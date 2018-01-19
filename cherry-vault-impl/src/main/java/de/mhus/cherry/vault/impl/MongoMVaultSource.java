@@ -12,7 +12,6 @@ import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import de.mhus.cherry.vault.api.model.VaultKey;
 import de.mhus.lib.core.MSystem;
-import de.mhus.lib.core.vault.DefaultEntry;
 import de.mhus.lib.core.vault.MutableVaultSource;
 import de.mhus.lib.core.vault.VaultEntry;
 import de.mhus.lib.core.vault.VaultSource;
@@ -30,12 +29,12 @@ public class MongoMVaultSource extends MutableVaultSource {
 
 	@Override
 	public VaultEntry getEntry(UUID id) {
-		ObjectId oid = MoUtil.toObjectId(id);
 		try {
-			VaultKey key = MoVaultManager.instance.getManager().getObject(VaultKey.class, oid);
+			VaultKey key = MoVaultManager.instance.getManager().createQuery(VaultKey.class).filter("ident", id.toString()).get();
+			if (key == null) return null;
 			return new VaultKeyEntry(key);
-		} catch (MException e) {
-			log().t(oid,id,e);
+		} catch (Exception e) {
+			log().t(id,e);
 			return null;
 		}
 	}
@@ -43,8 +42,8 @@ public class MongoMVaultSource extends MutableVaultSource {
 	@Override
 	public UUID[] getEntryIds() {
 		LinkedList<UUID> out = new LinkedList<>();
-		for ( Key<VaultKey> key : MoVaultManager.instance.getManager().createQuery(VaultKey.class).fetchKeys())
-			out.add(MoUtil.toUUID((ObjectId)key.getId()));
+		for ( VaultKey obj : MoVaultManager.instance.getManager().createQuery(VaultKey.class).limit(100).fetch())
+			out.add(UUID.fromString(obj.getIdent()));
 
 		return out.toArray(new UUID[out.size()]);
 	}
@@ -63,7 +62,7 @@ public class MongoMVaultSource extends MutableVaultSource {
 
 	@Override
 	public void addEntry(VaultEntry entry) {
-		VaultKey key = new VaultKey(entry.getValue(), entry.getDescription(), entry.getType());
+		VaultKey key = new VaultKey(entry.getId().toString(), entry.getValue(), entry.getDescription(), entry.getType());
 		MoVaultManager.instance.getManager().save(key);
 	}
 	
