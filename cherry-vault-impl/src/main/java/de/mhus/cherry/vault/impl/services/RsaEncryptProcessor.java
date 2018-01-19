@@ -37,13 +37,7 @@ public class RsaEncryptProcessor implements TargetProcessor {
 		de.mhus.lib.core.vault.VaultEntry keyValue = vault.getEntry(keyId);
 		if (keyValue == null) throw new NotFoundException("key not found",keyId);
 		
-		PemPub key;
-		try {
-			key = keyValue.adaptTo(PemPub.class);
-		} catch (IOException e) {
-			throw new MException(e);
-		}
-		
+		PemPub key = keyValue.adaptTo(PemPub.class);
 		PemBlock encoded = cipher.encode(key, secret.getContent().value());
 		
 		entry.setSecretId(keyId.toString());
