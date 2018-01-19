@@ -5,6 +5,7 @@ import java.util.Date;
 import de.mhus.cherry.vault.api.ifc.SecretContent;
 import de.mhus.cherry.vault.api.model.VaultEntry;
 import de.mhus.lib.core.IProperties;
+import de.mhus.lib.core.MProperties;
 import de.mhus.lib.errors.MException;
 
 public interface CherryVaultApi {
@@ -19,6 +20,10 @@ public interface CherryVaultApi {
 	 * @throws MException
 	 */
 	String createSecret(String groupName, Date validFrom, Date validTo, IProperties properties) throws MException;
+
+	default String createSecret(String groupName) throws MException {
+		return createSecret(groupName, null, null, new MProperties());
+	}
 
 	/**
 	 * Creates a new secret for an existing key (e.g. create new password).

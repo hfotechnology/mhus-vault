@@ -58,6 +58,8 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		LinkedList<VaultEntry> entriesToSave = new LinkedList<>();
 		processGroupTargets(group, properties, secretId, secret, entriesToSave);
 		
+		if (entriesToSave.size() == 0) return null;
+		
 		// save entries
 		saveEntries(groupName, entriesToSave, validFrom, validTo);
 		
