@@ -53,7 +53,7 @@ public class RsaEncryptProcessor implements TargetProcessor {
 			if (signKeyValue == null) throw new NotFoundException("sign key not found",signId);
 			PemPriv signKey = signKeyValue.adaptTo(PemPriv.class);
 			PemBlock signed = signer.sign(signKey, encoded.toString());
-			result.add(signed);
+			result.addFirst(signed);
 		}
 		
 		entry.setSecretKeyId(keyId.toString());

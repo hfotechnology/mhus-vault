@@ -231,8 +231,10 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 
 	@Override
 	public VaultEntry getSecret(String secretId, String target) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		VaultEntry obj = MoVaultManager.instance.getManager().createQuery(VaultEntry.class).field("secretId").equal(secretId).field("target").equal(target).get();
+		
+		return obj;
 	}
 
 	public SecretGenerator getGenerator(String generatorName) throws NotFoundException {

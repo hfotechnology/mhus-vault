@@ -5,7 +5,9 @@ import java.util.Date;
 import de.mhus.cherry.vault.api.ifc.SecretContent;
 import de.mhus.cherry.vault.api.model.VaultEntry;
 import de.mhus.lib.core.IProperties;
+import de.mhus.lib.core.MDate;
 import de.mhus.lib.core.MProperties;
+import de.mhus.lib.core.util.SecureString;
 import de.mhus.lib.errors.MException;
 
 public interface CherryVaultApi {
@@ -33,7 +35,11 @@ public interface CherryVaultApi {
 	 * @throws MException
 	 */
 	void createUpdate(String secretId, Date validFrom, Date validTo, IProperties properties) throws MException;
-			
+
+	default void createUpdate(String secretId) throws MException {
+		createUpdate(secretId, null, null, new MProperties());
+	}
+
 	/**
 	 * Import an existing secret as new secret.
 	 * @param groupName
@@ -44,9 +50,21 @@ public interface CherryVaultApi {
 	 */
 	String importSecret(String groupName, Date validFrom, Date validTo, SecretContent secret, IProperties properties) throws MException;
 
-	void importUpdate(String secretId, Date validFrom, Date validTo, SecretContent secret, IProperties properties) throws MException;
+	default String importSecret(String groupName, String secret) throws MException {
+		return importSecret(groupName, null, null, new SecretContent(new SecureString(secret), new MProperties()), new MProperties());
+	}
 	
+	void importUpdate(String secretId, Date validFrom, Date validTo, SecretContent secret, IProperties properties) throws MException;
+
+	default void importUpdate(String secretId, String secret) throws MException {
+		importUpdate(secretId, null, null, new SecretContent(new SecureString(secret), new MProperties()), new MProperties());
+	}
+
 	void rollbackSecret(String secretId, Date creationDate) throws MException;
+	
+	default void rollbackSecret(String secretId, String creationDate) throws MException {
+		rollbackSecret(secretId, MDate.toDate(creationDate, null));
+	}
 	
 	VaultEntry getSecret(String secretId, String target);
 	
