@@ -4,10 +4,15 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.mongodb.morphia.annotations.IndexOptions;
+import org.mongodb.morphia.annotations.Indexed;
+
+import de.mhus.lib.core.MSystem;
 import de.mhus.lib.mongo.MoMetadata;
 
 public class VaultGroup extends MoMetadata {
 
+	@Indexed(options = @IndexOptions(unique = true))
 	private String name;
 	private LinkedList<String> targets;
 	private String secretGeneratorName;
@@ -51,4 +56,9 @@ public class VaultGroup extends MoMetadata {
 		return allowImports;
 	}
 	
+	@Override
+	public String toString() {
+		return MSystem.toString(this, name);
+	}
+
 }

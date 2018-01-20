@@ -8,16 +8,24 @@ import java.util.Date;
 
 import javax.accessibility.AccessibleAction;
 
+import org.mongodb.morphia.annotations.Field;
+import org.mongodb.morphia.annotations.Index;
+import org.mongodb.morphia.annotations.Indexes;
 import org.mongodb.morphia.annotations.PrePersist;
 
 import de.mhus.lib.annotations.generic.Public;
 import de.mhus.lib.core.IReadProperties;
 import de.mhus.lib.core.MApi;
 import de.mhus.lib.core.MProperties;
+import de.mhus.lib.core.MSystem;
 import de.mhus.lib.core.util.ReadOnlyException;
 import de.mhus.lib.mongo.MoMetadata;
 import de.mhus.osgi.sop.api.aaa.AccessApi;
 
+@Indexes({
+		@Index(fields={@Field("secretId"),@Field("target")}),
+		@Index(fields={@Field("secretId")})
+})
 public class VaultEntry extends MoMetadata {
 
 	protected String target;
@@ -121,6 +129,11 @@ public class VaultEntry extends MoMetadata {
 
 	public String getCreator() {
 		return creator;
+	}
+	
+	@Override
+	public String toString() {
+		return MSystem.toString(this, secretId, target);
 	}
 	
 }
