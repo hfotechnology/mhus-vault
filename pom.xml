@@ -147,8 +147,7 @@
 
   <modules>
     <module>cherry-vault-api</module>
-    <module>cherry-vault-impl</module>
-    <module>cherry-vault-rest</module>
+    <module>cherry-vault-core</module>
   </modules>
 
 

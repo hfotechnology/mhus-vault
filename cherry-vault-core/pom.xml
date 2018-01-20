@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>cherry-vault-rest</artifactId>
+  <artifactId>cherry-vault-core</artifactId>
   <packaging>bundle</packaging>
 
   <parent>
@@ -24,8 +24,9 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Version>${project.version}</Bundle-Version>
                         <Export-Package>
-                            de.mhus.cherry.vault.rest.*;version=${project.version}
+	                        de.mhus.cherry.vault.core.*;version=${project.version}
                         </Export-Package>
+                        <Private-Package>de.mhus.cherry.vault.core.impl.*</Private-Package>
                         <Import-Package>*</Import-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>
                         <Service-Component>*</Service-Component>
@@ -51,6 +52,28 @@
     	<groupId>de.mhus.lib</groupId>
     	<artifactId>mhu-lib-core</artifactId>
     	<version>${mhulib.version}</version>
+    </dependency>
+    <dependency>
+    	<groupId>de.mhus.lib</groupId>
+    	<artifactId>mhu-lib-persistence</artifactId>
+    	<version>${mhulib.version}</version>
+    </dependency>
+    <dependency>
+    	<groupId>de.mhus.lib</groupId>
+    	<artifactId>mhu-lib-karaf</artifactId>
+    	<version>${mhulib.version}</version>
+    </dependency>
+
+    <dependency>
+    	<groupId>de.mhus.osgi</groupId>
+    	<artifactId>mhu-karaf-mongo</artifactId>
+    	<version>${osgitools.version}</version>
+    </dependency>
+
+    <dependency>
+    	<groupId>de.mhus.osgi</groupId>
+    	<artifactId>mhu-osgi-crypt-api</artifactId>
+    	<version>${osgitools.version}</version>
     </dependency>
     
     <dependency>

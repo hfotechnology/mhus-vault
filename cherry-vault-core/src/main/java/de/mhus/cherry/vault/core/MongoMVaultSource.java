@@ -1,4 +1,4 @@
-package de.mhus.cherry.vault.impl;
+package de.mhus.cherry.vault.core;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -11,6 +11,7 @@ import org.osgi.service.component.ComponentContext;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import de.mhus.cherry.vault.api.model.VaultKey;
+import de.mhus.cherry.vault.core.impl.StaticAccess;
 import de.mhus.lib.core.MSystem;
 import de.mhus.lib.core.vault.MutableVaultSource;
 import de.mhus.lib.core.vault.VaultEntry;
@@ -30,7 +31,7 @@ public class MongoMVaultSource extends MutableVaultSource {
 	@Override
 	public VaultEntry getEntry(UUID id) {
 		try {
-			VaultKey key = MoVaultManager.instance.getManager().createQuery(VaultKey.class).filter("ident", id.toString()).get();
+			VaultKey key = StaticAccess.moManager.getManager().createQuery(VaultKey.class).filter("ident", id.toString()).get();
 			if (key == null) return null;
 			return new VaultKeyEntry(key);
 		} catch (Exception e) {
@@ -42,7 +43,7 @@ public class MongoMVaultSource extends MutableVaultSource {
 	@Override
 	public UUID[] getEntryIds() {
 		LinkedList<UUID> out = new LinkedList<>();
-		for ( VaultKey obj : MoVaultManager.instance.getManager().createQuery(VaultKey.class).limit(100).fetch())
+		for ( VaultKey obj : StaticAccess.moManager.getManager().createQuery(VaultKey.class).limit(100).fetch())
 			out.add(UUID.fromString(obj.getIdent()));
 
 		return out.toArray(new UUID[out.size()]);
@@ -63,13 +64,13 @@ public class MongoMVaultSource extends MutableVaultSource {
 	@Override
 	public void addEntry(VaultEntry entry) {
 		VaultKey key = new VaultKey(entry.getId().toString(), entry.getValue(), entry.getDescription(), entry.getType());
-		MoVaultManager.instance.getManager().save(key);
+		StaticAccess.moManager.getManager().save(key);
 	}
 	
 	@Override
 	public void removeEntry(UUID id) {
 		VaultEntry obj = getEntry(id);
-		MoVaultManager.instance.getManager().delete(obj);
+		StaticAccess.moManager.getManager().delete(obj);
 	}
 	
 	@Override

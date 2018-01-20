@@ -1,4 +1,4 @@
-package de.mhus.cherry.vault.impl;
+package de.mhus.cherry.vault.core;
 
 import java.util.Date;
 import java.util.LinkedList;
@@ -18,6 +18,7 @@ import de.mhus.cherry.vault.api.model.VaultEntry;
 import de.mhus.cherry.vault.api.model.VaultGroup;
 import de.mhus.cherry.vault.api.model.VaultTarget;
 import de.mhus.cherry.vault.api.model.WritableEntry;
+import de.mhus.cherry.vault.core.impl.StaticAccess;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.IReadProperties;
 import de.mhus.lib.core.MApi;
@@ -213,13 +214,13 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 			throw new AccessDeniedException("Read access to target denied",targetName);
 
 		
-		VaultEntry obj = MoVaultManager.instance.getManager().createQuery(VaultEntry.class).field("secretId").equal(secretId).field("target").equal(targetName).get();
+		VaultEntry obj = StaticAccess.moManager.getManager().createQuery(VaultEntry.class).field("secretId").equal(secretId).field("target").equal(targetName).get();
 		
 		return obj;
 	}
 
 	private void saveEntries(String groupName, LinkedList<VaultEntry> entriesToSave, Date validFrom, Date validTo) {
-		MoManager manager = MoVaultManager.instance.getManager();
+		MoManager manager = StaticAccess.moManager.getManager();
 		for (VaultEntry entry : entriesToSave) {
 			try {
 				entry.setValidFrom(validFrom);
@@ -315,7 +316,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 	}
 
 	public VaultGroup getGroup(String name) throws NotFoundException {
-		List<VaultGroup> res = MoVaultManager.instance.getManager().createQuery(VaultGroup.class).field("name").equal(name).asList();
+		List<VaultGroup> res = StaticAccess.moManager.getManager().createQuery(VaultGroup.class).field("name").equal(name).asList();
 		if (res.size() < 1) throw new NotFoundException("Group not exists",name);
 		if (res.size() > 1) log().w("Not unique group name",name);
 		VaultGroup group = res.get(0);
@@ -325,14 +326,14 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 	}
 	
 	public VaultTarget getTarget(String name) throws NotFoundException {
-		List<VaultTarget> res = MoVaultManager.instance.getManager().createQuery(VaultTarget.class).field("name").equal(name).asList();
+		List<VaultTarget> res = StaticAccess.moManager.getManager().createQuery(VaultTarget.class).field("name").equal(name).asList();
 		if (res.size() < 1) throw new NotFoundException("Target not exists",name);
 		if (res.size() > 1) log().w("Not unique target name",name);
 		return res.get(0);
 	}
 
 	private String findGroupNameForSecretId(String secretId) throws NotFoundException {
-		List<VaultEntry> res = MoVaultManager.instance.getManager().createQuery(VaultEntry.class).field("secretId").equal(secretId).limit(1).asList();
+		List<VaultEntry> res = StaticAccess.moManager.getManager().createQuery(VaultEntry.class).field("secretId").equal(secretId).limit(1).asList();
 		if (res.size() == 0)
 			throw new NotFoundException("secretId not found",secretId);
 		return res.get(0).getGroup();
@@ -340,7 +341,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 
 	private void updateEntriesValidTo(String secretId, Date validTo) throws MException {
 		Date now = new Date();
-		MoManager manager = MoVaultManager.instance.getManager();
+		MoManager manager = StaticAccess.moManager.getManager();
 		MorphiaIterator<VaultEntry, VaultEntry> res = manager.createQuery(VaultEntry.class)
 			.field("secretId").equal(secretId)
 			.field("validFrom").lessThanOrEq(now)
@@ -423,12 +424,5 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		
 		importUpdate(secretId, validFrom, validTo, sec, properties);
 	}
-
-	@Override
-	public PojoModel getEntryPojoModel() throws NotFoundException {
-		return MoVaultManager.instance.getManager().getModelFor(VaultEntry.class);
-	}
-
-
 	
 }

@@ -94,7 +94,5 @@ public interface CherryVaultApi {
 	}
 	
 	VaultEntry getSecret(String secretId, String target) throws NotFoundException;
-
-	PojoModel getEntryPojoModel() throws NotFoundException;
 	
 }

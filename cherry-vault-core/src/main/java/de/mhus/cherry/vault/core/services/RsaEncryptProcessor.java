@@ -1,4 +1,4 @@
-package de.mhus.cherry.vault.impl.services;
+package de.mhus.cherry.vault.core.services;
 
 import java.io.IOException;
 import java.util.UUID;

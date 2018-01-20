@@ -1,4 +1,4 @@
-package de.mhus.cherry.vault.rest;
+package de.mhus.cherry.vault.core.rest;
 
 import java.util.Date;
 import java.util.List;
@@ -8,6 +8,8 @@ import org.codehaus.jackson.node.ObjectNode;
 import aQute.bnd.annotation.component.Component;
 import de.mhus.cherry.vault.api.CherryVaultApi;
 import de.mhus.cherry.vault.api.model.VaultEntry;
+import de.mhus.cherry.vault.core.MoVaultManager;
+import de.mhus.cherry.vault.core.impl.StaticAccess;
 import de.mhus.lib.core.MApi;
 import de.mhus.lib.core.MDate;
 import de.mhus.lib.core.MProperties;
@@ -32,7 +34,7 @@ public class VaultNode extends AbstractObjectListNode<VaultEntry>{
 		public PojoModel createPojoModel(Class<?> pojoClass) {
 			if (pojoClass == VaultEntry.class) {
 				try {
-					return MApi.lookup(CherryVaultApi.class).getEntryPojoModel();
+					return StaticAccess.moManager.getManager().getModelFor(VaultEntry.class);
 				} catch (NotFoundException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
