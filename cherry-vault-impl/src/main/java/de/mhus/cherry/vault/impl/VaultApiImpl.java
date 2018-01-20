@@ -19,6 +19,8 @@ import de.mhus.cherry.vault.api.model.VaultGroup;
 import de.mhus.cherry.vault.api.model.VaultTarget;
 import de.mhus.cherry.vault.api.model.WritableEntry;
 import de.mhus.lib.core.IProperties;
+import de.mhus.lib.core.IReadProperties;
+import de.mhus.lib.core.MApi;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MString;
 import de.mhus.lib.errors.AccessDeniedException;
@@ -27,6 +29,9 @@ import de.mhus.lib.errors.NotFoundException;
 import de.mhus.lib.errors.UsageException;
 import de.mhus.lib.karaf.MOsgi;
 import de.mhus.lib.mongo.MoManager;
+import de.mhus.osgi.sop.api.aaa.AaaContext;
+import de.mhus.osgi.sop.api.aaa.AaaUtil;
+import de.mhus.osgi.sop.api.aaa.AccessApi;
 
 @Component(immediate=true)
 public class VaultApiImpl extends MLog implements CherryVaultApi {
@@ -41,6 +46,12 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		
 		// get group
 		VaultGroup group = getGroup(groupName);
+		
+		// check write access
+		AccessApi aaa = MApi.lookup(AccessApi.class);
+		List<String> acl = group.getWriteAcl();
+		if (!AaaUtil.hasAccess(aaa.getCurrentOrGuest(), acl))
+			throw new AccessDeniedException("Write access to group denied",groupName);
 		
 		// get and execute secret generation
 		String generatorName = group.getSecretGeneratorName();
@@ -76,6 +87,12 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		String groupName = findGroupNameForSecretId(secretId);
 		VaultGroup group = getGroup(groupName);
 		
+		// check write access
+		AccessApi aaa = MApi.lookup(AccessApi.class);
+		List<String> acl = group.getWriteAcl();
+		if (!AaaUtil.hasAccess(aaa.getCurrentOrGuest(), acl))
+			throw new AccessDeniedException("Write access to group denied",groupName);
+
 		if (!group.isAllowUpdate()) throw new AccessDeniedException("The group dos not allow updates",groupName);
 		
 		// get and execute secret generation
@@ -106,6 +123,12 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 
 		// get group
 		VaultGroup group = getGroup(groupName);
+
+		// check write access
+		AccessApi aaa = MApi.lookup(AccessApi.class);
+		List<String> acl = group.getWriteAcl();
+		if (!AaaUtil.hasAccess(aaa.getCurrentOrGuest(), acl))
+			throw new AccessDeniedException("Write access to group denied",groupName);
 		
 		if (secret == null) throw new MException("Secret is null");
 		
@@ -132,6 +155,12 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		String groupName = findGroupNameForSecretId(secretId);
 		VaultGroup group = getGroup(groupName);
 		
+		// check write access
+		AccessApi aaa = MApi.lookup(AccessApi.class);
+		List<String> acl = group.getWriteAcl();
+		if (!AaaUtil.hasAccess(aaa.getCurrentOrGuest(), acl))
+			throw new AccessDeniedException("Write access to group denied",groupName);
+
 		if (!group.isAllowUpdate()) throw new AccessDeniedException("The group dos not allow updates",groupName);
 		
 		if (secret == null) throw new MException("Secret is null");
@@ -149,10 +178,36 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 
 	@Override
 	public void rollbackSecret(String secretId, Date creationDate) throws MException {
-		// TODO Auto-generated method stub
 		
+		// get group
+		String groupName = findGroupNameForSecretId(secretId);
+		VaultGroup group = getGroup(groupName);
+
+		// check write access
+		AccessApi aaa = MApi.lookup(AccessApi.class);
+		List<String> acl = group.getWriteAcl();
+		if (!AaaUtil.hasAccess(aaa.getCurrentOrGuest(), acl))
+			throw new AccessDeniedException("Write access to group denied",groupName);
+
+		// TODO Auto-generated method stub
 	}
-	
+
+	@Override
+	public VaultEntry getSecret(String secretId, String targetName) throws NotFoundException {
+		
+		VaultTarget target = getTarget(targetName);
+		// check read access
+		AccessApi aaa = MApi.lookup(AccessApi.class);
+		List<String> acl = target.getReadAcl();
+		if (!AaaUtil.hasAccess(aaa.getCurrentOrGuest(), acl))
+			throw new AccessDeniedException("Read access to target denied",targetName);
+
+		
+		VaultEntry obj = MoVaultManager.instance.getManager().createQuery(VaultEntry.class).field("secretId").equal(secretId).field("target").equal(targetName).get();
+		
+		return obj;
+	}
+
 	private void saveEntries(String groupName, LinkedList<VaultEntry> entriesToSave, Date validFrom, Date validTo) {
 		MoManager manager = MoVaultManager.instance.getManager();
 		for (VaultEntry entry : entriesToSave) {
@@ -168,6 +223,18 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 
 	private void processGroupTargets(VaultGroup group, IProperties properties, String secretId, SecretContent secret,
 	        LinkedList<VaultEntry> entriesToSave) throws MException {
+		
+		for (String targetName : group.getTargets()) {
+			VaultTarget target = getTarget(targetName);
+			if (checkProcessConditions(group, properties, target)) {
+				VaultEntry entry = processTarget(group, properties, target, secretId, secret);
+				if (entry != null)
+					entriesToSave.add(entry);
+			}
+		}
+		
+		if (entriesToSave.isEmpty()) return;
+		
 		VaultGroup ever = getMustHaveGroup(group.getName());
 		if (ever != null) {
 			for (String targetName : group.getTargets()) {
@@ -179,15 +246,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 				}
 			}
 		}
-		
-		for (String targetName : group.getTargets()) {
-			VaultTarget target = getTarget(targetName);
-			if (checkProcessConditions(group, properties, target)) {
-				VaultEntry entry = processTarget(group, properties, target, secretId, secret);
-				if (entry != null)
-					entriesToSave.add(entry);
-			}
-		}
+
 		
 	}
 
@@ -201,6 +260,17 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		TargetProcessor processor = getProcessor(processorName);
 		
 		WritableEntry entry = new WritableEntry();
+		// copy properties into meta
+		for (String mapping : target.getProcessorConfig().getString("properties2meta.mapping", "").split(",")) {
+			String from = mapping;
+			String to = mapping;
+			int p = mapping.indexOf('=');
+			if (p > 0) {
+				from = mapping.substring(p+1);
+				to = mapping.substring(0, p);
+			}
+			entry.getMeta().put(to, properties.get(from));
+		}
 		processor.process(properties, target.getProcessorConfig(), secret, entry);
 		
 		entry.setGroup(group.getName());
@@ -219,22 +289,15 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		if (conditions == null) return false;
 		String[] parts = conditions.split(",");
 		for (String part : parts) {
-			TargetCondition c = getConditionCheck(part);
-			if (!c.check(properties,target.getConditionConfig(part))) return false;
+			IReadProperties config = target.getConditionConfig(part);
+			TargetCondition c = getConditionCheck(config.getString("service", part));
+			if (!c.check(properties,config)) return false;
 		}
 		return true;
 	}
 
 	public TargetCondition getConditionCheck(String conditionName) throws NotFoundException {
 		return MOsgi.getService(TargetCondition.class, "(name=" + conditionName + ")");
-	}
-
-	@Override
-	public VaultEntry getSecret(String secretId, String target) {
-		
-		VaultEntry obj = MoVaultManager.instance.getManager().createQuery(VaultEntry.class).field("secretId").equal(secretId).field("target").equal(target).get();
-		
-		return obj;
 	}
 
 	public SecretGenerator getGenerator(String generatorName) throws NotFoundException {

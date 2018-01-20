@@ -13,6 +13,7 @@ public class VaultGroup extends MoMetadata {
 	private String secretGeneratorName;
 	private boolean allowUpdate;
 	private boolean enabled;
+	private LinkedList<String> writeAcl;
 	
 	public String getName() {
 		return name;
@@ -23,6 +24,11 @@ public class VaultGroup extends MoMetadata {
 		return Collections.unmodifiableList(targets);
 	}
 
+	public List<String> getWriteAcl() {
+		if (writeAcl == null) writeAcl = new LinkedList<>();
+		return Collections.unmodifiableList(writeAcl);
+	}
+	
 	public String getSecretGeneratorName() {
 		return secretGeneratorName;
 	}

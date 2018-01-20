@@ -9,6 +9,7 @@ import de.mhus.lib.core.MDate;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.util.SecureString;
 import de.mhus.lib.errors.MException;
+import de.mhus.lib.errors.NotFoundException;
 
 public interface CherryVaultApi {
 
@@ -66,6 +67,6 @@ public interface CherryVaultApi {
 		rollbackSecret(secretId, MDate.toDate(creationDate, null));
 	}
 	
-	VaultEntry getSecret(String secretId, String target);
+	VaultEntry getSecret(String secretId, String target) throws NotFoundException;
 	
 }

@@ -2,6 +2,8 @@ package de.mhus.cherry.vault.api.model;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import de.mhus.lib.core.IReadProperties;
@@ -17,6 +19,8 @@ public class VaultTarget extends MoMetadata {
 	private String conditionNames;
 	private MProperties conditionConfigs;
 	private boolean enabled;
+	private LinkedList<String> readAcl;
+
 	
 	public String getName() {
 		return name;
@@ -37,6 +41,10 @@ public class VaultTarget extends MoMetadata {
 	}
 	public boolean isEnabled() {
 		return enabled;
+	}
+	public List<String> getReadAcl() {
+		if (readAcl == null) readAcl = new LinkedList<>();
+		return Collections.unmodifiableList(readAcl);
 	}
 	
 }

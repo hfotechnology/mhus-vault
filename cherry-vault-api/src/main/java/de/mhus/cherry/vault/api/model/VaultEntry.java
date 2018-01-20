@@ -6,12 +6,16 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Date;
 
+import javax.accessibility.AccessibleAction;
+
 import org.mongodb.morphia.annotations.PrePersist;
 
 import de.mhus.lib.core.IReadProperties;
+import de.mhus.lib.core.MApi;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.util.ReadOnlyException;
 import de.mhus.lib.mongo.MoMetadata;
+import de.mhus.osgi.sop.api.aaa.AccessApi;
 
 public class VaultEntry extends MoMetadata {
 
@@ -23,6 +27,7 @@ public class VaultEntry extends MoMetadata {
 	protected MProperties meta;
 	protected Date validFrom;
 	protected Date validTo;
+	private String creator;
 	
 	private String checksum;
 	
@@ -39,10 +44,17 @@ public class VaultEntry extends MoMetadata {
 		meta = new MProperties(clone.getMeta());
 		validFrom = clone.getValidFrom();
 		validTo = clone.getValidTo();
+		creator = clone.getCreator();
 	}
 	
 	@PrePersist
 	public void preChecksum() throws NoSuchAlgorithmException, UnsupportedEncodingException, ReadOnlyException {
+		
+		if (creator == null) {
+			AccessApi aaa = MApi.lookup(AccessApi.class);
+			creator = aaa.getCurrentOrGuest().getAccountId();
+		}
+		
 		MessageDigest md = MessageDigest.getInstance("SHA-256");
 
 		md.update(secret.getBytes("UTF-8"));
@@ -50,6 +62,7 @@ public class VaultEntry extends MoMetadata {
 		md.update(secretId.getBytes("UTF-8"));
 		md.update(target.getBytes("UTF-8"));
 		md.update(group.getBytes("UTF-8"));
+		md.update(creator.getBytes("UTF-8"));
 
 		byte[] digest = md.digest();
 		String cs = Base64.getEncoder().encodeToString(digest);
@@ -103,6 +116,10 @@ public class VaultEntry extends MoMetadata {
 
 	public void setValidTo(Date validTo) {
 		this.validTo = validTo;
+	}
+
+	public String getCreator() {
+		return creator;
 	}
 	
 }
