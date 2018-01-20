@@ -29,6 +29,7 @@ import de.mhus.lib.core.crypt.pem.PemBlock;
 import de.mhus.lib.core.crypt.pem.PemBlockModel;
 import de.mhus.lib.core.crypt.pem.PemPriv;
 import de.mhus.lib.core.crypt.pem.PemUtil;
+import de.mhus.lib.core.pojo.PojoModel;
 import de.mhus.lib.core.util.SecureString;
 import de.mhus.lib.core.vault.MVaultUtil;
 import de.mhus.lib.errors.AccessDeniedException;
@@ -45,7 +46,7 @@ import de.mhus.osgi.sop.api.aaa.AccessApi;
 @Component(immediate=true)
 public class VaultApiImpl extends MLog implements CherryVaultApi {
 
-	private static final Date END_OF_DAYS = new Date(3000-1900,1,1);
+	private static final Date END_OF_DAYS = new Date(3000-1900,0,1);
 
 	@Override
 	public String createSecret(String groupName, Date validFrom, Date validTo, IProperties properties) throws MException {
@@ -421,6 +422,11 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		}
 		
 		importUpdate(secretId, validFrom, validTo, sec, properties);
+	}
+
+	@Override
+	public PojoModel getEntryPojoModel() throws NotFoundException {
+		return MoVaultManager.instance.getManager().getModelFor(VaultEntry.class);
 	}
 
 

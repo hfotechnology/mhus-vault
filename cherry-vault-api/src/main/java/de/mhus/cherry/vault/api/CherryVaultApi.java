@@ -7,6 +7,7 @@ import de.mhus.cherry.vault.api.model.VaultEntry;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.MDate;
 import de.mhus.lib.core.MProperties;
+import de.mhus.lib.core.pojo.PojoModel;
 import de.mhus.lib.core.util.SecureString;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;
@@ -93,5 +94,7 @@ public interface CherryVaultApi {
 	}
 	
 	VaultEntry getSecret(String secretId, String target) throws NotFoundException;
+
+	PojoModel getEntryPojoModel() throws NotFoundException;
 	
 }

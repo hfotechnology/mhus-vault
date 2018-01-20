@@ -6,6 +6,7 @@ install -s mvn:de.mhus.osgi/mhu-karaf-crypt/1.3.2-SNAPSHOT
 
 install -s mvn:de.mhus.cherry.vault/cherry-vault-api/1.0.0-SNAPSHOT
 install -s mvn:de.mhus.cherry.vault/cherry-vault-impl/1.0.0-SNAPSHOT
+install -s mvn:de.mhus.cherry.vault/cherry-vault-rest/1.0.0-SNAPSHOT
 
 
 Example:
@@ -24,7 +25,9 @@ Result: dbc02d77-0e70-4e30-9a28-110f55300e11
 
 service:invoke de.mhus.cherry.vault.api.CherryVaultApi getSecret dbc02d77-0e70-4e30-9a28-110f55300e11 test
 
+or
 
+http://localhost:8181/rest/vault/dbc02d77-0e70-4e30-9a28-110f55300e11?target=test
 
 
 

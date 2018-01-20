@@ -10,6 +10,7 @@ import javax.accessibility.AccessibleAction;
 
 import org.mongodb.morphia.annotations.PrePersist;
 
+import de.mhus.lib.annotations.generic.Public;
 import de.mhus.lib.core.IReadProperties;
 import de.mhus.lib.core.MApi;
 import de.mhus.lib.core.MProperties;

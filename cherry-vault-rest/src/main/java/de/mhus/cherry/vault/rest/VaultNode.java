@@ -11,8 +11,11 @@ import de.mhus.cherry.vault.api.model.VaultEntry;
 import de.mhus.lib.core.MApi;
 import de.mhus.lib.core.MDate;
 import de.mhus.lib.core.MProperties;
+import de.mhus.lib.core.pojo.PojoModel;
+import de.mhus.lib.core.pojo.PojoModelFactory;
 import de.mhus.lib.core.util.EmptyList;
 import de.mhus.lib.errors.MException;
+import de.mhus.lib.errors.NotFoundException;
 import de.mhus.lib.errors.UsageException;
 import de.mhus.osgi.sop.api.operation.OperationDescriptor;
 import de.mhus.osgi.sop.api.rest.AbstractObjectListNode;
@@ -22,6 +25,24 @@ import de.mhus.osgi.sop.api.rest.RestNodeService;
 
 @Component(immediate=true,provide=RestNodeService.class)
 public class VaultNode extends AbstractObjectListNode<VaultEntry>{
+
+	private PojoModelFactory pojoModelFactory = new PojoModelFactory() {
+
+		@Override
+		public PojoModel createPojoModel(Class<?> pojoClass) {
+			if (pojoClass == VaultEntry.class) {
+				try {
+					return MApi.lookup(CherryVaultApi.class).getEntryPojoModel();
+				} catch (NotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+				
+			return null;
+		}
+		
+	};
 
 	@Override
 	public String[] getParentNodeIds() {
@@ -105,5 +126,8 @@ public class VaultNode extends AbstractObjectListNode<VaultEntry>{
 		// TODO rollback ?
 	}
 	
+	protected PojoModelFactory getPojoModelFactory() {
+		return pojoModelFactory;
+	}
 	
 }
