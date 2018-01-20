@@ -14,6 +14,8 @@ public class VaultGroup extends MoMetadata {
 	private boolean allowUpdate;
 	private boolean enabled;
 	private LinkedList<String> writeAcl;
+	private boolean allowUnencrypted;
+	private boolean allowImports;
 	
 	public String getName() {
 		return name;
@@ -39,6 +41,14 @@ public class VaultGroup extends MoMetadata {
 
 	public boolean isEnabled() {
 		return enabled;
+	}
+
+	public boolean isAllowUnencrypted() {
+		return allowUnencrypted;
+	}
+
+	public boolean isAllowImports() {
+		return allowImports;
 	}
 	
 }

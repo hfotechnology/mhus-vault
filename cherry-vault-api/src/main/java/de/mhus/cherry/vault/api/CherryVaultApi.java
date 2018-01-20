@@ -51,12 +51,37 @@ public interface CherryVaultApi {
 	 */
 	String importSecret(String groupName, Date validFrom, Date validTo, SecretContent secret, IProperties properties) throws MException;
 
+	/**
+	 * Import an existing secret as new secret. The secret is encoded with the users private key.
+	 * 
+	 * @param groupName
+	 * @param validFrom
+	 * @param validTo
+	 * @param secret
+	 * @param properties
+	 * @return
+	 * @throws MException
+	 */
+	String importSecret(String groupName, Date validFrom, Date validTo, String secret, IProperties properties) throws MException;
+
 	default String importSecret(String groupName, String secret) throws MException {
 		return importSecret(groupName, null, null, new SecretContent(new SecureString(secret), new MProperties()), new MProperties());
 	}
 	
 	void importUpdate(String secretId, Date validFrom, Date validTo, SecretContent secret, IProperties properties) throws MException;
 
+	/**
+	 * Import and update an secret. The secret is encoded with the users private key.
+	 * 
+	 * @param secretId
+	 * @param validFrom
+	 * @param validTo
+	 * @param secret
+	 * @param properties
+	 * @throws MException
+	 */
+	void importUpdate(String secretId, Date validFrom, Date validTo, String secret, IProperties properties) throws MException;
+	
 	default void importUpdate(String secretId, String secret) throws MException {
 		importUpdate(secretId, null, null, new SecretContent(new SecureString(secret), new MProperties()), new MProperties());
 	}

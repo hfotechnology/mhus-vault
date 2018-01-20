@@ -21,14 +21,23 @@ import de.mhus.cherry.vault.api.model.WritableEntry;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.IReadProperties;
 import de.mhus.lib.core.MApi;
+import de.mhus.lib.core.MCollection;
 import de.mhus.lib.core.MLog;
+import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MString;
+import de.mhus.lib.core.crypt.pem.PemBlock;
+import de.mhus.lib.core.crypt.pem.PemBlockModel;
+import de.mhus.lib.core.crypt.pem.PemPriv;
+import de.mhus.lib.core.crypt.pem.PemUtil;
+import de.mhus.lib.core.util.SecureString;
+import de.mhus.lib.core.vault.MVaultUtil;
 import de.mhus.lib.errors.AccessDeniedException;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;
 import de.mhus.lib.errors.UsageException;
 import de.mhus.lib.karaf.MOsgi;
 import de.mhus.lib.mongo.MoManager;
+import de.mhus.osgi.crypt.api.cipher.CipherProvider;
 import de.mhus.osgi.sop.api.aaa.AaaContext;
 import de.mhus.osgi.sop.api.aaa.AaaUtil;
 import de.mhus.osgi.sop.api.aaa.AccessApi;
@@ -308,7 +317,10 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		List<VaultGroup> res = MoVaultManager.instance.getManager().createQuery(VaultGroup.class).field("name").equal(name).asList();
 		if (res.size() < 1) throw new NotFoundException("Group not exists",name);
 		if (res.size() > 1) log().w("Not unique group name",name);
-		return res.get(0);
+		VaultGroup group = res.get(0);
+		if (!group.isEnabled())
+			throw new NotFoundException("Group is disabled", name);
+		return group;
 	}
 	
 	public VaultTarget getTarget(String name) throws NotFoundException {
@@ -340,6 +352,75 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 			entry.save();
 		}
 		
+	}
+
+	@Override
+	public String importSecret(String groupName, Date validFrom, Date validTo, String secret, IProperties properties)
+	        throws MException {
+		
+		VaultGroup group = getGroup(groupName);
+		AccessApi aaa = MApi.lookup(AccessApi.class);
+		AaaContext ac = aaa.getCurrentOrGuest();
+		
+		SecretContent sec = null;
+		if (PemUtil.isPemBlock(secret)) {
+			// it's encoded
+			CipherProvider api = MApi.lookup(CipherProvider.class);
+			PemBlockModel encoded = new PemBlockModel().parse(secret);
+			String privKeyId = encoded.getString(PemBlock.PRIV_ID);
+			// check if the private key is owned by the user (list of owned ids are configured at the user profile)
+			if (!MCollection.contains( ac.getAccount().getAttributes().getString("privateKey", ""), ',', privKeyId))
+				throw new AccessDeniedException("The private key is not owned by the current user",ac,privKeyId);
+			// search for the key in MVault
+			de.mhus.lib.core.vault.VaultEntry privKeyObj = MVaultUtil.loadDefault().getEntry(UUID.fromString(privKeyId ) );
+			if (privKeyObj == null) throw new NotFoundException("Private key not found",privKeyId);
+			// Decode the secret
+			PemPriv privKey = privKeyObj.adaptTo(PemPriv.class);
+			String decoded = api.decode(privKey, encoded);
+			sec = new SecretContent(new SecureString(decoded), new MProperties());
+			decoded = "";
+		} else {
+			if (!group.isAllowUnencrypted())
+				throw new AccessDeniedException("Need to encrypt secrets",groupName);
+			sec = new SecretContent(new SecureString(secret), new MProperties());
+		}
+		
+		return importSecret(groupName, validFrom, validTo, sec, properties);
+	}
+
+	@Override
+	public void importUpdate(String secretId, Date validFrom, Date validTo, String secret, IProperties properties)
+	        throws MException {
+		
+		String groupName = findGroupNameForSecretId(secretId);
+		VaultGroup group = getGroup(groupName);
+		AccessApi aaa = MApi.lookup(AccessApi.class);
+		AaaContext ac = aaa.getCurrentOrGuest();
+		
+		SecretContent sec = null;
+		if (PemUtil.isPemBlock(secret)) {
+			// it's encoded
+			CipherProvider api = MApi.lookup(CipherProvider.class);
+			PemBlockModel encoded = new PemBlockModel().parse(secret);
+			String privKeyId = encoded.getString(PemBlock.PRIV_ID);
+			// check if the private key is owned by the user (list of owned ids are configured at the user profile)
+			if (!MCollection.contains( ac.getAccount().getAttributes().getString("privateKey", ""), ',', privKeyId))
+				throw new AccessDeniedException("The private key is not owned by the current user",ac,privKeyId);
+			// search for the key in MVault
+			de.mhus.lib.core.vault.VaultEntry privKeyObj = MVaultUtil.loadDefault().getEntry(UUID.fromString(privKeyId ) );
+			if (privKeyObj == null) throw new NotFoundException("Private key not found",privKeyId);
+			// Decode the secret
+			PemPriv privKey = privKeyObj.adaptTo(PemPriv.class);
+			String decoded = api.decode(privKey, encoded);
+			sec = new SecretContent(new SecureString(decoded), new MProperties());
+			decoded = "";
+		} else {
+			if (!group.isAllowUnencrypted())
+				throw new AccessDeniedException("Need to encrypt secrets",groupName);
+			sec = new SecretContent(new SecureString(secret), new MProperties());
+		}
+		
+		importUpdate(secretId, validFrom, validTo, sec, properties);
 	}
 
 
