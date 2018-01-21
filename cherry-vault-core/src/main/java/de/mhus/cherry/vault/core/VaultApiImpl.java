@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
-import org.apache.karaf.shell.api.action.lifecycle.Manager;
 import org.mongodb.morphia.query.MorphiaIterator;
 
 import aQute.bnd.annotation.component.Component;
@@ -31,7 +30,6 @@ import de.mhus.lib.core.crypt.pem.PemBlock;
 import de.mhus.lib.core.crypt.pem.PemBlockModel;
 import de.mhus.lib.core.crypt.pem.PemPriv;
 import de.mhus.lib.core.crypt.pem.PemUtil;
-import de.mhus.lib.core.pojo.PojoModel;
 import de.mhus.lib.core.util.SecureString;
 import de.mhus.lib.core.vault.MVaultUtil;
 import de.mhus.lib.errors.AccessDeniedException;
@@ -48,7 +46,9 @@ import de.mhus.osgi.sop.api.aaa.AccessApi;
 @Component(immediate=true)
 public class VaultApiImpl extends MLog implements CherryVaultApi {
 
+	@SuppressWarnings("deprecation")
 	private static final Date END_OF_DAYS = new Date(3000-1900,0,1);
+	private static final Object DEFAULT_GROUP_NAME = "default";
 
 	@Override
 	public String createSecret(String groupName, Date validFrom, Date validTo, IProperties properties) throws MException {
@@ -225,6 +225,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 	@Override
 	public void undeleteSecret(String secretId) throws MException {
 		
+		@SuppressWarnings("deprecation")
 		List<VaultArchive> res = StaticAccess.moManager.getManager().createQuery(VaultArchive.class).field("secretId").equal(secretId).limit(1).asList();
 		if (res.size() == 0)
 			throw new NotFoundException("secretId not found",secretId);
@@ -308,8 +309,12 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 	}
 
 	private VaultGroup getMustHaveGroup(String groupName) {
-		// TODO Auto-generated method stub
-		return null;
+		List<VaultGroup> res = StaticAccess.moManager.getManager().createQuery(VaultGroup.class).field("name").equal(DEFAULT_GROUP_NAME).asList();
+		if (res.size() < 1) return null;
+		if (res.size() > 1) log().w("Not unique group name",DEFAULT_GROUP_NAME);
+		VaultGroup group = res.get(0);
+		if (!group.isEnabled()) return null;
+		return group;
 	}
 
 	private VaultEntry processTarget(VaultGroup group, IProperties properties, VaultTarget target, String secretId, SecretContent secret) throws MException {
@@ -379,6 +384,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 	}
 
 	private String findGroupNameForSecretId(String secretId) throws NotFoundException {
+		@SuppressWarnings("deprecation")
 		List<VaultEntry> res = StaticAccess.moManager.getManager().createQuery(VaultEntry.class).field("secretId").equal(secretId).limit(1).asList();
 		if (res.size() == 0)
 			throw new NotFoundException("secretId not found",secretId);

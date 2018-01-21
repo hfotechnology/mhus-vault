@@ -5,9 +5,7 @@ import java.util.Date;
 import de.mhus.cherry.vault.api.ifc.SecretContent;
 import de.mhus.cherry.vault.api.model.VaultEntry;
 import de.mhus.lib.core.IProperties;
-import de.mhus.lib.core.MDate;
 import de.mhus.lib.core.MProperties;
-import de.mhus.lib.core.pojo.PojoModel;
 import de.mhus.lib.core.util.SecureString;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;
@@ -19,6 +17,8 @@ public interface CherryVaultApi {
 	 * by the target processors.
 	 * 
 	 * @param groupName Processing for this group of targets
+	 * @param validFrom 
+	 * @param validTo 
 	 * @param properties Processing configuration
 	 * @return The new created secretId
 	 * @throws MException
@@ -33,6 +33,8 @@ public interface CherryVaultApi {
 	 * Creates a new secret for an existing key (e.g. create new password).
 	 * 
 	 * @param secretId Secret to be updated
+	 * @param validFrom 
+	 * @param validTo 
 	 * @param properties Processing configuration
 	 * @throws MException
 	 */
@@ -45,9 +47,11 @@ public interface CherryVaultApi {
 	/**
 	 * Import an existing secret as new secret.
 	 * @param groupName
+	 * @param validFrom 
+	 * @param validTo 
 	 * @param secret 
 	 * @param properties
-	 * @return
+	 * @return secretId
 	 * @throws MException
 	 */
 	String importSecret(String groupName, Date validFrom, Date validTo, SecretContent secret, IProperties properties) throws MException;
@@ -60,7 +64,7 @@ public interface CherryVaultApi {
 	 * @param validTo
 	 * @param secret
 	 * @param properties
-	 * @return
+	 * @return secretId
 	 * @throws MException
 	 */
 	String importSecret(String groupName, Date validFrom, Date validTo, String secret, IProperties properties) throws MException;

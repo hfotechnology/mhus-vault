@@ -5,8 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
-import org.bson.types.ObjectId;
-import org.mongodb.morphia.Key;
 import org.osgi.service.component.ComponentContext;
 
 import aQute.bnd.annotation.component.Activate;
@@ -18,9 +16,7 @@ import de.mhus.lib.core.MSystem;
 import de.mhus.lib.core.vault.MutableVaultSource;
 import de.mhus.lib.core.vault.VaultEntry;
 import de.mhus.lib.core.vault.VaultSource;
-import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotSupportedException;
-import de.mhus.lib.mongo.MoUtil;
 import de.mhus.osgi.sop.api.aaa.AaaContext;
 import de.mhus.osgi.sop.api.aaa.AaaUtil;
 import de.mhus.osgi.sop.api.aaa.AccessApi;
@@ -51,6 +47,7 @@ public class MongoMVaultSource extends MutableVaultSource {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public UUID[] getEntryIds() {
 		LinkedList<UUID> out = new LinkedList<>();

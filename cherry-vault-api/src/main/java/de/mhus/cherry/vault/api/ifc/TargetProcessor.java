@@ -1,6 +1,5 @@
 package de.mhus.cherry.vault.api.ifc;
 
-import de.mhus.cherry.vault.api.model.VaultEntry;
 import de.mhus.cherry.vault.api.model.WritableEntry;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.IReadProperties;
