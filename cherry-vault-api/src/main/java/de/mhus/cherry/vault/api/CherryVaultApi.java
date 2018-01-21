@@ -87,11 +87,9 @@ public interface CherryVaultApi {
 		importUpdate(secretId, null, null, new SecretContent(new SecureString(secret), new MProperties()), new MProperties());
 	}
 
-	void rollbackSecret(String secretId, Date creationDate) throws MException;
-	
-	default void rollbackSecret(String secretId, String creationDate) throws MException {
-		rollbackSecret(secretId, MDate.toDate(creationDate, null));
-	}
+	void deleteSecret(String secretId) throws MException;
+		
+	void undeleteSecret(String secretId) throws MException;
 	
 	VaultEntry getSecret(String secretId, String target) throws NotFoundException;
 	

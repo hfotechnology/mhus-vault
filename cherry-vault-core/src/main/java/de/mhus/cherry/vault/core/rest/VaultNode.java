@@ -36,7 +36,6 @@ public class VaultNode extends AbstractObjectListNode<VaultEntry>{
 				try {
 					return StaticAccess.moManager.getManager().getModelFor(VaultEntry.class);
 				} catch (NotFoundException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -76,11 +75,11 @@ public class VaultNode extends AbstractObjectListNode<VaultEntry>{
 	@Override
 	public void doUpdate(JsonResult result, CallContext callContext) throws Exception {
 		String secret = callContext.getParameter("_secret");
-		String secredId = callContext.getParameter("_secretId");
-		if (secredId == null)
-			secredId = getIdFromContext(callContext);
-		if (secredId == null)
-			throw new UsageException("secred id not found");
+		String secretId = callContext.getParameter("_secretId");
+		if (secretId == null)
+			secretId = getIdFromContext(callContext);
+		if (secretId == null)
+			throw new UsageException("secret id not found");
 		Date validFrom = MDate.toDate(callContext.getParameter("_validFrom"), null);
 		Date validTo = MDate.toDate(callContext.getParameter("_validTo"), null);
 		
@@ -95,7 +94,7 @@ public class VaultNode extends AbstractObjectListNode<VaultEntry>{
 		CherryVaultApi api = MApi.lookup(CherryVaultApi.class);
 		
 		if (secret != null) {
-			api.importUpdate(secredId, validFrom, validTo, secret, properties);
+			api.importUpdate(secretId, validFrom, validTo, secret, properties);
 		}
 		
 	}
@@ -119,15 +118,24 @@ public class VaultNode extends AbstractObjectListNode<VaultEntry>{
 		if (secret != null) {
 			String secretId = api.importSecret(groupName, validFrom, validTo, secret, properties);
 			ObjectNode res = result.createObjectNode();
-			res.put("secredId", secretId);
+			res.put("secretId", secretId);
 		}
 		
 	}
 	@Override
 	public void doDelete(JsonResult result, CallContext callContext) throws Exception {
-		// TODO rollback ?
+		String secretId = callContext.getParameter("_secretId");
+		if (secretId == null)
+			secretId = getIdFromContext(callContext);
+		if (secretId == null)
+			throw new UsageException("secret id not found");
+
+		CherryVaultApi api = MApi.lookup(CherryVaultApi.class);
+		
+		api.deleteSecret(secretId);
 	}
 	
+	@Override
 	protected PojoModelFactory getPojoModelFactory() {
 		return pojoModelFactory;
 	}

@@ -14,6 +14,7 @@ import de.mhus.cherry.vault.api.ifc.SecretContent;
 import de.mhus.cherry.vault.api.ifc.SecretGenerator;
 import de.mhus.cherry.vault.api.ifc.TargetCondition;
 import de.mhus.cherry.vault.api.ifc.TargetProcessor;
+import de.mhus.cherry.vault.api.model.VaultArchive;
 import de.mhus.cherry.vault.api.model.VaultEntry;
 import de.mhus.cherry.vault.api.model.VaultGroup;
 import de.mhus.cherry.vault.api.model.VaultTarget;
@@ -192,7 +193,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 	}
 
 	@Override
-	public void rollbackSecret(String secretId, Date creationDate) throws MException {
+	public void deleteSecret(String secretId) throws MException {
 		
 		// get group
 		String groupName = findGroupNameForSecretId(secretId);
@@ -204,8 +205,40 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		if (!AaaUtil.hasAccess(aaa.getCurrentOrGuest(), acl))
 			throw new AccessDeniedException("Write access to group denied",groupName);
 
-		// TODO Auto-generated method stub
+		MorphiaIterator<VaultEntry, VaultEntry> res = StaticAccess.moManager.getManager().createQuery(VaultEntry.class).field("secretId").equal(secretId).fetch();
+		for (VaultEntry entry : res) {
+			VaultArchive archive = new VaultArchive(entry);
+			StaticAccess.moManager.getManager().save(archive);
+			entry.delete();
+		}
+		res.close();
 	}
+	
+	@Override
+	public void undeleteSecret(String secretId) throws MException {
+		
+		List<VaultArchive> res = StaticAccess.moManager.getManager().createQuery(VaultArchive.class).field("secretId").equal(secretId).limit(1).asList();
+		if (res.size() == 0)
+			throw new NotFoundException("secretId not found",secretId);
+		String groupName = res.get(0).getGroup();
+		VaultGroup group = getGroup(groupName);
+
+		// check write access
+		AccessApi aaa = MApi.lookup(AccessApi.class);
+		List<String> acl = group.getWriteAcl();
+		if (!AaaUtil.hasAccess(aaa.getCurrentOrGuest(), acl))
+			throw new AccessDeniedException("Write access to group denied",groupName);
+
+		MorphiaIterator<VaultArchive, VaultArchive> res2 = StaticAccess.moManager.getManager().createQuery(VaultArchive.class).field("secretId").equal(secretId).fetch();
+		for (VaultEntry archive : res2) {
+			VaultEntry entry = new VaultEntry(archive);
+			StaticAccess.moManager.getManager().save(entry);
+			archive.delete();
+		}
+		res2.close();
+
+	}
+
 
 	@Override
 	public VaultEntry getSecret(String secretId, String targetName) throws NotFoundException {
@@ -357,7 +390,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 			entry.setValidTo(validTo);
 			entry.save();
 		}
-		
+		res.close();
 	}
 
 	@Override
