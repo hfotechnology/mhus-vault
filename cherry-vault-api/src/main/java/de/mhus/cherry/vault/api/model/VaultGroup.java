@@ -21,6 +21,7 @@ public class VaultGroup extends MoMetadata {
 	private LinkedList<String> writeAcl;
 	private boolean allowUnencrypted;
 	private boolean allowImports;
+	private int maxImportLength;
 	
 	public String getName() {
 		return name;
@@ -59,6 +60,10 @@ public class VaultGroup extends MoMetadata {
 	@Override
 	public String toString() {
 		return MSystem.toString(this, name);
+	}
+
+	public int getMaxImportLength() {
+		return maxImportLength;
 	}
 
 }

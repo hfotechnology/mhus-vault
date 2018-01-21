@@ -14,9 +14,7 @@ public class SecretContent {
 	public SecretContent(SecureString content, MProperties properties) {
 		this.content = content;
 		this.properties = properties;
-	}
-
-	
+	}	
 	
 	public SecureString getContent() {
 		return content;

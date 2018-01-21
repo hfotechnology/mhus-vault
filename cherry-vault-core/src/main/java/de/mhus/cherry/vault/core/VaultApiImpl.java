@@ -141,7 +141,9 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		if (!AaaUtil.hasAccess(aaa.getCurrentOrGuest(), acl))
 			throw new AccessDeniedException("Write access to group denied",groupName);
 		
-		if (secret == null) throw new MException("Secret is null");
+		if (secret == null || secret.getContent() == null || secret.getContent().isNull()) throw new MException("Secret is null");
+		if (group.getMaxImportLength() > 0 && secret.getContent().length() > group.getMaxImportLength())
+			throw new MException("Secret out of bounds",group.getMaxImportLength());
 		
 		// create entries by targets
 		String secretId = UUID.randomUUID().toString();
@@ -174,7 +176,9 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 
 		if (!group.isAllowUpdate()) throw new AccessDeniedException("The group dos not allow updates",groupName);
 		
-		if (secret == null) throw new MException("Secret is null");
+		if (secret == null || secret.getContent() == null || secret.getContent().isNull()) throw new MException("Secret is null");
+		if (group.getMaxImportLength() > 0 && secret.getContent().length() > group.getMaxImportLength())
+			throw new MException("Secret out of bounds",group.getMaxImportLength());
 		
 		// -- cache entries to save. Save if everything target was ok
 		LinkedList<VaultEntry> entriesToSave = new LinkedList<>();
@@ -363,7 +367,8 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		VaultGroup group = getGroup(groupName);
 		AccessApi aaa = MApi.lookup(AccessApi.class);
 		AaaContext ac = aaa.getCurrentOrGuest();
-		
+		if (properties == null) properties = new MProperties();
+				
 		SecretContent sec = null;
 		if (PemUtil.isPemBlock(secret)) {
 			// it's encoded
@@ -378,7 +383,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 			if (privKeyObj == null) throw new NotFoundException("Private key not found",privKeyId);
 			// Decode the secret
 			PemPriv privKey = privKeyObj.adaptTo(PemPriv.class);
-			String decoded = api.decode(privKey, encoded);
+			String decoded = api.decode(privKey, encoded, properties.getString("passphrase", null));
 			sec = new SecretContent(new SecureString(decoded), new MProperties());
 			decoded = "";
 		} else {
@@ -398,6 +403,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		VaultGroup group = getGroup(groupName);
 		AccessApi aaa = MApi.lookup(AccessApi.class);
 		AaaContext ac = aaa.getCurrentOrGuest();
+		if (properties == null) properties = new MProperties();
 		
 		SecretContent sec = null;
 		if (PemUtil.isPemBlock(secret)) {
@@ -413,7 +419,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 			if (privKeyObj == null) throw new NotFoundException("Private key not found",privKeyId);
 			// Decode the secret
 			PemPriv privKey = privKeyObj.adaptTo(PemPriv.class);
-			String decoded = api.decode(privKey, encoded);
+			String decoded = api.decode(privKey, encoded, properties.getString("passphrase", null));
 			sec = new SecretContent(new SecureString(decoded), new MProperties());
 			decoded = "";
 		} else {
