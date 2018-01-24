@@ -63,9 +63,9 @@ public class VaultEntry extends MoMetadata {
 		
 		MessageDigest md = MessageDigest.getInstance("SHA-256");
 
-		md.update(secret.getBytes("UTF-8"));
-		md.update(secretKeyId.getBytes("UTF-8"));
-		md.update(secretId.getBytes("UTF-8"));
+		md.update(String.valueOf(secret).getBytes("UTF-8"));
+		md.update(String.valueOf(secretKeyId).getBytes("UTF-8"));
+		md.update(String.valueOf(secretId).getBytes("UTF-8"));
 		md.update(target.getBytes("UTF-8"));
 		md.update(group.getBytes("UTF-8"));
 		md.update(creator.getBytes("UTF-8"));
