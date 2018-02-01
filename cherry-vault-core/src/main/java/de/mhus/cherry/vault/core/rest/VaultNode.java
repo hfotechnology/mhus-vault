@@ -296,6 +296,8 @@ public class VaultNode extends AbstractObjectListNode<VaultEntry>{
 		
 		if (secret != null) {
 			api.importUpdate(secretId, validFrom, validTo, secret, properties);
+		} else {
+			api.createUpdate(secretId, validFrom, validTo, properties);
 		}
 		
 	}
@@ -318,6 +320,10 @@ public class VaultNode extends AbstractObjectListNode<VaultEntry>{
 		
 		if (secret != null) {
 			String secretId = api.importSecret(groupName, validFrom, validTo, secret, properties);
+			ObjectNode res = result.createObjectNode();
+			res.put("secretId", secretId);
+		} else {
+			String secretId = api.createSecret(groupName, validFrom, validTo, properties);
 			ObjectNode res = result.createObjectNode();
 			res.put("secretId", secretId);
 		}

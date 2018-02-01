@@ -28,8 +28,14 @@ or
 
 http://localhost:8181/rest/vault/dbc02d77-0e70-4e30-9a28-110f55300e11?target=test
 
+Create:
+http://localhost:8181/rest/vault?_method=POST&_group=test
 
+Update:
+http://localhost:8181/rest/vault?_method=PUT&_secretId=dfc3fbb9-253b-43bd-9ff8-95ec109518be
 
+Delete:
+http://localhost:8181/rest/vault?_method=DELETE&_secretId=dfc3fbb9-253b-43bd-9ff8-95ec109518be
 
 
 view VaultEntry 5a6258d7a7afa2b2303f18c7
