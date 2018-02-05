@@ -64,7 +64,7 @@ public class VaultClientConnection {
 	 */
 	public SecretEntry getSecret(UUID secretId, String target) throws IOException {
 		// open url and read content
-		String u = url + "/rest/vault/" + secretId.toString() + "?target=" + target;
+		String u = url + "/rest/vault/" + secretId.toString() + ":" + target;
 		URL url = new URL(u);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         // connection.setRequestMethod("POST");
@@ -217,7 +217,6 @@ public class VaultClientConnection {
 			throw new IOException("Rest Error: " + json.get("_error").asText() + " " + json.get("_errorMessage").asText() );
 	}
 
-	
 	private String getQuery(List<NameValuePair> params) throws UnsupportedEncodingException
 	{
 	    StringBuilder result = new StringBuilder();

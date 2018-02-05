@@ -269,16 +269,24 @@ public class VaultNode extends AbstractObjectListNode<VaultEntry>{
 
 	@Override
 	protected VaultEntry getObjectForId(CallContext context, String id) throws Exception {
+		int p = id.indexOf(':');
+		if (p <= 0) return null;
+		String target = id.substring(p+1);
+		id = id.substring(0, p);
 		CherryVaultApi api = MApi.lookup(CherryVaultApi.class);
-		return api.getSecret(id, context.getParameter("target"));
+		return api.getSecret(id, target);
 	}
 
 	@Override
 	public void doUpdate(JsonResult result, CallContext callContext) throws Exception {
 		String secret = callContext.getParameter("_secret");
 		String secretId = callContext.getParameter("_secretId");
-		if (secretId == null)
+		if (secretId == null) {
 			secretId = getIdFromContext(callContext);
+			int p = secretId.indexOf(':');
+			if (p >= 0)
+				secretId = secretId.substring(0, p); // ignore target
+		}
 		if (secretId == null)
 			throw new UsageException("secret id not found");
 		Date validFrom = MDate.toDate(callContext.getParameter("_validFrom"), null);
@@ -332,8 +340,12 @@ public class VaultNode extends AbstractObjectListNode<VaultEntry>{
 	@Override
 	public void doDelete(JsonResult result, CallContext callContext) throws Exception {
 		String secretId = callContext.getParameter("_secretId");
-		if (secretId == null)
+		if (secretId == null) {
 			secretId = getIdFromContext(callContext);
+			int p = secretId.indexOf(':');
+			if (p >= 0)
+				secretId = secretId.substring(0, p); // ignore target
+		}
 		if (secretId == null)
 			throw new UsageException("secret id not found");
 

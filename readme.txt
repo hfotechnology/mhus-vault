@@ -26,7 +26,7 @@ service:invoke de.mhus.cherry.vault.api.CherryVaultApi getSecret dbc02d77-0e70-4
 
 or
 
-http://localhost:8181/rest/vault/dbc02d77-0e70-4e30-9a28-110f55300e11?target=test
+http://localhost:8181/rest/vault/dbc02d77-0e70-4e30-9a28-110f55300e11:test
 
 Create:
 http://localhost:8181/rest/vault?_method=POST&_group=test
