@@ -1,12 +1,16 @@
 
+cherryVersion=1.0.1-SNAPSHOT
+feature:repo-add mvn:de.mhus.cherry.vault/cherry-vault-feature/$cherryVersion/xml/features
 
-install -s mvn:de.mhus.osgi/mhu-osgi-crypt-api/1.3.2-SNAPSHOT
-install -s mvn:de.mhus.osgi/mhu-osgi-crypt-bc/1.3.2-SNAPSHOT
-install -s mvn:de.mhus.osgi/mhu-karaf-crypt/1.3.2-SNAPSHOT
+feature:install cherry-vault
 
-install -s mvn:de.mhus.cherry.vault/cherry-vault-api/1.0.0-SNAPSHOT
-install -s mvn:de.mhus.cherry.vault/cherry-vault-core/1.0.0-SNAPSHOT
+cp .../etc/mongo-ds.xml deploy/
+cp .../etc/api-access.xml deploy/
+cp .../etc/api-access-sources.xml deploy/
+cp .../etc/aaa/grouppmapping/* sop/aaa/groupmapping
 
+If you need a user:
+cp .../etc/aaa/accounts/* sop/aaa/accounts
 
 Example:
 
@@ -15,6 +19,8 @@ Public key Id: f62af2f1-7acc-4b2e-9d77-1ea74c656953
 
 crypta:signer -i -s CherryVaultLocalSource DSA-1 create
 Private Key Id: c49ac4bb-8379-4956-a278-a426af19e829
+
+xdb:use -g -s cherryvault save
 
 xdb:create VaultGroup name=test secretgeneratorname=password allowupdate=true targets.add=test writeacl.add=* enabled=true maximportlength=100
 xdb:create VaultTarget name=test conditionnames=true processorname=cipher.rsa processorconfig.keyId=f62af2f1-7acc-4b2e-9d77-1ea74c656953 processorconfig.signId=c49ac4bb-8379-4956-a278-a426af19e829 processorconfig.signService=DSA-1 readacl.add=*

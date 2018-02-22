@@ -1,0 +1,12 @@
+<user>
+  <password plain="123" />
+  <information name="Admin" />
+  <attributes>
+    <attribute name="privatekey" value=""/>
+  </attributes> 
+  <acl>
+  </acl>
+  <groups>
+    <group name="ADMINISTRATOR"/>
+  </groups>
+</user>
