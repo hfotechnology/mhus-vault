@@ -203,8 +203,6 @@
  */
 package de.mhus.cherry.vault.core;
 
-import java.io.IOException;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
@@ -212,100 +210,111 @@ import org.osgi.service.component.ComponentContext;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Deactivate;
+import de.mhus.cherry.vault.api.model.VaultArchive;
+import de.mhus.cherry.vault.api.model.VaultEntry;
+import de.mhus.cherry.vault.api.model.VaultGroup;
 import de.mhus.cherry.vault.api.model.VaultKey;
+import de.mhus.cherry.vault.api.model.VaultTarget;
 import de.mhus.cherry.vault.core.impl.StaticAccess;
-import de.mhus.lib.core.MApi;
-import de.mhus.lib.core.MSystem;
-import de.mhus.lib.core.vault.MutableVaultSource;
-import de.mhus.lib.core.vault.VaultEntry;
-import de.mhus.lib.core.vault.VaultSource;
-import de.mhus.lib.errors.NotSupportedException;
+import de.mhus.karaf.mongo.MoManagerService;
+import de.mhus.karaf.mongo.MoManagerServiceImpl;
+import de.mhus.lib.adb.DbMetadata;
+import de.mhus.lib.adb.Persistable;
+import de.mhus.lib.core.MLog;
+import de.mhus.lib.core.MValidator;
+import de.mhus.lib.errors.MException;
+import de.mhus.lib.xdb.XdbService;
 import de.mhus.osgi.sop.api.aaa.AaaContext;
-import de.mhus.osgi.sop.api.aaa.AaaUtil;
-import de.mhus.osgi.sop.api.aaa.AccessApi;
+import de.mhus.osgi.sop.api.adb.DbSchemaService;
+import de.mhus.osgi.sop.api.adb.ReferenceCollector;
+import de.mhus.osgi.sop.api.model.ActionTask;
 
-@Component(provide=VaultSource.class)
-public class MongoMVaultSource extends MutableVaultSource {
+@Component(immediate=true,provide=DbSchemaService.class)
+public class CherryVaultManager extends MLog implements DbSchemaService {
 
-	@Activate
-	public void doActivate(ComponentContext ctx) {
-		name = "CherryVaultLocalSource";
+	private XdbService service;
+
+	@Override
+	public void registerObjectTypes(List<Class<? extends Persistable>> list) {
+		list.add(VaultGroup.class);
+		list.add(VaultTarget.class);
+		list.add(VaultEntry.class);
+		list.add(VaultArchive.class);
+		list.add(VaultKey.class);
 	}
 
 	@Override
-	public VaultEntry getEntry(UUID id) {
-		try {
-			VaultKey key = StaticAccess.moManager.getManager().createQuery(VaultKey.class).filter("ident", id.toString()).get();
-			if (key == null) return null;
-			List<String> readAcl = key.getReadAcl();
-			if (readAcl != null) {
-				AaaContext acc = MApi.lookup(AccessApi.class).getCurrentOrGuest();
-				if (!AaaUtil.hasAccess(acc, readAcl))
-					return null;
-			}
-			return new VaultKeyEntry(key);
-		} catch (Exception e) {
-			log().t(id,e);
-			return null;
-		}
-	}
-
-	@SuppressWarnings("deprecation")
-	@Override
-	public UUID[] getEntryIds() {
-		LinkedList<UUID> out = new LinkedList<>();
-		AaaContext acc = MApi.lookup(AccessApi.class).getCurrentOrGuest();
-		for ( VaultKey obj : StaticAccess.moManager.getManager().createQuery(VaultKey.class).limit(100).fetch()) {
-			List<String> readAcl = obj.getReadAcl();
-			if (readAcl != null) {
-				if (!AaaUtil.hasAccess(acc, readAcl))
-					continue;
-			}
-			out.add(UUID.fromString(obj.getIdent()));
-		}
-		return out.toArray(new UUID[out.size()]);
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> T adaptTo(Class<? extends T> ifc) throws NotSupportedException {
-		if (ifc.isInstance(this)) return (T) this;
-		throw new NotSupportedException(this,ifc);
+	public void doInitialize(XdbService dbService) {
+		this.service = dbService;
+		StaticAccess.moManager = this;
 	}
 
 	@Override
-	public String getName() {
-		return name;
+	public void doDestroy() {
+		StaticAccess.moManager = null;
 	}
 
 	@Override
-	public void addEntry(VaultEntry entry) {
-		VaultKey key = new VaultKey(entry.getId().toString(), entry.getValue(), entry.getDescription(), entry.getType());
-		StaticAccess.moManager.getManager().save(key);
-	}
-	
-	@Override
-	public void removeEntry(UUID id) {
-		VaultEntry obj = getEntry(id);
-		AaaContext acc = MApi.lookup(AccessApi.class).getCurrentOrGuest();
-		if (!acc.isAdminMode())
-			throw new RuntimeException("only admin can delete entries");
-		StaticAccess.moManager.getManager().delete(obj);
-	}
-	
-	@Override
-	public String toString() {
-		return MSystem.toString(this, name);
+	public boolean canRead(AaaContext context, DbMetadata obj) throws MException {
+		return true;
 	}
 
 	@Override
-	public void doLoad() throws IOException {
+	public boolean canUpdate(AaaContext context, DbMetadata obj) throws MException {
+		return true;
+	}
+
+	@Override
+	public boolean canDelete(AaaContext context, DbMetadata obj) throws MException {
+		return true;
+	}
+
+	@Override
+	public boolean canCreate(AaaContext context, DbMetadata obj) throws MException {
+		return true;
+	}
+
+	@Override
+	public DbMetadata getObject(String type, UUID id) throws MException {
+		if (type.equals(VaultGroup.class.getCanonicalName()))
+			return service.getObject(VaultGroup.class, id);
+		if (type.equals(VaultTarget.class.getCanonicalName()))
+			return service.getObject(VaultTarget.class, id);
+		if (type.equals(VaultEntry.class.getCanonicalName()))
+			return service.getObject(VaultEntry.class, id);
+		if (type.equals(VaultArchive.class.getCanonicalName()))
+			return service.getObject(VaultArchive.class, id);
+		if (type.equals(VaultKey.class.getCanonicalName()))
+			return service.getObject(VaultKey.class, id);
+		
+		throw new MException("unknown type",type);
+	}
+
+	@Override
+	public DbMetadata getObject(String type, String id) throws MException {
+		if (MValidator.isUUID(id))
+			return getObject(type, UUID.fromString(id));
+		throw new MException("unknown type",type);
+	}
+
+	@Override
+	public void collectReferences(Persistable object, ReferenceCollector collector) {
 		
 	}
 
 	@Override
-	public void doSave() throws IOException {
+	public void doCleanup() {
 		
+	}
+
+	@Override
+	public void doPostInitialize(XdbService manager) throws Exception {
+		
+	}
+
+	public XdbService getManager() {
+		return service;
 	}
 
 }

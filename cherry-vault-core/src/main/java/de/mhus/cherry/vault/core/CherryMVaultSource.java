@@ -203,57 +203,118 @@
  */
 package de.mhus.cherry.vault.core;
 
+import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 import org.osgi.service.component.ComponentContext;
 
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Deactivate;
-import de.mhus.cherry.vault.api.model.VaultArchive;
-import de.mhus.cherry.vault.api.model.VaultEntry;
-import de.mhus.cherry.vault.api.model.VaultGroup;
 import de.mhus.cherry.vault.api.model.VaultKey;
-import de.mhus.cherry.vault.api.model.VaultTarget;
 import de.mhus.cherry.vault.core.impl.StaticAccess;
-import de.mhus.karaf.mongo.MoManagerService;
-import de.mhus.karaf.mongo.MoManagerServiceImpl;
-import de.mhus.lib.adb.Persistable;
+import de.mhus.lib.adb.query.Db;
+import de.mhus.lib.core.MApi;
+import de.mhus.lib.core.MSystem;
+import de.mhus.lib.core.vault.MutableVaultSource;
+import de.mhus.lib.core.vault.VaultEntry;
+import de.mhus.lib.core.vault.VaultSource;
+import de.mhus.lib.errors.MException;
+import de.mhus.lib.errors.NotSupportedException;
+import de.mhus.osgi.sop.api.aaa.AaaContext;
+import de.mhus.osgi.sop.api.aaa.AaaUtil;
+import de.mhus.osgi.sop.api.aaa.AccessApi;
 
-@Component(immediate=true,provide=MoManagerService.class)
-public class MoVaultManager extends MoManagerServiceImpl {
+@Component(provide=VaultSource.class)
+public class CherryMVaultSource extends MutableVaultSource {
 
 	@Activate
 	public void doActivate(ComponentContext ctx) {
-		StaticAccess.moManager = this;
+		name = "CherryVaultLocalSource";
+	}
+
+	@Override
+	public VaultEntry getEntry(UUID id) {
+		try {
+//			VaultKey key = StaticAccess.moManager.getManager().createQuery(VaultKey.class).filter("ident", id.toString()).get();
+			VaultKey key = StaticAccess.moManager.getManager().getObjectByQualification(Db.query(VaultKey.class).eq("ident", id));
+			if (key == null) return null;
+			List<String> readAcl = key.getReadAcl();
+			if (readAcl != null) {
+				AaaContext acc = MApi.lookup(AccessApi.class).getCurrentOrGuest();
+				if (!AaaUtil.hasAccess(acc, readAcl))
+					return null;
+			}
+			return new VaultKeyEntry(key);
+		} catch (Exception e) {
+			log().t(id,e);
+			return null;
+		}
+	}
+
+	@SuppressWarnings("deprecation")
+	@Override
+	public UUID[] getEntryIds() {
+		LinkedList<UUID> out = new LinkedList<>();
+		AaaContext acc = MApi.lookup(AccessApi.class).getCurrentOrGuest();
+		try {
+	//		for ( VaultKey obj : StaticAccess.moManager.getManager().createQuery(VaultKey.class).limit(100).fetch()) {
+			for ( VaultKey obj : StaticAccess.moManager.getManager().getByQualification(Db.query(VaultKey.class).limit(100))) {
+				List<String> readAcl = obj.getReadAcl();
+				if (readAcl != null) {
+					if (!AaaUtil.hasAccess(acc, readAcl))
+						continue;
+				}
+				out.add(UUID.fromString(obj.getIdent()));
+			}
+		} catch (MException e) {
+			log().e(e);
+		}
+		return out.toArray(new UUID[out.size()]);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T adaptTo(Class<? extends T> ifc) throws NotSupportedException {
+		if (ifc.isInstance(this)) return (T) this;
+		throw new NotSupportedException(this,ifc);
+	}
+
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public void addEntry(VaultEntry entry) throws MException {
+		VaultKey key = new VaultKey(entry.getId().toString(), entry.getValue(), entry.getDescription(), entry.getType());
+		StaticAccess.moManager.getManager().inject(key).save();
 	}
 	
-	@Deactivate
-	public void doDeactivate(ComponentContext ctx) {
-		StaticAccess.moManager = null;
+	@Override
+	public void removeEntry(UUID id) throws MException {
+		VaultKey obj = (VaultKey) getEntry(id);
+		AaaContext acc = MApi.lookup(AccessApi.class).getCurrentOrGuest();
+		if (!acc.isAdminMode())
+			throw new RuntimeException("only admin can delete entries");
+//		StaticAccess.moManager.getManager().delete(obj);
+		obj.delete();
 	}
 	
 	@Override
-	public void doInitialize() {
+	public String toString() {
+		return MSystem.toString(this, name);
 	}
 
 	@Override
-	public String getServiceName() {
-		return "cherryvault";
+	public void doLoad() throws IOException {
+		
 	}
 
 	@Override
-	public String getMongoDataSourceName() {
-		return "local";
-	}
-
-	@Override
-	protected void findObjectTypes(List<Class<? extends Persistable>> list) {
-		list.add(VaultGroup.class);
-		list.add(VaultTarget.class);
-		list.add(VaultEntry.class);
-		list.add(VaultArchive.class);
-		list.add(VaultKey.class);
+	public void doSave() throws IOException {
+		
 	}
 
 }

@@ -214,11 +214,13 @@ import org.mongodb.morphia.annotations.Index;
 import org.mongodb.morphia.annotations.Indexes;
 import org.mongodb.morphia.annotations.PrePersist;
 
+import de.mhus.lib.adb.DbMetadata;
 import de.mhus.lib.core.IReadProperties;
 import de.mhus.lib.core.MApi;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MSystem;
 import de.mhus.lib.core.util.ReadOnlyException;
+import de.mhus.lib.errors.MException;
 import de.mhus.lib.mongo.MoMetadata;
 import de.mhus.osgi.sop.api.aaa.AccessApi;
 
@@ -226,7 +228,7 @@ import de.mhus.osgi.sop.api.aaa.AccessApi;
 		@Index(fields={@Field("secretId"),@Field("target")}),
 		@Index(fields={@Field("secretId")})
 })
-public class VaultEntry extends MoMetadata {
+public class VaultEntry extends DbMetadata {
 
 	protected String target;
 	protected String group;
@@ -280,7 +282,7 @@ public class VaultEntry extends MoMetadata {
 			checksum = cs;
 		else
 		if (!cs.equals(checksum))
-			throw new ReadOnlyException("VautlEntry data are read only",getObjectId());
+			throw new ReadOnlyException("VautlEntry data are read only",getId());
 		
 	}
 	
@@ -334,6 +336,12 @@ public class VaultEntry extends MoMetadata {
 	@Override
 	public String toString() {
 		return MSystem.toString(this, secretId, target);
+	}
+
+	@Override
+	public DbMetadata findParentObject() throws MException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

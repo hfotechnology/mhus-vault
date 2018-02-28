@@ -203,10 +203,10 @@
  */
 package de.mhus.cherry.vault.core.impl;
 
-import de.mhus.cherry.vault.core.MoVaultManager;
+import de.mhus.cherry.vault.core.CherryVaultManager;
 
 public class StaticAccess {
 
-	public static MoVaultManager moManager;
+	public static CherryVaultManager moManager;
 
 }

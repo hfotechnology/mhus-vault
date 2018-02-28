@@ -210,13 +210,15 @@ import java.util.List;
 import org.mongodb.morphia.annotations.IndexOptions;
 import org.mongodb.morphia.annotations.Indexed;
 
+import de.mhus.lib.adb.DbMetadata;
 import de.mhus.lib.core.IReadProperties;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MSystem;
 import de.mhus.lib.core.util.PropertiesSubset;
+import de.mhus.lib.errors.MException;
 import de.mhus.lib.mongo.MoMetadata;
 
-public class VaultTarget extends MoMetadata {
+public class VaultTarget extends DbMetadata {
 
 	@Indexed(options = @IndexOptions(unique = true))
 	private String name;
@@ -256,6 +258,11 @@ public class VaultTarget extends MoMetadata {
 	@Override
 	public String toString() {
 		return MSystem.toString(this, name);
+	}
+	@Override
+	public DbMetadata findParentObject() throws MException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	

@@ -222,6 +222,8 @@ import de.mhus.cherry.vault.api.model.VaultGroup;
 import de.mhus.cherry.vault.api.model.VaultTarget;
 import de.mhus.cherry.vault.api.model.WritableEntry;
 import de.mhus.cherry.vault.core.impl.StaticAccess;
+import de.mhus.lib.adb.DbCollection;
+import de.mhus.lib.adb.query.Db;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.IReadProperties;
 import de.mhus.lib.core.MApi;
@@ -241,6 +243,7 @@ import de.mhus.lib.errors.NotFoundException;
 import de.mhus.lib.errors.UsageException;
 import de.mhus.lib.karaf.MOsgi;
 import de.mhus.lib.mongo.MoManager;
+import de.mhus.lib.xdb.XdbService;
 import de.mhus.osgi.crypt.api.cipher.CipherProvider;
 import de.mhus.osgi.sop.api.aaa.AaaContext;
 import de.mhus.osgi.sop.api.aaa.AaaUtil;
@@ -251,7 +254,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 
 	@SuppressWarnings("deprecation")
 	private static final Date END_OF_DAYS = new Date(3000-1900,0,1);
-	private static final Object DEFAULT_GROUP_NAME = "default";
+	private static final String DEFAULT_GROUP_NAME = "default";
 
 	@Override
 	public String createSecret(String groupName, Date validFrom, Date validTo, IProperties properties) throws MException {
@@ -416,10 +419,11 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 
 		log().i("delete secret",groupName,secretId);
 
-		MorphiaIterator<VaultEntry, VaultEntry> res = StaticAccess.moManager.getManager().createQuery(VaultEntry.class).field("secretId").equal(secretId).fetch();
+//		MorphiaIterator<VaultEntry, VaultEntry> res = StaticAccess.moManager.getManager().createQuery(VaultEntry.class).field("secretId").equal(secretId).fetch();
+		DbCollection<VaultEntry> res = StaticAccess.moManager.getManager().getByQualification(Db.query(VaultEntry.class).eq("secretid", secretId));
 		for (VaultEntry entry : res) {
 			VaultArchive archive = new VaultArchive(entry);
-			StaticAccess.moManager.getManager().save(archive);
+			StaticAccess.moManager.getManager().inject(archive).save();
 			entry.delete();
 		}
 		res.close();
@@ -429,10 +433,12 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 	public void undeleteSecret(String secretId) throws MException {
 		
 		@SuppressWarnings("deprecation")
-		List<VaultArchive> res = StaticAccess.moManager.getManager().createQuery(VaultArchive.class).field("secretId").equal(secretId).limit(1).asList();
-		if (res.size() == 0)
+//		List<VaultArchive> res = StaticAccess.moManager.getManager().createQuery(VaultArchive.class).field("secretId").equal(secretId).limit(1).asList();
+		
+		VaultArchive res = StaticAccess.moManager.getManager().getObjectByQualification(Db.query(VaultArchive.class).eq("secretid", secretId));
+		if (res == null)
 			throw new NotFoundException("secretId not found",secretId);
-		String groupName = res.get(0).getGroup();
+		String groupName = res.getGroup();
 		VaultGroup group = getGroup(groupName);
 
 		// check write access
@@ -443,10 +449,11 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 
 		log().i("undelete secret",groupName,secretId);
 
-		MorphiaIterator<VaultArchive, VaultArchive> res2 = StaticAccess.moManager.getManager().createQuery(VaultArchive.class).field("secretId").equal(secretId).fetch();
+//		MorphiaIterator<VaultArchive, VaultArchive> res2 = StaticAccess.moManager.getManager().createQuery(VaultArchive.class).field("secretId").equal(secretId).fetch();
+		DbCollection<VaultArchive> res2 = StaticAccess.moManager.getManager().getByQualification(Db.query(VaultArchive.class).eq("secretid", secretId));
 		for (VaultEntry archive : res2) {
 			VaultEntry entry = new VaultEntry(archive);
-			StaticAccess.moManager.getManager().save(entry);
+			StaticAccess.moManager.getManager().inject(entry).save();
 			archive.delete();
 		}
 		res2.close();
@@ -464,18 +471,23 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		if (!AaaUtil.hasAccess(aaa.getCurrentOrGuest(), acl))
 			throw new AccessDeniedException("Read access to target denied",targetName);
 
-		VaultEntry obj = StaticAccess.moManager.getManager().createQuery(VaultEntry.class).field("secretId").equal(secretId).field("target").equal(targetName).get();
-		
-		return obj;
+//		VaultEntry obj = StaticAccess.moManager.getManager().createQuery(VaultEntry.class).field("secretId").equal(secretId).field("target").equal(targetName).get();
+		try {
+			VaultEntry obj = StaticAccess.moManager.getManager().getObjectByQualification(Db.query(VaultEntry.class).eq("secretid", secretId).eq("target", targetName));
+			if (obj == null)
+				throw new NotFoundException("secret not found",secretId,target);
+			return obj;
+		} catch(MException e) {
+			throw new NotFoundException(secretId,target,e);
+		}
 	}
 
 	private void saveEntries(String groupName, LinkedList<VaultEntry> entriesToSave, Date validFrom, Date validTo) {
-		MoManager manager = StaticAccess.moManager.getManager();
 		for (VaultEntry entry : entriesToSave) {
 			try {
 				entry.setValidFrom(validFrom);
 				entry.setValidTo(validTo);
-				manager.save(entry);
+				entry.save();
 			} catch (Throwable t) {
 				log().w(groupName,entry,t);
 			}
@@ -511,13 +523,14 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		
 	}
 
-	private VaultGroup getMustHaveGroup(String groupName) {
-		List<VaultGroup> res = StaticAccess.moManager.getManager().createQuery(VaultGroup.class).field("name").equal(DEFAULT_GROUP_NAME).asList();
-		if (res.size() < 1) return null;
-		if (res.size() > 1) log().w("Not unique group name",DEFAULT_GROUP_NAME);
-		VaultGroup group = res.get(0);
-		if (!group.isEnabled()) return null;
-		return group;
+	private VaultGroup getMustHaveGroup(String groupName) throws NotFoundException {
+//		List<VaultGroup> res = StaticAccess.moManager.getManager().createQuery(VaultGroup.class).field("name").equal(DEFAULT_GROUP_NAME).asList();
+//		if (res.size() < 1) return null;
+//		if (res.size() > 1) log().w("Not unique group name",DEFAULT_GROUP_NAME);
+//		VaultGroup group = res.get(0);
+//		if (!group.isEnabled()) return null;
+//		return group;
+		return getGroup(DEFAULT_GROUP_NAME);
 	}
 
 	private VaultEntry processTarget(VaultGroup group, IProperties properties, VaultTarget target, String secretId, SecretContent secret) throws MException {
@@ -570,41 +583,68 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 	}
 
 	public VaultGroup getGroup(String name) throws NotFoundException {
-		List<VaultGroup> res = StaticAccess.moManager.getManager().createQuery(VaultGroup.class).field("name").equal(name).asList();
-		if (res.size() < 1) throw new NotFoundException("Group not exists",name);
-		if (res.size() > 1) log().w("Not unique group name",name);
-		VaultGroup group = res.get(0);
-		if (!group.isEnabled())
-			throw new NotFoundException("Group is disabled", name);
-		return group;
+//		List<VaultGroup> res = StaticAccess.moManager.getManager().createQuery(VaultGroup.class).field("name").equal(name).asList();
+//		if (res.size() < 1) throw new NotFoundException("Group not exists",name);
+//		if (res.size() > 1) log().w("Not unique group name",name);
+//		VaultGroup group = res.get(0);
+		try {
+			VaultGroup group = StaticAccess.moManager.getManager().getObjectByQualification(Db.query(VaultGroup.class).eq("name", name));
+			if (!group.isEnabled())
+				throw new NotFoundException("Group is disabled", name);
+			return group;
+		} catch (MException e) {
+			throw new NotFoundException(name,e);
+		}
 	}
 	
 	public VaultTarget getTarget(String name) throws NotFoundException {
-		List<VaultTarget> res = StaticAccess.moManager.getManager().createQuery(VaultTarget.class).field("name").equal(name).asList();
-		if (res.size() < 1) throw new NotFoundException("Target not exists",name);
-		if (res.size() > 1) log().w("Not unique target name",name);
-		return res.get(0);
+//		List<VaultTarget> res = StaticAccess.moManager.getManager().createQuery(VaultTarget.class).field("name").equal(name).asList();
+//		if (res.size() < 1) throw new NotFoundException("Target not exists",name);
+//		if (res.size() > 1) log().w("Not unique target name",name);
+//		return res.get(0);
+		try {
+			VaultTarget out = StaticAccess.moManager.getManager().getObjectByQualification(Db.query(VaultTarget.class).eq("name", name));
+			if (out == null)
+				throw new NotFoundException("Target not exists",name);
+			return out;
+		} catch (MException e) {
+			throw new NotFoundException(name,e);
+		}
 	}
 
 	private String findGroupNameForSecretId(String secretId) throws NotFoundException {
-		@SuppressWarnings("deprecation")
-		List<VaultEntry> res = StaticAccess.moManager.getManager().createQuery(VaultEntry.class).field("secretId").equal(secretId).limit(1).asList();
-		if (res.size() == 0)
-			throw new NotFoundException("secretId not found",secretId);
-		return res.get(0).getGroup();
+//		@SuppressWarnings("deprecation")
+//		List<VaultEntry> res = StaticAccess.moManager.getManager().createQuery(VaultEntry.class).field("secretId").equal(secretId).limit(1).asList();
+//		if (res.size() == 0)
+//			throw new NotFoundException("secretId not found",secretId);
+//		return res.get(0).getGroup();
+		try {
+			VaultEntry out = StaticAccess.moManager.getManager().getObjectByQualification(Db.query(VaultEntry.class).eq("secretid", secretId));
+			if (out == null)
+				throw new NotFoundException("secretId not found",secretId);
+			return out.getGroup();
+		} catch (MException e) {
+			throw new NotFoundException(secretId,e);
+		}
 	}
 
 	private void updateEntriesValidTo(String secretId, Date validTo) throws MException {
 		Date now = new Date();
-		MoManager manager = StaticAccess.moManager.getManager();
-		MorphiaIterator<VaultEntry, VaultEntry> res = manager.createQuery(VaultEntry.class)
-			.field("secretId").equal(secretId)
-			.field("validFrom").lessThanOrEq(now)
-			.field("validTo").greaterThan(now)
-			.fetch();
+		XdbService manager = StaticAccess.moManager.getManager();
+//		MorphiaIterator<VaultEntry, VaultEntry> res = manager.createQuery(VaultEntry.class)
+//			.field("secretId").equal(secretId)
+//			.field("validFrom").lessThanOrEq(now)
+//			.field("validTo").greaterThan(now)
+//			.fetch();
+		DbCollection<VaultEntry> res = manager.getByQualification(
+				Db.query(VaultEntry.class)
+					.eq("secretid", secretId)
+					.le("validfrom",now)
+					.gt("validto", now)
+				);
 		
 		for (VaultEntry entry : res) {
-			log().t("Update validTo",entry.getObjectId(),entry.getValidTo(),validTo);
+			log().t("Update validTo",entry.getId(),entry.getValidTo(),validTo);
 			entry.setValidTo(validTo);
 			entry.save();
 		}

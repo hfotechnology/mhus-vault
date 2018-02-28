@@ -210,10 +210,12 @@ import java.util.List;
 import org.mongodb.morphia.annotations.IndexOptions;
 import org.mongodb.morphia.annotations.Indexed;
 
+import de.mhus.lib.adb.DbMetadata;
 import de.mhus.lib.core.MSystem;
+import de.mhus.lib.errors.MException;
 import de.mhus.lib.mongo.MoMetadata;
 
-public class VaultKey extends MoMetadata {
+public class VaultKey extends DbMetadata {
 
 	@Indexed(options = @IndexOptions(unique = true))
 	private String ident;
@@ -260,5 +262,11 @@ public class VaultKey extends MoMetadata {
 		if (readAcl == null) return null;
 		return Collections.unmodifiableList(readAcl);
  	}
+
+	@Override
+	public DbMetadata findParentObject() throws MException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

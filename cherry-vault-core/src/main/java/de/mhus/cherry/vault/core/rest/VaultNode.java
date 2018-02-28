@@ -229,23 +229,6 @@ import de.mhus.osgi.sop.api.rest.RestNodeService;
 @Component(immediate=true,provide=RestNodeService.class)
 public class VaultNode extends AbstractObjectListNode<VaultEntry>{
 
-	private PojoModelFactory pojoModelFactory = new PojoModelFactory() {
-
-		@Override
-		public PojoModel createPojoModel(Class<?> pojoClass) {
-			if (pojoClass == VaultEntry.class) {
-				try {
-					return StaticAccess.moManager.getManager().getModelFor(VaultEntry.class);
-				} catch (NotFoundException e) {
-					e.printStackTrace();
-				}
-			}
-				
-			return null;
-		}
-		
-	};
-
 	@Override
 	public String[] getParentNodeIds() {
 		return new String[] {ROOT_ID};
@@ -356,7 +339,7 @@ public class VaultNode extends AbstractObjectListNode<VaultEntry>{
 	
 	@Override
 	protected PojoModelFactory getPojoModelFactory() {
-		return pojoModelFactory;
+		return StaticAccess.moManager.getManager().getPojoModelFactory();
 	}
 	
 }
