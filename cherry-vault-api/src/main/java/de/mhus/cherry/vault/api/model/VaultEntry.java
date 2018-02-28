@@ -215,6 +215,8 @@ import org.mongodb.morphia.annotations.Indexes;
 import org.mongodb.morphia.annotations.PrePersist;
 
 import de.mhus.lib.adb.DbMetadata;
+import de.mhus.lib.annotations.adb.DbIndex;
+import de.mhus.lib.annotations.adb.DbPersistent;
 import de.mhus.lib.core.IReadProperties;
 import de.mhus.lib.core.MApi;
 import de.mhus.lib.core.MProperties;
@@ -224,22 +226,30 @@ import de.mhus.lib.errors.MException;
 import de.mhus.lib.mongo.MoMetadata;
 import de.mhus.osgi.sop.api.aaa.AccessApi;
 
-@Indexes({
-		@Index(fields={@Field("secretId"),@Field("target")}),
-		@Index(fields={@Field("secretId")})
-})
 public class VaultEntry extends DbMetadata {
 
+	@DbIndex("1")
+	@DbPersistent
 	protected String target;
+	@DbPersistent
 	protected String group;
+	@DbPersistent
 	protected String secretKeyId;
+	@DbPersistent
 	protected String secret;
+	@DbIndex({"1","2"})
+	@DbPersistent
 	protected String secretId;
+	@DbPersistent
 	protected MProperties meta;
+	@DbPersistent
 	protected Date validFrom;
+	@DbPersistent
 	protected Date validTo;
+	@DbPersistent
 	private String creator;
 	
+	@DbPersistent
 	private String checksum;
 	
 	// constructor for morphia

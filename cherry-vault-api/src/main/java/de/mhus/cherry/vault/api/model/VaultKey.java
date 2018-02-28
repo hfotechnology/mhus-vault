@@ -211,17 +211,24 @@ import org.mongodb.morphia.annotations.IndexOptions;
 import org.mongodb.morphia.annotations.Indexed;
 
 import de.mhus.lib.adb.DbMetadata;
+import de.mhus.lib.annotations.adb.DbIndex;
+import de.mhus.lib.annotations.adb.DbPersistent;
 import de.mhus.lib.core.MSystem;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.mongo.MoMetadata;
 
 public class VaultKey extends DbMetadata {
 
-	@Indexed(options = @IndexOptions(unique = true))
+	@DbIndex("u1")
+	@DbPersistent
 	private String ident;
+	@DbPersistent
 	private String value;
+	@DbPersistent
 	private String description;
+	@DbPersistent
 	private String type;
+	@DbPersistent
 	private LinkedList<String> readAcl;
 
 	public VaultKey() {}

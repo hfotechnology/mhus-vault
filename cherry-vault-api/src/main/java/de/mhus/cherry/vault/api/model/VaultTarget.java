@@ -211,6 +211,8 @@ import org.mongodb.morphia.annotations.IndexOptions;
 import org.mongodb.morphia.annotations.Indexed;
 
 import de.mhus.lib.adb.DbMetadata;
+import de.mhus.lib.annotations.adb.DbIndex;
+import de.mhus.lib.annotations.adb.DbPersistent;
 import de.mhus.lib.core.IReadProperties;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MSystem;
@@ -220,13 +222,20 @@ import de.mhus.lib.mongo.MoMetadata;
 
 public class VaultTarget extends DbMetadata {
 
-	@Indexed(options = @IndexOptions(unique = true))
+	@DbIndex("u1")
+	@DbPersistent
 	private String name;
+	@DbPersistent
 	private String processorName;
+	@DbPersistent
 	private MProperties processorConfig;
+	@DbPersistent
 	private String conditionNames;
+	@DbPersistent
 	private MProperties conditionConfigs;
+	@DbPersistent
 	private boolean enabled;
+	@DbPersistent
 	private LinkedList<String> readAcl;
 
 	

@@ -211,21 +211,32 @@ import org.mongodb.morphia.annotations.IndexOptions;
 import org.mongodb.morphia.annotations.Indexed;
 
 import de.mhus.lib.adb.DbMetadata;
+import de.mhus.lib.annotations.adb.DbIndex;
+import de.mhus.lib.annotations.adb.DbPersistent;
 import de.mhus.lib.core.MSystem;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.mongo.MoMetadata;
 
 public class VaultGroup extends DbMetadata {
 
-	@Indexed(options = @IndexOptions(unique = true))
+	@DbIndex("u1")
+	@DbPersistent
 	private String name;
+	@DbPersistent
 	private LinkedList<String> targets;
+	@DbPersistent
 	private String secretGeneratorName;
+	@DbPersistent
 	private boolean allowUpdate;
+	@DbPersistent
 	private boolean enabled;
+	@DbPersistent
 	private LinkedList<String> writeAcl;
+	@DbPersistent
 	private boolean allowUnencrypted;
+	@DbPersistent
 	private boolean allowImports;
+	@DbPersistent
 	private int maxImportLength;
 	
 	public String getName() {
