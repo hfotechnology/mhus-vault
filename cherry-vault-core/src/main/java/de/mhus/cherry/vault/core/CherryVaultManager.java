@@ -223,15 +223,17 @@ import de.mhus.lib.adb.DbMetadata;
 import de.mhus.lib.adb.Persistable;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MValidator;
+import de.mhus.lib.core.security.Ace;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.xdb.XdbService;
 import de.mhus.osgi.sop.api.aaa.AaaContext;
+import de.mhus.osgi.sop.api.adb.AbstractDbSchemaService;
 import de.mhus.osgi.sop.api.adb.DbSchemaService;
 import de.mhus.osgi.sop.api.adb.ReferenceCollector;
 import de.mhus.osgi.sop.api.model.SopActionTask;
 
 @Component(immediate=true,provide=DbSchemaService.class)
-public class CherryVaultManager extends MLog implements DbSchemaService {
+public class CherryVaultManager extends AbstractDbSchemaService {
 
 	private XdbService service;
 
@@ -256,49 +258,6 @@ public class CherryVaultManager extends MLog implements DbSchemaService {
 	}
 
 	@Override
-	public boolean canRead(AaaContext context, DbMetadata obj) throws MException {
-		return true;
-	}
-
-	@Override
-	public boolean canUpdate(AaaContext context, DbMetadata obj) throws MException {
-		return true;
-	}
-
-	@Override
-	public boolean canDelete(AaaContext context, DbMetadata obj) throws MException {
-		return true;
-	}
-
-	@Override
-	public boolean canCreate(AaaContext context, DbMetadata obj) throws MException {
-		return true;
-	}
-
-	@Override
-	public DbMetadata getObject(String type, UUID id) throws MException {
-		if (type.equals(VaultGroup.class.getCanonicalName()))
-			return service.getObject(VaultGroup.class, id);
-		if (type.equals(VaultTarget.class.getCanonicalName()))
-			return service.getObject(VaultTarget.class, id);
-		if (type.equals(VaultEntry.class.getCanonicalName()))
-			return service.getObject(VaultEntry.class, id);
-		if (type.equals(VaultArchive.class.getCanonicalName()))
-			return service.getObject(VaultArchive.class, id);
-		if (type.equals(VaultKey.class.getCanonicalName()))
-			return service.getObject(VaultKey.class, id);
-		
-		throw new MException("unknown type",type);
-	}
-
-	@Override
-	public DbMetadata getObject(String type, String id) throws MException {
-		if (MValidator.isUUID(id))
-			return getObject(type, UUID.fromString(id));
-		throw new MException("unknown type",type);
-	}
-
-	@Override
 	public void collectReferences(Persistable object, ReferenceCollector collector) {
 		
 	}
@@ -308,13 +267,23 @@ public class CherryVaultManager extends MLog implements DbSchemaService {
 		
 	}
 
+	public XdbService getManager() {
+		return service;
+	}
+
+	@Override
+	public boolean canCreate(AaaContext context, Persistable obj) throws MException {
+		return true;
+	}
+
 	@Override
 	public void doPostInitialize(XdbService manager) throws Exception {
 		
 	}
 
-	public XdbService getManager() {
-		return service;
+	@Override
+	protected String getAcl(AaaContext context, Persistable obj) throws MException {
+		return "*=" + Ace.RIGHTS_ALL; // TODO
 	}
 
 }
