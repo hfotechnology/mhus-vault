@@ -213,6 +213,7 @@ import org.mongodb.morphia.annotations.Indexed;
 import de.mhus.lib.adb.DbMetadata;
 import de.mhus.lib.annotations.adb.DbIndex;
 import de.mhus.lib.annotations.adb.DbPersistent;
+import de.mhus.lib.annotations.adb.DbType.TYPE;
 import de.mhus.lib.core.MSystem;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.mongo.MoMetadata;
@@ -222,7 +223,7 @@ public class VaultKey extends DbMetadata {
 	@DbIndex("u1")
 	@DbPersistent
 	private String ident;
-	@DbPersistent
+	@DbPersistent(type=TYPE.BLOB)
 	private String value;
 	@DbPersistent
 	private String description;

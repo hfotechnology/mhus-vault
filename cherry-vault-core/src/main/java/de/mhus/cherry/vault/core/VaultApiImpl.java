@@ -530,7 +530,17 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 //		VaultGroup group = res.get(0);
 //		if (!group.isEnabled()) return null;
 //		return group;
-		return getGroup(DEFAULT_GROUP_NAME);
+		try {
+			VaultGroup group = StaticAccess.moManager.getManager().getObjectByQualification(Db.query(VaultGroup.class).eq("name", DEFAULT_GROUP_NAME));
+			if (group == null) {
+				log().w("Unique group not found",DEFAULT_GROUP_NAME);
+				return null;
+			}
+			if (!group.isEnabled()) return null;
+			return group;
+		} catch (MException e) {
+			throw new NotFoundException(DEFAULT_GROUP_NAME,e);
+		}
 	}
 
 	private VaultEntry processTarget(VaultGroup group, IProperties properties, VaultTarget target, String secretId, SecretContent secret) throws MException {
@@ -555,7 +565,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		entry.setTarget(target.getName());
 		entry.setSecretId(secretId);
 		
-		return new VaultEntry(entry);
+		return StaticAccess.moManager.getManager().inject( new VaultEntry(entry) );
 	}
 
 	public TargetProcessor getProcessor(String processorName) throws NotFoundException {

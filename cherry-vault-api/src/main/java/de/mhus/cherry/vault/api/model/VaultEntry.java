@@ -217,6 +217,7 @@ import org.mongodb.morphia.annotations.PrePersist;
 import de.mhus.lib.adb.DbMetadata;
 import de.mhus.lib.annotations.adb.DbIndex;
 import de.mhus.lib.annotations.adb.DbPersistent;
+import de.mhus.lib.annotations.adb.DbType.TYPE;
 import de.mhus.lib.core.IReadProperties;
 import de.mhus.lib.core.MApi;
 import de.mhus.lib.core.MProperties;
@@ -235,7 +236,7 @@ public class VaultEntry extends DbMetadata {
 	protected String group;
 	@DbPersistent
 	protected String secretKeyId;
-	@DbPersistent
+	@DbPersistent(type=TYPE.BLOB)
 	protected String secret;
 	@DbIndex({"1","2"})
 	@DbPersistent

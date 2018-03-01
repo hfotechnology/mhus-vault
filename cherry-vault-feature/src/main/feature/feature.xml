@@ -216,10 +216,13 @@
 		<feature>jndi</feature>
 		<feature>http</feature>
 		<feature>http-whiteboard</feature>
+		<feature>activemq-client</feature>
+
 
 		<!-- mhu-lib -->
 		
 		<bundle>mvn:org.jsoup/jsoup/1.8.3</bundle>
+		<bundle>mvn:mysql/mysql-connector-java/5.1.18</bundle>
 		
 		<bundle>mvn:org.apache.commons/commons-jexl/2.1.1</bundle>
 		<bundle><![CDATA[wrap:mvn:org.w3c.css/sac/1.3/$Bundle-SymbolicName=sac&Bundle-Version=1.3&Export-Package=org.w3c.css.sac;version="1.3",!*]]></bundle>
@@ -230,6 +233,7 @@
 
 		<bundle>mvn:de.mhus.lib/mhu-lib-annotations/${mhulib.version}</bundle>
 		<bundle>mvn:de.mhus.lib/mhu-lib-core/${mhulib.version}</bundle>
+		<bundle>mvn:de.mhus.lib/mhu-lib-jms/${mhulib.version}</bundle>
 		<bundle>mvn:de.mhus.lib/mhu-lib-persistence/${mhulib.version}</bundle>
 		<bundle>mvn:de.mhus.lib/mhu-lib-karaf/${mhulib.version}</bundle>
 
