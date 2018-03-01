@@ -228,7 +228,7 @@ import de.mhus.lib.xdb.XdbService;
 import de.mhus.osgi.sop.api.aaa.AaaContext;
 import de.mhus.osgi.sop.api.adb.DbSchemaService;
 import de.mhus.osgi.sop.api.adb.ReferenceCollector;
-import de.mhus.osgi.sop.api.model.ActionTask;
+import de.mhus.osgi.sop.api.model.SopActionTask;
 
 @Component(immediate=true,provide=DbSchemaService.class)
 public class CherryVaultManager extends MLog implements DbSchemaService {
