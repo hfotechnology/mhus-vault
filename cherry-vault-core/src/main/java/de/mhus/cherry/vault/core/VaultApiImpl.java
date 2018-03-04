@@ -208,8 +208,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
-import org.mongodb.morphia.query.MorphiaIterator;
-
 import aQute.bnd.annotation.component.Component;
 import de.mhus.cherry.vault.api.CherryVaultApi;
 import de.mhus.cherry.vault.api.ifc.SecretContent;
@@ -242,7 +240,6 @@ import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;
 import de.mhus.lib.errors.UsageException;
 import de.mhus.lib.karaf.MOsgi;
-import de.mhus.lib.mongo.MoManager;
 import de.mhus.lib.xdb.XdbService;
 import de.mhus.osgi.crypt.api.cipher.CipherProvider;
 import de.mhus.osgi.sop.api.aaa.AaaContext;

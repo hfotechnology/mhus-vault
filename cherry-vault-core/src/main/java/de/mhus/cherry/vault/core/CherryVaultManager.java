@@ -204,33 +204,22 @@
 package de.mhus.cherry.vault.core;
 
 import java.util.List;
-import java.util.UUID;
 
-import org.osgi.service.component.ComponentContext;
-
-import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
-import aQute.bnd.annotation.component.Deactivate;
 import de.mhus.cherry.vault.api.model.VaultArchive;
 import de.mhus.cherry.vault.api.model.VaultEntry;
 import de.mhus.cherry.vault.api.model.VaultGroup;
 import de.mhus.cherry.vault.api.model.VaultKey;
 import de.mhus.cherry.vault.api.model.VaultTarget;
 import de.mhus.cherry.vault.core.impl.StaticAccess;
-import de.mhus.karaf.mongo.MoManagerService;
-import de.mhus.karaf.mongo.MoManagerServiceImpl;
-import de.mhus.lib.adb.DbMetadata;
 import de.mhus.lib.adb.Persistable;
 import de.mhus.lib.basics.Ace;
-import de.mhus.lib.core.MLog;
-import de.mhus.lib.core.MValidator;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.xdb.XdbService;
 import de.mhus.osgi.sop.api.aaa.AaaContext;
 import de.mhus.osgi.sop.api.adb.AbstractDbSchemaService;
 import de.mhus.osgi.sop.api.adb.DbSchemaService;
 import de.mhus.osgi.sop.api.adb.ReferenceCollector;
-import de.mhus.osgi.sop.api.model.SopActionTask;
 
 @Component(immediate=true,provide=DbSchemaService.class)
 public class CherryVaultManager extends AbstractDbSchemaService {

@@ -209,9 +209,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Date;
 
-import org.mongodb.morphia.annotations.Field;
-import org.mongodb.morphia.annotations.Index;
-import org.mongodb.morphia.annotations.Indexes;
 import org.mongodb.morphia.annotations.PrePersist;
 
 import de.mhus.lib.adb.DbMetadata;
@@ -224,7 +221,6 @@ import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MSystem;
 import de.mhus.lib.core.util.ReadOnlyException;
 import de.mhus.lib.errors.MException;
-import de.mhus.lib.mongo.MoMetadata;
 import de.mhus.osgi.sop.api.aaa.AccessApi;
 
 public class VaultEntry extends DbMetadata {
