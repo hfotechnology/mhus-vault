@@ -209,8 +209,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Date;
 
-import org.mongodb.morphia.annotations.PrePersist;
-
 import de.mhus.lib.adb.DbMetadata;
 import de.mhus.lib.annotations.adb.DbIndex;
 import de.mhus.lib.annotations.adb.DbPersistent;
@@ -221,6 +219,8 @@ import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MSystem;
 import de.mhus.lib.core.util.ReadOnlyException;
 import de.mhus.lib.errors.MException;
+import de.mhus.lib.errors.MRuntimeException;
+import de.mhus.lib.sql.DbConnection;
 import de.mhus.osgi.sop.api.aaa.AccessApi;
 
 public class VaultEntry extends DbMetadata {
@@ -249,7 +249,6 @@ public class VaultEntry extends DbMetadata {
 	@DbPersistent
 	private String checksum;
 	
-	// constructor for morphia
 	public VaultEntry() {}
 	
 	// constructor for VaultArchive
@@ -265,7 +264,7 @@ public class VaultEntry extends DbMetadata {
 		creator = clone.getCreator();
 	}
 	
-	@PrePersist
+	
 	public void preChecksum() throws NoSuchAlgorithmException, UnsupportedEncodingException, ReadOnlyException {
 		
 		if (creator == null) {
@@ -349,6 +348,26 @@ public class VaultEntry extends DbMetadata {
 	public DbMetadata findParentObject() throws MException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void doPreCreate(DbConnection con) {
+		try {
+			preChecksum();
+		} catch (NoSuchAlgorithmException | UnsupportedEncodingException | ReadOnlyException e) {
+			throw new MRuntimeException(e);
+		}
+		super.doPreCreate(con);
+	}
+
+	@Override
+	public void doPreSave(DbConnection con) {
+		try {
+			preChecksum();
+		} catch (NoSuchAlgorithmException | UnsupportedEncodingException | ReadOnlyException e) {
+			throw new MRuntimeException(e);
+		}
+		super.doPreSave(con);
 	}
 	
 }
