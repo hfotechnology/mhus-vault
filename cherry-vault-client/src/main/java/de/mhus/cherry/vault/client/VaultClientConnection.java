@@ -481,7 +481,7 @@ public class VaultClientConnection {
         int sc = connection.getResponseCode();
         if (sc != 200) throw new IOException("HTTP error " + sc + " " + connection.getResponseMessage());
         BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        StringBuffer content = new StringBuffer();
+        StringBuilder content = new StringBuilder();
         String inputLine;
         while ((inputLine = in.readLine()) != null) 
         	content.append(inputLine);
@@ -529,7 +529,7 @@ public class VaultClientConnection {
         int sc = connection.getResponseCode();
         if (sc != 200) throw new IOException("HTTP error " + sc + " " + connection.getResponseMessage());
         BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        StringBuffer content = new StringBuffer();
+        StringBuilder content = new StringBuilder();
         String inputLine;
         while ((inputLine = in.readLine()) != null) 
         	content.append(inputLine);
@@ -576,7 +576,7 @@ public class VaultClientConnection {
         int sc = connection.getResponseCode();
         if (sc != 200) throw new IOException("HTTP error " + sc + " " + connection.getResponseMessage());
         BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        StringBuffer content = new StringBuffer();
+        StringBuilder content = new StringBuilder();
         String inputLine;
         while ((inputLine = in.readLine()) != null) 
         	content.append(inputLine);
@@ -612,7 +612,7 @@ public class VaultClientConnection {
         int sc = connection.getResponseCode();
         if (sc != 200) throw new IOException("HTTP error " + sc + " " + connection.getResponseMessage());
         BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        StringBuffer content = new StringBuffer();
+        StringBuilder content = new StringBuilder();
         String inputLine;
         while ((inputLine = in.readLine()) != null) 
         	content.append(inputLine);
