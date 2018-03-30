@@ -241,7 +241,6 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 	@Override
 	public void undeleteSecret(String secretId) throws MException {
 		
-		@SuppressWarnings("deprecation")
 //		List<VaultArchive> res = StaticAccess.moManager.getManager().createQuery(VaultArchive.class).field("secretId").equal(secretId).limit(1).asList();
 		
 		VaultArchive res = StaticAccess.moManager.getManager().getObjectByQualification(Db.query(VaultArchive.class).eq("secretid", secretId));

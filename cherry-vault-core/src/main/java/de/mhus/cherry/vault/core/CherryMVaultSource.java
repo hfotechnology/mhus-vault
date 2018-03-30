@@ -65,7 +65,6 @@ public class CherryMVaultSource extends MutableVaultSource {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public UUID[] getEntryIds() {
 		LinkedList<UUID> out = new LinkedList<>();
