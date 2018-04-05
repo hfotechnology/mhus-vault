@@ -18,16 +18,60 @@ package de.mhus.cherry.vault.client;
 import java.io.ByteArrayOutputStream;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Date;
 
 import javax.crypto.Cipher;
 
 import de.mhus.lib.core.crypt.Blowfish;
 import de.mhus.lib.core.crypt.pem.PemBlock;
+import de.mhus.lib.core.crypt.pem.PemBlockModel;
 import de.mhus.lib.core.crypt.pem.PemPriv;
+import de.mhus.lib.core.crypt.pem.PemPub;
 import de.mhus.lib.errors.MException;
 
 public class RsaCipher {
+
+	public static PemBlock encode(PemPub key, String content) throws MException {
+		try {
+			byte[] encKey = key.getBytesBlock();
+			X509EncodedKeySpec pubKeySpec = new X509EncodedKeySpec(encKey);
+			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+			PublicKey pubKey = keyFactory.generatePublic(pubKeySpec);
+
+			Cipher cipher = Cipher.getInstance("RSA");
+			cipher.init(Cipher.ENCRYPT_MODE, pubKey);
+			
+			String stringEncoding = "utf-8";
+			byte[] b = content.getBytes(stringEncoding);
+			ByteArrayOutputStream os = new ByteArrayOutputStream();
+			
+			int length = key.getInt(PemBlock.LENGTH, 1024);
+			int blockSize = length == 512 ? 53 : 117;
+
+			int off = 0;
+			while (off < b.length) {
+				int len = Math.min(blockSize, b.length - off);
+				byte[] cipherData = cipher.doFinal(b, off, len);
+				os.write(cipherData);
+				off = off + len;
+			}
+			
+			PemBlockModel out = new PemBlockModel(PemBlock.BLOCK_CIPHER, os.toByteArray());
+			out.set(PemBlock.METHOD, "RSA-1");
+			out.set(PemBlock.STRING_ENCODING, stringEncoding);
+			if (key.isProperty(PemBlock.IDENT))
+				out.set(PemBlock.KEY_IDENT, key.getString(PemBlock.IDENT));
+			out.set(PemBlock.CREATED, new Date());
+			
+			return out;
+
+		} catch (Throwable t) {
+			throw new MException(t);
+		}
+	}
 
 	public static String decode(PemPriv key, PemBlock encoded, String passphrase) throws MException {
 		try {
