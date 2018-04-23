@@ -53,16 +53,18 @@
 		
 		<bundle>mvn:org.bouncycastle/bcprov-jdk16/1.46</bundle>
 		
-		<bundle>mvn:de.mhus.osgi/mhu-osgi-commands/${osgitools.version}</bundle>
+		<bundle>mvn:de.mhus.osgi/mhu-osgi-services/${osgitools.version}</bundle>
+		<bundle>mvn:de.mhus.osgi/mhu-karaf-commands/${osgitools.version}</bundle>
 		<bundle>mvn:de.mhus.osgi/mhu-karaf-xdb/${osgitools.version}</bundle>
 
 		<bundle>mvn:javax.xml.rpc/javax.xml.rpc-api/1.1.1</bundle>
 
+<!--
 		<bundle>mvn:org.mongodb/mongo-java-driver/${mongo.version}</bundle>
     	<bundle>wrap:mvn:com.thoughtworks.proxytoys/proxytoys/1.0</bundle>
     	<bundle>mvn:org.mongodb.morphia/morphia/${mongo.morphia.version}</bundle>	
 		<bundle>mvn:de.mhus.osgi/mhu-karaf-mongo/${osgitools.version}</bundle>
-		
+-->		
 		<bundle>mvn:de.mhus.osgi/mhu-osgi-crypt-api/${osgitools.version}</bundle>
 		<bundle>mvn:de.mhus.osgi/mhu-osgi-crypt-bc/${osgitools.version}</bundle>
 		<bundle>mvn:de.mhus.osgi/mhu-karaf-crypt/${osgitools.version}</bundle>
