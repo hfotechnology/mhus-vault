@@ -76,8 +76,8 @@
 		
 		<!-- vault -->
 		
-		<bundle>mvn:de.mhus.cherry.vault/cherry-vault-api/${project.version}</bundle>
-		<bundle>mvn:de.mhus.cherry.vault/cherry-vault-core/${project.version}</bundle>
+		<bundle>mvn:de.mhus.cherry.vault/vault-api/${project.version}</bundle>
+		<bundle>mvn:de.mhus.cherry.vault/vault-core/${project.version}</bundle>
 		
 	</feature>
 		

@@ -174,10 +174,10 @@
 	</build>
 
 	<modules>
-		<module>cherry-vault-api</module>
-		<module>cherry-vault-core</module>
-		<module>cherry-vault-client</module>
-		<module>cherry-vault-feature</module>
+		<module>vault-api</module>
+		<module>vault-core</module>
+		<module>vault-client</module>
+		<module>vault-feature</module>
 	</modules>
 
 	<distributionManagement>

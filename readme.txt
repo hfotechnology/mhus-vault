@@ -1,7 +1,7 @@
 
 cherryVersion=1.0.1-SNAPSHOT
 feature:repo-add activemq 5.12.1
-feature:repo-add mvn:de.mhus.cherry.vault/cherry-vault-feature/$cherryVersion/xml/features
+feature:repo-add mvn:de.mhus.cherry.vault/vault-feature/$cherryVersion/xml/features
 
 feature:install cherry-vault
 
