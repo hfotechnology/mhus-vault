@@ -22,7 +22,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.mhus.cherry.vault</groupId>
 	<artifactId>cherry-vault</artifactId>
-	<version>1.0.1-SNAPSHOT</version>
+	<version>1.0.1</version>
 	<packaging>pom</packaging>
 	<name>Cherry Password Vault</name>
 	<description>Central password and security store for distributed applications</description>
@@ -51,10 +51,9 @@
 	</developers>
 	
 	<properties>
-		<mhulib.version>3.3.4-SNAPSHOT</mhulib.version>
-		<osgitools.version>1.3.5-SNAPSHOT</osgitools.version>
-		<mhusop.version>1.3.2-SNAPSHOT</mhusop.version>
-		<ports.version>1.3.4</ports.version>
+		<mhulib.version>3.3.4</mhulib.version>
+		<osgitools.version>1.4.0</osgitools.version>
+		<mhusop.version>1.3.2</mhusop.version>
 		
 		<scr.packages>*</scr.packages>
 		<felix.scr.version>1.6.0</felix.scr.version>
@@ -107,13 +106,47 @@
 					</descriptors>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<configuration>
-					<failOnError>false</failOnError>
-				</configuration>
-			</plugin>
+		<plugin>
+	      <groupId>org.apache.maven.plugins</groupId>
+	      <artifactId>maven-javadoc-plugin</artifactId>
+	      <version>2.9.1</version>
+	      <configuration>
+	      	<failOnError>false</failOnError>
+	      </configuration>
+		  <executions>
+		       <execution>
+		         <id>attach-javadocs</id>
+		         <goals>
+		           <goal>jar</goal>
+		         </goals>
+		       </execution>
+		     </executions>	      
+	    </plugin>		
+	    <plugin>
+	      <groupId>org.apache.maven.plugins</groupId>
+	      <artifactId>maven-source-plugin</artifactId>
+	      <version>2.2.1</version>
+	      <executions>
+	        <execution>
+	          <id>attach-sources</id>
+	          <goals>
+	            <goal>jar-no-fork</goal>
+	          </goals>
+	        </execution>
+	      </executions>
+	    </plugin>
+		<plugin>
+		  <groupId>org.sonatype.plugins</groupId>
+		  <artifactId>nexus-staging-maven-plugin</artifactId>
+		  <version>1.6.7</version>
+		  <extensions>true</extensions>
+		  <configuration>
+		     <serverId>ossrh</serverId>
+		     <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+		     <autoReleaseAfterClose>true</autoReleaseAfterClose>
+		  </configuration>
+		</plugin>
+	    
 			<plugin>
 				<groupId>de.mhus.ports.karaf.tooling</groupId>
 				<artifactId>karaf-services-maven-plugin</artifactId>
@@ -190,7 +223,7 @@
 
 	<profiles>
 		<profile>
-			<id>release-sign-artifacts</id>
+			<id>release</id>
 			<activation>
 				<property>
 					<name>performRelease</name>
@@ -202,7 +235,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
-						<version>1.4</version>
+						<version>1.5</version>
 						<configuration>
 							<passphrase>${gpg.passphrase}</passphrase>
 						</configuration>
