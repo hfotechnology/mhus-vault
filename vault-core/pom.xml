@@ -56,7 +56,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>de.mhus.cherry.vault</groupId>
-			<artifactId>cherry-vault-api</artifactId>
+			<artifactId>vault-api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 
