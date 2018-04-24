@@ -61,16 +61,17 @@
 			<artifactId>mhu-lib-persistence</artifactId>
 			<version>${mhulib.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>de.mhus.lib</groupId>
-			<artifactId>mhu-lib-karaf</artifactId>
-			<version>${mhulib.version}</version>
+       	<dependency>
+			<groupId>de.mhus.osgi</groupId>
+			<artifactId>mhu-osgi-services</artifactId>
+			<version>${osgitools.version}</version>
 		</dependency>
-		<dependency>
+       	<dependency>
 			<groupId>de.mhus.osgi</groupId>
 			<artifactId>mhu-sop-api</artifactId>
 			<version>${mhusop.version}</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.osgi</groupId>
 			<artifactId>org.osgi.core</artifactId>

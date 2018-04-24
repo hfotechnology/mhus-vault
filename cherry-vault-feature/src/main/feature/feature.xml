@@ -47,7 +47,6 @@
 		<bundle>mvn:de.mhus.lib/mhu-lib-core/${mhulib.version}</bundle>
 		<bundle>mvn:de.mhus.lib/mhu-lib-jms/${mhulib.version}</bundle>
 		<bundle>mvn:de.mhus.lib/mhu-lib-persistence/${mhulib.version}</bundle>
-		<bundle>mvn:de.mhus.lib/mhu-lib-karaf/${mhulib.version}</bundle>
 
 		<!-- osgi tools -->
 		
