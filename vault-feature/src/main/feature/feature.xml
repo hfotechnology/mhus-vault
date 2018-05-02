@@ -19,6 +19,11 @@
 <features name="${project.artifactId}-${project.version}"
 	xmlns="http://karaf.apache.org/xmlns/features/v1.3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://karaf.apache.org/xmlns/features/v1.3.0 http://karaf.apache.org/xmlns/features/v1.3.0">
 
+	<feature name='cherry-vault-dev' description='Development environment' version='${project.version}'>
+		<bundle>mvn:org.hsqldb/hsqldb/2.3.2</bundle>
+		<feature>cherry-vault</feature>
+	</feature>
+	
 	<feature name='cherry-vault' description='cherry-vault' version='${project.version}'>
 		<details>${project.description}</details>
 		

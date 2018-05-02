@@ -16,7 +16,7 @@ RUN find ~/.m2/repository \
 	&& while [ "$(grep -c Done data/log/karaf.log)" = "0" ]; do echo "."; sleep 5; done \
 	&& echo "feature:repo-add mvn:de.mhus.cherry.vault/vault-feature/${VAULT_VERSION}/xml/features" | ./bin/client \
 	&& echo "feature:repo-add activemq 5.12.1" | ./bin/client \
-	&& echo "feature:install cherry-vault" | ./bin/client \
+	&& echo "feature:install cherry-vault-playground" | ./bin/client \
 	&& sleep 2 \
 	&& ./bin/stop \
 	&& sleep 5 \
