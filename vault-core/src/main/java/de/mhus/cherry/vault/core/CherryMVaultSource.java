@@ -128,4 +128,9 @@ public class CherryMVaultSource extends MutableVaultSource {
 		
 	}
 
+	@Override
+	public boolean isMemoryBased() {
+		return false;
+	}
+
 }
