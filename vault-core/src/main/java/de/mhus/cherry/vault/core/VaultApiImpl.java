@@ -37,22 +37,18 @@ import de.mhus.lib.adb.query.Db;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.IReadProperties;
 import de.mhus.lib.core.MApi;
-import de.mhus.lib.core.MCollection;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MString;
 import de.mhus.lib.core.crypt.pem.PemBlockList;
-import de.mhus.lib.core.crypt.pem.PemPriv;
 import de.mhus.lib.core.crypt.pem.PemUtil;
 import de.mhus.lib.core.util.SecureString;
-import de.mhus.lib.core.vault.MVaultUtil;
 import de.mhus.lib.errors.AccessDeniedException;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;
 import de.mhus.lib.errors.UsageException;
 import de.mhus.lib.xdb.XdbService;
 import de.mhus.osgi.crypt.api.CryptaApi;
-import de.mhus.osgi.crypt.api.util.SimpleVaultProcessContext;
 import de.mhus.osgi.services.MOsgi;
 import de.mhus.osgi.sop.api.aaa.AaaContext;
 import de.mhus.osgi.sop.api.aaa.AaaUtil;
@@ -477,7 +473,6 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		AccessApi aaa = MApi.lookup(AccessApi.class);
 		AaaContext ac = aaa.getCurrentOrGuest();
 		if (properties == null) properties = new MProperties();
-		final IProperties finalProperties = properties;
 		
 		SecretContent sec = null;
 		if (PemUtil.isPemBlock(secret)) {
@@ -485,27 +480,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 			CryptaApi crypta = MApi.lookup(CryptaApi.class);
 			PemBlockList encoded = new PemBlockList(secret);
 			
-			SimpleVaultProcessContext context = new SimpleVaultProcessContext() {
-				
-				@Override
-				public PemPriv getPrivateKey(String privId) throws MException {
-					PemPriv privKey = super.getPrivateKey(privId);
-					if (privKey != null) return privKey;
-					
-					if (!MCollection.contains( ac.getAccount().getAttributes().getString("privateKey", ""), ',', privId))
-						throw new AccessDeniedException("The private key is not owned by the current user",ac,privId);
-					de.mhus.lib.core.vault.VaultEntry privKeyObj = MVaultUtil.loadDefault().getEntry(UUID.fromString(privId ) );
-					if (privKeyObj == null) throw new NotFoundException("Private key not found",privId);
-
-					privKey = privKeyObj.adaptTo(PemPriv.class);
-					
-					addPassphrase(privId, new SecureString(finalProperties.getString("passphrase", null)));
-					
-					return privKey;
-				}
-
-			};
-			
+			CherryVaultProcessContext context = new CherryVaultProcessContext(ac,properties);			
 			crypta.processPemBlocks(context, encoded);
 
 			if (context.getLastSecret() == null)
@@ -530,7 +505,6 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		AccessApi aaa = MApi.lookup(AccessApi.class);
 		AaaContext ac = aaa.getCurrentOrGuest();
 		if (properties == null) properties = new MProperties();
-		final IProperties finalProperties = properties;
 
 		SecretContent sec = null;
 		if (PemUtil.isPemBlock(secret)) {
@@ -538,26 +512,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 			CryptaApi crypta = MApi.lookup(CryptaApi.class);
 			PemBlockList encoded = new PemBlockList(secret);
 			
-			SimpleVaultProcessContext context = new SimpleVaultProcessContext() {
-				
-				@Override
-				public PemPriv getPrivateKey(String privId) throws MException {
-					PemPriv privKey = super.getPrivateKey(privId);
-					if (privKey != null) return privKey;
-					
-					if (!MCollection.contains( ac.getAccount().getAttributes().getString("privateKey", ""), ',', privId))
-						throw new AccessDeniedException("The private key is not owned by the current user",ac,privId);
-					de.mhus.lib.core.vault.VaultEntry privKeyObj = MVaultUtil.loadDefault().getEntry(UUID.fromString(privId ) );
-					if (privKeyObj == null) throw new NotFoundException("Private key not found",privId);
-
-					privKey = privKeyObj.adaptTo(PemPriv.class);
-					
-					addPassphrase(privId, new SecureString(finalProperties.getString("passphrase", null)));
-					
-					return privKey;
-				}
-
-			};
+			CherryVaultProcessContext context = new CherryVaultProcessContext(ac,properties);			
 			
 			crypta.processPemBlocks(context, encoded);
 
