@@ -54,7 +54,6 @@ import de.mhus.lib.errors.NotFoundException;
 import de.mhus.lib.errors.UsageException;
 import de.mhus.lib.xdb.XdbService;
 import de.mhus.osgi.crypt.api.CryptaApi;
-import de.mhus.osgi.crypt.api.VaultProcessContext;
 import de.mhus.osgi.crypt.api.cipher.CipherProvider;
 import de.mhus.osgi.crypt.api.util.SimpleVaultProcessContext;
 import de.mhus.osgi.services.MOsgi;
@@ -481,14 +480,15 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		AccessApi aaa = MApi.lookup(AccessApi.class);
 		AaaContext ac = aaa.getCurrentOrGuest();
 		if (properties == null) properties = new MProperties();
-				
+		final IProperties finalProperties = properties;
+		
 		SecretContent sec = null;
 		if (PemUtil.isPemBlock(secret)) {
 			// it's encoded
 			CryptaApi crypta = MApi.lookup(CryptaApi.class);
 			PemBlockList encoded = new PemBlockList(secret);
 			
-			VaultProcessContext context = new SimpleVaultProcessContext() {
+			SimpleVaultProcessContext context = new SimpleVaultProcessContext() {
 				
 				@Override
 				public PemPriv getPrivateKey(String privId) throws MException {
@@ -501,6 +501,9 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 					if (privKeyObj == null) throw new NotFoundException("Private key not found",privId);
 
 					privKey = privKeyObj.adaptTo(PemPriv.class);
+					
+					addPassphrase(privId, new SecureString(finalProperties.getString("passphrase", null)));
+					
 					return privKey;
 				}
 
@@ -508,6 +511,22 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 			
 			crypta.processPemBlocks(context, encoded);
 			
+//			String privKeyId = encoded.getString(PemBlock.PRIV_ID);
+//			// check if the private key is owned by the user (list of owned ids are configured at the user profile)
+//			if (!MCollection.contains( ac.getAccount().getAttributes().getString("privateKey", ""), ',', privKeyId))
+//				throw new AccessDeniedException("The private key is not owned by the current user",ac,privKeyId);
+//			// search for the key in MVault
+//			de.mhus.lib.core.vault.VaultEntry privKeyObj = MVaultUtil.loadDefault().getEntry(UUID.fromString(privKeyId ) );
+//			if (privKeyObj == null) throw new NotFoundException("Private key not found",privKeyId);
+//			// Decode the secret
+//			PemPriv privKey = privKeyObj.adaptTo(PemPriv.class);
+//			String decoded = api.decode(privKey, encoded, properties.getString("passphrase", null));
+//			sec = new SecretContent(new SecureString(decoded), new MProperties());
+//			decoded = "";
+			if (context.getLastSecret() == null)
+				throw new AccessDeniedException("can't decode secret");
+			
+			sec = new SecretContent(context.getLastSecret(), new MProperties()); 
 		} else {
 			if (!group.isAllowUnencrypted())
 				throw new AccessDeniedException("Need to encrypt secrets",groupName);
