@@ -32,7 +32,7 @@ import de.mhus.lib.core.vault.MVault;
 import de.mhus.lib.core.vault.MVaultUtil;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;
-import de.mhus.osgi.crypt.api.CryptaApi;
+import de.mhus.osgi.crypt.api.CryptApi;
 import de.mhus.osgi.crypt.api.cipher.CipherProvider;
 import de.mhus.osgi.crypt.api.signer.SignerProvider;
 
@@ -45,7 +45,7 @@ public class RsaEncryptProcessor implements TargetProcessor {
 
 		UUID keyId = UUID.fromString(processorConfig.getString("keyId"));
 		
-		CryptaApi api = MApi.lookup(CryptaApi.class);
+		CryptApi api = MApi.lookup(CryptApi.class);
 		CipherProvider cipher = api.getCipher(processorConfig.getString("cipherService","RSA-1"));
 		
 		MVault vault = MVaultUtil.loadDefault();

@@ -48,7 +48,7 @@ import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;
 import de.mhus.lib.errors.UsageException;
 import de.mhus.lib.xdb.XdbService;
-import de.mhus.osgi.crypt.api.CryptaApi;
+import de.mhus.osgi.crypt.api.CryptApi;
 import de.mhus.osgi.services.MOsgi;
 import de.mhus.osgi.sop.api.aaa.AaaContext;
 import de.mhus.osgi.sop.api.aaa.AaaUtil;
@@ -477,7 +477,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		SecretContent sec = null;
 		if (PemUtil.isPemBlock(secret)) {
 			// it's encoded
-			CryptaApi crypta = MApi.lookup(CryptaApi.class);
+			CryptApi crypta = MApi.lookup(CryptApi.class);
 			PemBlockList encoded = new PemBlockList(secret);
 			
 			CherryVaultProcessContext context = new CherryVaultProcessContext(ac,properties);			
@@ -509,7 +509,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		SecretContent sec = null;
 		if (PemUtil.isPemBlock(secret)) {
 			// it's encoded
-			CryptaApi crypta = MApi.lookup(CryptaApi.class);
+			CryptApi crypta = MApi.lookup(CryptApi.class);
 			PemBlockList encoded = new PemBlockList(secret);
 			
 			CherryVaultProcessContext context = new CherryVaultProcessContext(ac,properties);			

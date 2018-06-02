@@ -37,7 +37,7 @@ import de.mhus.lib.core.vault.MVault;
 import de.mhus.lib.core.vault.MVaultUtil;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;
-import de.mhus.osgi.crypt.api.CryptaApi;
+import de.mhus.osgi.crypt.api.CryptApi;
 import de.mhus.osgi.crypt.api.signer.SignerProvider;
 
 @Component(properties="name=hash.sha")
@@ -67,7 +67,7 @@ public class ShaProcessor implements TargetProcessor {
 			
 			if (processorConfig.isProperty("signId")) {
 				MVault vault = MVaultUtil.loadDefault();
-				CryptaApi api = MApi.lookup(CryptaApi.class);
+				CryptApi api = MApi.lookup(CryptApi.class);
 				UUID signId = UUID.fromString(processorConfig.getString("signId"));
 				SignerProvider signer = api.getSigner(processorConfig.getString("signService", "DSA-1"));
 				de.mhus.lib.core.vault.VaultEntry signKeyValue = vault.getEntry(signId);
