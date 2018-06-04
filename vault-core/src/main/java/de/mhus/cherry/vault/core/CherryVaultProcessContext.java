@@ -10,10 +10,10 @@ import de.mhus.lib.core.vault.MVaultUtil;
 import de.mhus.lib.errors.AccessDeniedException;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;
-import de.mhus.osgi.crypt.api.util.SimpleVaultProcessContext;
+import de.mhus.osgi.crypt.api.util.SimplePemProcessContext;
 import de.mhus.osgi.sop.api.aaa.AaaContext;
 
-public class CherryVaultProcessContext extends SimpleVaultProcessContext {
+public class CherryVaultProcessContext extends SimplePemProcessContext {
 
 	private IReadProperties properties;
 	private AaaContext ac;
