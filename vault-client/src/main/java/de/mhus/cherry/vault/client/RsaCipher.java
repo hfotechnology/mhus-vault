@@ -63,7 +63,9 @@ public class RsaCipher {
 			out.set(PemBlock.METHOD, "RSA-1");
 			out.set(PemBlock.STRING_ENCODING, stringEncoding);
 			if (key.isProperty(PemBlock.IDENT))
-				out.set(PemBlock.KEY_IDENT, key.getString(PemBlock.IDENT));
+				out.set(PemBlock.PUB_ID, key.getString(PemBlock.IDENT));
+			if (key.isProperty(PemBlock.PRIV_ID))
+				out.set(PemBlock.PRIV_ID, key.getString(PemBlock.PRIV_ID));
 			out.set(PemBlock.CREATED, new Date());
 			
 			return out;
