@@ -51,8 +51,9 @@
 	</developers>
 	
 	<properties>
-		<mhulib.version>3.3.5</mhulib.version>
-		<osgitools.version>1.4.1</osgitools.version>
+		<mhulib.version>3.3.6</mhulib.version>
+		<osgitools.version>1.4.2</osgitools.version>
+		<osgicrypt.version>1.4.1</osgicrypt.version>
 		<mhusop.version>1.3.2</mhusop.version>
 		
 		<scr.packages>*</scr.packages>

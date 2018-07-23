@@ -84,7 +84,7 @@
        	<dependency>
 			<groupId>de.mhus.osgi</groupId>
 			<artifactId>mhu-osgi-crypt-api</artifactId>
-			<version>${osgitools.version}</version>
+			<version>${osgicrypt.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
