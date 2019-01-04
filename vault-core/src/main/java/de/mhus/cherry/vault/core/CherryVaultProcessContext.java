@@ -5,6 +5,7 @@ import java.util.UUID;
 import de.mhus.lib.core.IReadProperties;
 import de.mhus.lib.core.MCollection;
 import de.mhus.lib.core.crypt.pem.PemPriv;
+import de.mhus.lib.core.crypt.pem.PemUtil;
 import de.mhus.lib.core.util.SecureString;
 import de.mhus.lib.core.vault.MVaultUtil;
 import de.mhus.lib.errors.AccessDeniedException;
@@ -33,7 +34,7 @@ public class CherryVaultProcessContext extends SimplePemProcessContext {
 		de.mhus.lib.core.vault.VaultEntry privKeyObj = MVaultUtil.loadDefault().getEntry(UUID.fromString(privId ) );
 		if (privKeyObj == null) throw new NotFoundException("Private key not found",privId);
 
-		privKey = privKeyObj.adaptTo(PemPriv.class);
+		privKey = PemUtil.toKey(privKeyObj.getValue().value());
 		
 		addPassphrase(privId, new SecureString(properties.getString("passphrase", null)));
 		

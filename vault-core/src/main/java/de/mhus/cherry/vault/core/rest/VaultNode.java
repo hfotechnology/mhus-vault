@@ -31,13 +31,13 @@ import de.mhus.lib.core.pojo.PojoModelFactory;
 import de.mhus.lib.core.util.EmptyList;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.UsageException;
-import de.mhus.osgi.sop.api.rest.AbstractObjectListNode;
 import de.mhus.osgi.sop.api.rest.CallContext;
 import de.mhus.osgi.sop.api.rest.JsonResult;
+import de.mhus.osgi.sop.api.rest.ObjectListNode;
 import de.mhus.osgi.sop.api.rest.RestNodeService;
 
 @Component(immediate=true,provide=RestNodeService.class)
-public class VaultNode extends AbstractObjectListNode<VaultEntry>{
+public class VaultNode extends ObjectListNode<VaultEntry>{
 
 	@Override
 	public String[] getParentNodeIds() {

@@ -83,7 +83,7 @@ public class CherryVaultManager extends AbstractDbSchemaService {
 	}
 
 	@Override
-	protected String getAcl(AaaContext context, Persistable obj) throws MException {
+	public String getAcl(AaaContext context, Persistable obj) throws MException {
 		return "*=" + Ace.RIGHTS_ALL; // TODO
 	}
 

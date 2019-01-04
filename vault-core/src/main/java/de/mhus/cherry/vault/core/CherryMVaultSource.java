@@ -28,18 +28,20 @@ import de.mhus.cherry.vault.api.model.VaultKey;
 import de.mhus.cherry.vault.core.impl.StaticAccess;
 import de.mhus.lib.adb.query.Db;
 import de.mhus.lib.core.MApi;
+import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MSystem;
 import de.mhus.lib.core.vault.MutableVaultSource;
 import de.mhus.lib.core.vault.VaultEntry;
 import de.mhus.lib.core.vault.VaultSource;
 import de.mhus.lib.errors.MException;
-import de.mhus.lib.errors.NotSupportedException;
 import de.mhus.osgi.sop.api.aaa.AaaContext;
 import de.mhus.osgi.sop.api.aaa.AaaUtil;
 import de.mhus.osgi.sop.api.aaa.AccessApi;
 
 @Component(provide=VaultSource.class)
-public class CherryMVaultSource extends MutableVaultSource {
+public class CherryMVaultSource extends MLog implements MutableVaultSource {
+
+	private String name;
 
 	@Activate
 	public void doActivate(ComponentContext ctx) {
@@ -66,7 +68,7 @@ public class CherryMVaultSource extends MutableVaultSource {
 	}
 
 	@Override
-	public UUID[] getEntryIds() {
+	public Iterable<UUID> getEntryIds() {
 		LinkedList<UUID> out = new LinkedList<>();
 		AaaContext acc = MApi.lookup(AccessApi.class).getCurrentOrGuest();
 		try {
@@ -82,15 +84,15 @@ public class CherryMVaultSource extends MutableVaultSource {
 		} catch (MException e) {
 			log().e(e);
 		}
-		return out.toArray(new UUID[out.size()]);
+		return out;
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> T adaptTo(Class<? extends T> ifc) throws NotSupportedException {
-		if (ifc.isInstance(this)) return (T) this;
-		throw new NotSupportedException(this,ifc);
-	}
+//	@SuppressWarnings("unchecked")
+//	@Override
+//	public <T> T adaptTo(Class<? extends T> ifc) throws NotSupportedException {
+//		if (ifc.isInstance(this)) return (T) this;
+//		throw new NotSupportedException(this,ifc);
+//	}
 
 	@Override
 	public String getName() {
@@ -99,7 +101,7 @@ public class CherryMVaultSource extends MutableVaultSource {
 
 	@Override
 	public void addEntry(VaultEntry entry) throws MException {
-		VaultKey key = new VaultKey(entry.getId().toString(), entry.getValue(), entry.getDescription(), entry.getType());
+		VaultKey key = new VaultKey(entry.getId().toString(), entry.getValue().value(), entry.getDescription(), entry.getType());
 		StaticAccess.moManager.getManager().inject(key).save();
 	}
 	
@@ -131,6 +133,11 @@ public class CherryMVaultSource extends MutableVaultSource {
 	@Override
 	public boolean isMemoryBased() {
 		return false;
+	}
+
+	@Override
+	public MutableVaultSource getEditable() {
+		return this;
 	}
 
 }

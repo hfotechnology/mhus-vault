@@ -28,6 +28,7 @@ import de.mhus.lib.core.crypt.pem.PemBlock;
 import de.mhus.lib.core.crypt.pem.PemBlockList;
 import de.mhus.lib.core.crypt.pem.PemPriv;
 import de.mhus.lib.core.crypt.pem.PemPub;
+import de.mhus.lib.core.crypt.pem.PemUtil;
 import de.mhus.lib.core.vault.MVault;
 import de.mhus.lib.core.vault.MVaultUtil;
 import de.mhus.lib.errors.MException;
@@ -52,8 +53,8 @@ public class RsaEncryptProcessor implements TargetProcessor {
 		de.mhus.lib.core.vault.VaultEntry keyValue = vault.getEntry(keyId);
 		if (keyValue == null) throw new NotFoundException("key not found",keyId);
 		
-		PemPub key = keyValue.adaptTo(PemPub.class);
-		PemBlock encoded = cipher.encode(key, secret.getContent().value());
+		PemPub key = PemUtil.toKey(keyValue.getValue().value());
+		PemBlock encoded = cipher.encrypt(key, secret.getContent().value());
 		
 		PemBlockList result = new PemBlockList();
 		result.add(encoded);
@@ -63,7 +64,7 @@ public class RsaEncryptProcessor implements TargetProcessor {
 			SignerProvider signer = api.getSigner(processorConfig.getString("signService", "DSA-1"));
 			de.mhus.lib.core.vault.VaultEntry signKeyValue = vault.getEntry(signId);
 			if (signKeyValue == null) throw new NotFoundException("sign key not found",signId);
-			PemPriv signKey = signKeyValue.adaptTo(PemPriv.class);
+			PemPriv signKey = PemUtil.toKey(signKeyValue.getValue().value());
 			PemBlock signed = signer.sign(signKey, encoded.toString(), processorConfig.getString("signPassphrase", null));
 			result.addFirst(signed);
 		}
