@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.codehaus.jackson.node.ObjectNode;
 
-import aQute.bnd.annotation.component.Component;
+import org.osgi.service.component.annotations.Component;
 import de.mhus.cherry.vault.api.CherryVaultApi;
 import de.mhus.cherry.vault.api.model.VaultEntry;
 import de.mhus.cherry.vault.core.impl.StaticAccess;
@@ -36,7 +36,7 @@ import de.mhus.osgi.sop.api.rest.JsonResult;
 import de.mhus.osgi.sop.api.rest.ObjectListNode;
 import de.mhus.osgi.sop.api.rest.RestNodeService;
 
-@Component(immediate=true,provide=RestNodeService.class)
+@Component(immediate=true,service=RestNodeService.class)
 public class VaultNode extends ObjectListNode<VaultEntry>{
 
 	@Override

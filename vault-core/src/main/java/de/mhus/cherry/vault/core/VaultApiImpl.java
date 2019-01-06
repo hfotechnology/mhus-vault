@@ -20,7 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
-import aQute.bnd.annotation.component.Component;
+import org.osgi.service.component.annotations.Component;
 import de.mhus.cherry.vault.api.CherryVaultApi;
 import de.mhus.cherry.vault.api.ifc.SecretContent;
 import de.mhus.cherry.vault.api.ifc.SecretGenerator;

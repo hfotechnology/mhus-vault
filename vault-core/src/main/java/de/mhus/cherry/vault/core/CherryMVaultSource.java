@@ -22,8 +22,8 @@ import java.util.UUID;
 
 import org.osgi.service.component.ComponentContext;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
 import de.mhus.cherry.vault.api.model.VaultKey;
 import de.mhus.cherry.vault.core.impl.StaticAccess;
 import de.mhus.lib.adb.query.Db;
@@ -38,7 +38,7 @@ import de.mhus.osgi.sop.api.aaa.AaaContext;
 import de.mhus.osgi.sop.api.aaa.AaaUtil;
 import de.mhus.osgi.sop.api.aaa.AccessApi;
 
-@Component(provide=VaultSource.class)
+@Component(service=VaultSource.class)
 public class CherryMVaultSource extends MLog implements MutableVaultSource {
 
 	private String name;

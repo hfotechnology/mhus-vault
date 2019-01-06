@@ -15,7 +15,7 @@
  */
 package de.mhus.cherry.vault.core.services;
 
-import aQute.bnd.annotation.component.Component;
+import org.osgi.service.component.annotations.Component;
 import de.mhus.cherry.vault.api.ifc.SecretContent;
 import de.mhus.cherry.vault.api.ifc.SecretGenerator;
 import de.mhus.cherry.vault.api.model.VaultGroup;

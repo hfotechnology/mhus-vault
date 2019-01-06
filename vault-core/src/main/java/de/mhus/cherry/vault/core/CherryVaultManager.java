@@ -17,7 +17,7 @@ package de.mhus.cherry.vault.core;
 
 import java.util.List;
 
-import aQute.bnd.annotation.component.Component;
+import org.osgi.service.component.annotations.Component;
 import de.mhus.cherry.vault.api.model.VaultArchive;
 import de.mhus.cherry.vault.api.model.VaultEntry;
 import de.mhus.cherry.vault.api.model.VaultGroup;
@@ -33,7 +33,7 @@ import de.mhus.osgi.sop.api.adb.AbstractDbSchemaService;
 import de.mhus.osgi.sop.api.adb.DbSchemaService;
 import de.mhus.osgi.sop.api.adb.ReferenceCollector;
 
-@Component(immediate=true,provide=DbSchemaService.class)
+@Component(immediate=true,service=DbSchemaService.class)
 public class CherryVaultManager extends AbstractDbSchemaService {
 
 	private XdbService service;

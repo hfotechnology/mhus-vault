@@ -15,7 +15,7 @@
  */
 package de.mhus.cherry.vault.core.services;
 
-import aQute.bnd.annotation.component.Component;
+import org.osgi.service.component.annotations.Component;
 import de.mhus.cherry.vault.api.ifc.TargetCondition;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.IReadProperties;

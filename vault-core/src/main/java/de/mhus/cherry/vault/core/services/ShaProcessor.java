@@ -21,7 +21,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.UUID;
 
-import aQute.bnd.annotation.component.Component;
+import org.osgi.service.component.annotations.Component;
 import de.mhus.cherry.vault.api.ifc.SecretContent;
 import de.mhus.cherry.vault.api.ifc.TargetProcessor;
 import de.mhus.cherry.vault.api.model.WritableEntry;
