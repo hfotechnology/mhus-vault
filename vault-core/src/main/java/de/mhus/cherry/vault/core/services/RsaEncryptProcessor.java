@@ -37,7 +37,7 @@ import de.mhus.osgi.crypt.api.CryptApi;
 import de.mhus.osgi.crypt.api.cipher.CipherProvider;
 import de.mhus.osgi.crypt.api.signer.SignerProvider;
 
-@Component(properties="name=cipher.rsa")
+@Component(property="name=cipher.rsa")
 public class RsaEncryptProcessor implements TargetProcessor {
 
 	@Override

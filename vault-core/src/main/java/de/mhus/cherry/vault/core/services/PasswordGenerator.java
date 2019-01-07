@@ -23,7 +23,7 @@ import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.MPassword;
 import de.mhus.lib.core.util.SecureString;
 
-@Component(properties="name=password")
+@Component(property="name=password")
 public class PasswordGenerator implements SecretGenerator {
 
 	@Override

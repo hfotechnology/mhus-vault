@@ -20,7 +20,7 @@ import de.mhus.cherry.vault.api.ifc.TargetCondition;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.IReadProperties;
 
-@Component(properties="name=true")
+@Component(property="name=true")
 public class TrueCondition implements TargetCondition {
 
 	@Override

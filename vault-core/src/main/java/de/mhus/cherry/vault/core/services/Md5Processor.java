@@ -41,7 +41,7 @@ import de.mhus.lib.errors.NotFoundException;
 import de.mhus.osgi.crypt.api.CryptApi;
 import de.mhus.osgi.crypt.api.signer.SignerProvider;
 
-@Component(properties="name=hash.md5")
+@Component(property="name=hash.md5")
 public class Md5Processor implements TargetProcessor {
 
 	@Override
