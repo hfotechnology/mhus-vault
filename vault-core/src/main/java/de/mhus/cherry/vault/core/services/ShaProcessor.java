@@ -40,7 +40,8 @@ import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;
 import de.mhus.osgi.crypt.api.CryptApi;
 import de.mhus.osgi.crypt.api.signer.SignerProvider;
-Component(property="name=hash.sha")
+
+@Component(property="name=hash.sha")
 public class ShaProcessor implements TargetProcessor {
 
 	@Override
