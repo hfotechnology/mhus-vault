@@ -33,7 +33,7 @@
 				<plugin>
 					<groupId>org.apache.karaf.tooling</groupId>
 					<artifactId>karaf-maven-plugin</artifactId>
-					<version>3.0.1</version>
+					<version>${karaf.tool.version}</version>
 					<extensions>true</extensions>
 				</plugin>
 				<!--This plugin's configuration is used to store Eclipse m2e settings 
@@ -60,6 +60,7 @@
 											<goal>
 												features-generate-descriptor
 											</goal>
+											<goal>verify</goal>
 										</goals>
 									</pluginExecutionFilter>
 									<action>
