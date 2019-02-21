@@ -32,7 +32,7 @@ public class SecurityInfo {
 		ConsoleTable out = new ConsoleTable();
 		out.setHeaderValues("Name","Version","Info");
 		for (Provider provider : Security.getProviders()) {
-			out.addRowValues(provider.getName(), provider.getVersion(), provider.getInfo());
+			out.addRowValues(provider.getName(), provider.getVersionStr(), provider.getInfo());
 		}
 		out.print(System.out);
 		
