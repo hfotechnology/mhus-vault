@@ -38,28 +38,43 @@ import de.mhus.osgi.sop.api.aaa.AccessApi;
 public class VaultEntry extends DbMetadata {
 
 	@DbIndex("1")
-	@DbPersistent
+	@DbPersistent(ro=true)
 	protected String target;
-	@DbPersistent
+	@DbPersistent(ro=true)
 	protected String group;
-	@DbPersistent
+	@DbPersistent(ro=true)
 	protected String secretKeyId;
 	@DbPersistent(type=TYPE.BLOB)
 	protected String secret;
 	@DbIndex({"1","2"})
-	@DbPersistent
+	@DbPersistent(ro=true)
 	protected String secretId;
-	@DbPersistent
+	@DbPersistent(ro=true)
 	protected MProperties meta;
 	@DbPersistent
 	protected Date validFrom;
 	@DbPersistent
 	protected Date validTo;
-	@DbPersistent
+	@DbPersistent(ro=true)
 	private String creator;
-	
-	@DbPersistent
+	@DbPersistent(ro=true)
 	private String checksum;
+    @DbPersistent
+    @DbIndex("v0")
+    private String index0;
+    @DbPersistent
+    @DbIndex("v1")
+    private String index1;
+    @DbPersistent
+    @DbIndex("v2")
+    private String index2;
+    @DbPersistent
+    @DbIndex("v3")
+    private String index3;
+    @DbPersistent
+    @DbIndex("v4")
+    private String index4;
+	
 	
 	public VaultEntry() {}
 	
@@ -181,5 +196,45 @@ public class VaultEntry extends DbMetadata {
 		}
 		super.doPreSave(con);
 	}
+
+    public String getIndex0() {
+        return index0;
+    }
+
+    public void setIndex0(String index0) {
+        this.index0 = index0;
+    }
+
+    public String getIndex1() {
+        return index1;
+    }
+
+    public void setIndex1(String index1) {
+        this.index1 = index1;
+    }
+
+    public String getIndex2() {
+        return index2;
+    }
+
+    public void setIndex2(String index2) {
+        this.index2 = index2;
+    }
+
+    public String getIndex3() {
+        return index3;
+    }
+
+    public void setIndex3(String index3) {
+        this.index3 = index3;
+    }
+
+    public String getIndex4() {
+        return index4;
+    }
+
+    public void setIndex4(String index4) {
+        this.index4 = index4;
+    }
 	
 }

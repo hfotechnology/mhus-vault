@@ -33,6 +33,7 @@ import de.mhus.cherry.vault.api.model.VaultTarget;
 import de.mhus.cherry.vault.api.model.WritableEntry;
 import de.mhus.cherry.vault.core.impl.StaticAccess;
 import de.mhus.lib.adb.DbCollection;
+import de.mhus.lib.adb.query.AQuery;
 import de.mhus.lib.adb.query.Db;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.IReadProperties;
@@ -42,6 +43,7 @@ import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MString;
 import de.mhus.lib.core.crypt.pem.PemBlockList;
 import de.mhus.lib.core.crypt.pem.PemUtil;
+import de.mhus.lib.core.util.EmptyList;
 import de.mhus.lib.core.util.SecureString;
 import de.mhus.lib.errors.AccessDeniedException;
 import de.mhus.lib.errors.MException;
@@ -62,7 +64,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 	private static final String DEFAULT_GROUP_NAME = "default";
 
 	@Override
-	public String createSecret(String groupName, Date validFrom, Date validTo, IProperties properties) throws MException {
+	public String createSecret(String groupName, Date validFrom, Date validTo, IProperties properties, String[] index) throws MException {
 		
 		if (validFrom == null) validFrom = new Date();
 		if (validTo == null) validTo = END_OF_DAYS;
@@ -95,14 +97,34 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		
 		if (entriesToSave.size() == 0) return null;
 		
+		updateIndexes(entriesToSave, index);
+		
 		// save entries
 		saveEntries(groupName, entriesToSave, validFrom, validTo);
 		
 		return secretId;
 	}
 
-	@Override
-	public void createUpdate(String secretId, Date validFrom, Date validTo, IProperties properties) throws MException {
+	private void updateIndexes(LinkedList<VaultEntry> entriesToSave, String[] index) {
+	    if (index == null || index.length == 0) return;
+	    
+        entriesToSave.forEach(e -> {
+            for (int i = 0; i < index.length; i++) {
+                String val = index[i];
+                if (val == null) continue;
+                switch(i) {
+                case 0:e.setIndex0(val); break;
+                case 1:e.setIndex1(val); break;
+                case 2:e.setIndex2(val); break;
+                case 3:e.setIndex3(val); break;
+                case 4:e.setIndex4(val); break;
+                }
+            }
+        });
+    }
+
+    @Override
+	public void createUpdate(String secretId, Date validFrom, Date validTo, IProperties properties, String[] index) throws MException {
 		
 		if (validFrom == null) validFrom = new Date();
 		if (validTo == null) validTo = END_OF_DAYS;
@@ -136,13 +158,15 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		
 		updateEntriesValidTo(secretId, validFrom);
 		
+		updateIndexes(entriesToSave, index);
+		
 		// save entries
 		saveEntries(groupName, entriesToSave, validFrom, validTo);
 		
 	}
 
 	@Override
-	public String importSecret(String groupName, Date validFrom, Date validTo, SecretContent secret, IProperties properties) throws MException {
+	public String importSecret(String groupName, Date validFrom, Date validTo, SecretContent secret, IProperties properties, String[] index) throws MException {
 		
 		if (validFrom == null) validFrom = new Date();
 		if (validTo == null) validTo = END_OF_DAYS;
@@ -168,6 +192,8 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		LinkedList<VaultEntry> entriesToSave = new LinkedList<>();
 		processGroupTargets(group, properties, secretId, secret, entriesToSave);
 		
+        updateIndexes(entriesToSave, index);
+		
 		// save entries
 		saveEntries(groupName, entriesToSave, validFrom, validTo);
 		
@@ -175,7 +201,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 	}
 
 	@Override
-	public void importUpdate(String secretId, Date validFrom, Date validTo, SecretContent secret, IProperties properties) throws MException {
+	public void importUpdate(String secretId, Date validFrom, Date validTo, SecretContent secret, IProperties properties, String[] index) throws MException {
 		
 		if (validFrom == null) validFrom = new Date();
 		if (validTo == null) validTo = END_OF_DAYS;
@@ -203,7 +229,9 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		processGroupTargets(group, properties, secretId, secret, entriesToSave);
 		
 		updateEntriesValidTo(secretId, validFrom);
-		
+
+	    updateIndexes(entriesToSave, index);
+
 		// save entries
 		saveEntries(groupName, entriesToSave, validFrom, validTo);
 		
@@ -466,7 +494,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 	}
 
 	@Override
-	public String importSecret(String groupName, Date validFrom, Date validTo, String secret, IProperties properties)
+	public String importSecret(String groupName, Date validFrom, Date validTo, String secret, IProperties properties, String[] index)
 	        throws MException {
 		
 		VaultGroup group = getGroup(groupName);
@@ -493,11 +521,11 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 			sec = new SecretContent(new SecureString(secret), new MProperties());
 		}
 		
-		return importSecret(groupName, validFrom, validTo, sec, properties);
+		return importSecret(groupName, validFrom, validTo, sec, properties, index);
 	}
 
 	@Override
-	public void importUpdate(String secretId, Date validFrom, Date validTo, String secret, IProperties properties)
+	public void importUpdate(String secretId, Date validFrom, Date validTo, String secret, IProperties properties, String[] index)
 	        throws MException {
 		
 		String groupName = findGroupNameForSecretId(secretId);
@@ -527,7 +555,64 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 			sec = new SecretContent(new SecureString(secret), new MProperties());
 		}
 		
-		importUpdate(secretId, validFrom, validTo, sec, properties);
+		importUpdate(secretId, validFrom, validTo, sec, properties, index);
 	}
+
+    @Override
+    public void update(String secretId, String[] index) throws MException {
+
+        Date now = new Date();
+        XdbService manager = StaticAccess.moManager.getManager();
+        DbCollection<VaultEntry> res = manager.getByQualification(
+                Db.query(VaultEntry.class)
+                    .eq("secretid", secretId)
+                    .le("validfrom",now)
+                    .gt("validto", now)
+                );
+        LinkedList<VaultEntry> entriesToSave = new LinkedList<>();
+        for (VaultEntry item : res)
+            entriesToSave.add(item);
+        res.close();
+
+        updateIndexes(entriesToSave, index);
+
+        for (VaultEntry entry : entriesToSave) {
+            try {
+                entry.save();
+            } catch (Throwable t) {
+                log().w(entry,t);
+            }
+        }
+
+    }
+
+    @Override
+    public List<VaultEntry> search(String[] index, int size) throws MException {
+        if (index == null || index.length == 0) return new EmptyList<VaultEntry>();
+
+        Date now = new Date();
+        AQuery<VaultEntry> query = Db.query(VaultEntry.class)
+                .le("validfrom",now)
+                .gt("validto", now);
+        boolean found = false;
+        for (int i = 0; i < index.length; i++) {
+            if (index[i] == null || i > 4) continue;
+            found = true;
+            query.eq("index" + i, index[i]);
+        }
+        if (!found) return new EmptyList<VaultEntry>();
+
+        XdbService manager = StaticAccess.moManager.getManager();
+        DbCollection<VaultEntry> res = manager.getByQualification(query);
+
+        LinkedList<VaultEntry> out = new LinkedList<>();
+        for (VaultEntry item : res) {
+            out.add(item);
+            if (out.size() >= size) break;
+        }
+        res.close();
+
+        return out;
+    }
 	
 }
