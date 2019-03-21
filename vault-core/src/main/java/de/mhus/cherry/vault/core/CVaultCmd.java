@@ -1,7 +1,5 @@
 package de.mhus.cherry.vault.core;
 
-import java.util.Arrays;
-
 import org.apache.karaf.shell.api.action.Action;
 import org.apache.karaf.shell.api.action.Argument;
 import org.apache.karaf.shell.api.action.Command;
