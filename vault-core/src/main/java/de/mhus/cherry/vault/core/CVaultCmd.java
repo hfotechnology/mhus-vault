@@ -19,6 +19,7 @@ public class CVaultCmd implements Action {
     @Argument(index=0, name="cmd", required=true, description="Command:\n"
             + " search [index0] [index1] [index2] [index3] [index4]\n"
             + " update <secretId> [index0] [index1] [index2] [index3] [index4]\n"
+            + " create <groupId> [index0] [index1] [index2] [index3] [index4]\n"
             + " ", multiValued=false)
     String cmd;
     
@@ -27,13 +28,18 @@ public class CVaultCmd implements Action {
 
     @Option(name="-t", description="Target",required=false, multiValued=false)
     String target;
-
+    
     @Override
     public Object execute() throws Exception {
 
         CherryVaultApi api = MApi.lookup(CherryVaultApi.class);
 
         switch (cmd) {
+        case "create": {
+            String[] index = MCollection.cropArray(parameters, 1, parameters.length);
+            String res = api.createSecret(parameters[0], index);
+            System.out.println(res);
+        } break;
         case "search": {
             ConsoleTable table = new ConsoleTable(false);
             table.setHeaderValues("id","SecretId","Group","Target","SecretKeyId","From","To");
@@ -48,6 +54,8 @@ public class CVaultCmd implements Action {
             api.update(secretId, index);
             System.out.println("OK");
         } break;
+        default:
+            System.out.println("Unknown command " + cmd);
         }
 
         return null;

@@ -74,6 +74,8 @@
 		<bundle>mvn:de.mhus.osgi/mhu-karaf-crypt/${mhus-crypt.version}</bundle>
 		
 		<!-- sop -->
+
+        <bundle>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcomponents.httpcore.version}</bundle>
 		
 		<bundle>mvn:de.mhus.osgi/mhu-sop-api/${mhus-sop.version}</bundle>
 		<bundle>mvn:de.mhus.osgi/mhu-sop-core/${mhus-sop.version}</bundle>

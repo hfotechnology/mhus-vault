@@ -27,6 +27,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -36,6 +37,8 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+
+import de.mhus.lib.core.MString;
 
 public class VaultClientConnection {
 
@@ -95,7 +98,7 @@ public class VaultClientConnection {
         	content.append(inputLine);
         in.close();
         
-        // reate json object
+        // create json object
 		JsonNode json = mapper.readTree(content.toString());
 		if (json.has("_error"))
 			throw new IOException("Rest Error: " + json.get("_error").asText() + " " + json.get("_errorMessage").asText() );
@@ -143,7 +146,7 @@ public class VaultClientConnection {
         	content.append(inputLine);
         in.close();
         
-        // reate json object
+        // create json object
 		JsonNode json = mapper.readTree(content.toString());
 		if (json.has("_error"))
 			throw new IOException("Rest Error: " + json.get("_error").asText() + " " + json.get("_errorMessage").asText() );
@@ -190,7 +193,7 @@ public class VaultClientConnection {
         	content.append(inputLine);
         in.close();
         
-        // reate json object
+        // create json object
 		JsonNode json = mapper.readTree(content.toString());
 		if (json.has("_error"))
 			throw new IOException("Rest Error: " + json.get("_error").asText() + " " + json.get("_errorMessage").asText() );
@@ -226,10 +229,45 @@ public class VaultClientConnection {
         	content.append(inputLine);
         in.close();
         
-        // reate json object
+        // create json object
 		JsonNode json = mapper.readTree(content.toString());
 		if (json.has("_error"))
 			throw new IOException("Rest Error: " + json.get("_error").asText() + " " + json.get("_errorMessage").asText() );
+	}
+	
+	public List<SecretEntry> search(String target, String ... index) throws IOException {
+        String u = url + "/rest/vault?target=" + URLEncoder.encode(target, "UTF-8");
+        for (int i = 0; i < index.length; i++)
+            if (MString.isSet(index[i]))
+                u = u + "&index"+i+"=" +  URLEncoder.encode(index[i], "UTF-8");
+        URL url = new URL(u);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+        connection.setDoOutput(true);
+        connection.setRequestProperty  ("Authorization", "Basic " + auth);
+        connection.connect();
+        int sc = connection.getResponseCode();
+        if (sc != 200) throw new IOException("HTTP error " + sc + " " + connection.getResponseMessage());
+        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        StringBuilder content = new StringBuilder();
+        String inputLine;
+        while ((inputLine = in.readLine()) != null) 
+            content.append(inputLine);
+        in.close();
+        
+        // create json object
+        JsonNode json = mapper.readTree(content.toString());
+        if (json.has("_error"))
+            throw new IOException("Rest Error: " + json.get("_error").asText() + " " + json.get("_errorMessage").asText() );
+
+        if (!json.isArray())
+            throw new IOException("Result is not an array");
+        
+        LinkedList<SecretEntry> out = new LinkedList<>();
+        for (JsonNode jEntry : json) {
+            out.add(new SecretEntry(jEntry));
+        }
+        return out;
 	}
 
 	private String getQuery(List<NameValuePair> params) throws UnsupportedEncodingException

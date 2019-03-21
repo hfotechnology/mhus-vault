@@ -31,8 +31,7 @@ xdb:create VaultGroup name=test secretgeneratorname=password allowupdate=true ta
 xdb:create VaultTarget name=test conditionnames=true processorname=cipher.rsa processorconfig.keyId=$rsaPubId processorconfig.signId=$dsaPrivId processorconfig.signService=DSA-BC readacl.add=*
 
 
-
-service:invoke de.mhus.cherry.vault.api.CherryVaultApi createSecret test
+cvc create test
 
 Result: dbc02d77-0e70-4e30-9a28-110f55300e11
 
