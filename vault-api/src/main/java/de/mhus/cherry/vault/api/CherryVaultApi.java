@@ -127,6 +127,6 @@ public interface CherryVaultApi {
 	
 	VaultEntry getSecret(String secretId, String target) throws NotFoundException;
 
-    List<VaultEntry> search(String[] index, int size) throws MException;
+    List<VaultEntry> search(String target, String[] index, int size) throws MException;
 	
 }

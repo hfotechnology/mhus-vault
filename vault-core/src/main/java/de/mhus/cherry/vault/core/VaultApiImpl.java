@@ -587,13 +587,17 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
     }
 
     @Override
-    public List<VaultEntry> search(String[] index, int size) throws MException {
+    public List<VaultEntry> search(String target, String[] index, int size) throws MException {
         if (index == null || index.length == 0) return new EmptyList<VaultEntry>();
 
         Date now = new Date();
         AQuery<VaultEntry> query = Db.query(VaultEntry.class)
                 .le("validfrom",now)
                 .gt("validto", now);
+        
+        if (target != null)
+            query.eq("target", target);
+        
         boolean found = false;
         for (int i = 0; i < index.length; i++) {
             if (MString.isEmpty(index[i]) || i > 4) continue;

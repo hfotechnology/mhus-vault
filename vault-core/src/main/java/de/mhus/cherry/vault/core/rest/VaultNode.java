@@ -28,6 +28,7 @@ import de.mhus.lib.core.MApi;
 import de.mhus.lib.core.MDate;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.pojo.PojoModelFactory;
+import de.mhus.lib.core.util.EmptyList;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.UsageException;
 import de.mhus.osgi.sop.api.rest.CallContext;
@@ -46,13 +47,16 @@ public class VaultNode extends ObjectListNode<VaultEntry>{
 	protected List<VaultEntry> getObjectList(CallContext callContext) throws MException {
 		// we will not support browsing - but searching
 	    
-       String[] index = new String[5];
+	    String target = callContext.getParameter("target");
+        if (target == null) return new EmptyList<VaultEntry>();
+        
+	    String[] index = new String[5];
         for (int i = 0; i < index.length; i++)
-            index[i] = callContext.getParameter("_index"+i);
+            index[i] = callContext.getParameter("index"+i);
 
         CherryVaultApi api = MApi.lookup(CherryVaultApi.class);
         
-		return api.search(index, 100);
+		return api.search(target, index, 100);
 	}
 
 	@Override

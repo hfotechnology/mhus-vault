@@ -37,7 +37,7 @@ import de.mhus.osgi.sop.api.aaa.AccessApi;
 
 public class VaultEntry extends DbMetadata {
 
-	@DbIndex("1")
+	@DbIndex({"1","v0","v1","v2","v3","v4"})
 	@DbPersistent(ro=true)
 	protected String target;
 	@DbPersistent(ro=true)
@@ -173,7 +173,6 @@ public class VaultEntry extends DbMetadata {
 
 	@Override
 	public DbMetadata findParentObject() throws MException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
