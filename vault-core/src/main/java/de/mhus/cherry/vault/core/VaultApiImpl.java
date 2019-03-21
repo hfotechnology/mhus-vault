@@ -111,7 +111,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
         entriesToSave.forEach(e -> {
             for (int i = 0; i < index.length; i++) {
                 String val = index[i];
-                if (val == null) continue;
+                if (MString.isEmpty(val)) continue;
                 switch(i) {
                 case 0:e.setIndex0(val); break;
                 case 1:e.setIndex1(val); break;
@@ -596,7 +596,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
                 .gt("validto", now);
         boolean found = false;
         for (int i = 0; i < index.length; i++) {
-            if (index[i] == null || i > 4) continue;
+            if (MString.isEmpty(index[i]) || i > 4) continue;
             found = true;
             query.eq("index" + i, index[i]);
         }
