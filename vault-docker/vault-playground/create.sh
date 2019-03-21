@@ -15,17 +15,13 @@
 # limitations under the License.
 #
 
-rm -r repository/*
-
-for f in $(cd  ~/.m2/repository;find . -type d -name \*SNAPSHOT\*)
-do 
-  echo Import $f
-  mkdir -p repository/$f
-  cp -r ~/.m2/repository/$f/* repository/$f
-done
-
 if [ "$1" = "clean" ]; then
-	docker build --no-cache -t vault-playground .
+    docker build --no-cache -t vault-playground-stage1 .
 else
-	docker build -t vault-playground .
-fi	
+    docker build -t vault-playground-stage1 .
+fi  
+
+docker rm vault-playground-stage1
+docker run --name vault-playground-stage1 -e PREVENT_ENVIRONMENT=1 -v ~/.m2:/home/user/.m2 vault-playground-stage1
+docker commit vault-playground-stage1 vault-playground
+

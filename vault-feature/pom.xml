@@ -33,7 +33,6 @@
 				<plugin>
 					<groupId>org.apache.karaf.tooling</groupId>
 					<artifactId>karaf-maven-plugin</artifactId>
-					<version>${karaf.tool.version}</version>
 					<extensions>true</extensions>
 				</plugin>
 				<!--This plugin's configuration is used to store Eclipse m2e settings 

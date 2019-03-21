@@ -47,7 +47,7 @@ public class RsaEncryptProcessor implements TargetProcessor {
 		UUID keyId = UUID.fromString(processorConfig.getString("keyId"));
 		
 		CryptApi api = MApi.lookup(CryptApi.class);
-		CipherProvider cipher = api.getCipher(processorConfig.getString("cipherService","RSA-1"));
+		CipherProvider cipher = api.getCipher(processorConfig.getString("cipherService","RSA-BC"));
 		
 		MVault vault = MVaultUtil.loadDefault();
 		de.mhus.lib.core.vault.VaultEntry keyValue = vault.getEntry(keyId);
@@ -61,7 +61,7 @@ public class RsaEncryptProcessor implements TargetProcessor {
 		
 		if (processorConfig.isProperty("signId")) {
 			UUID signId = UUID.fromString(processorConfig.getString("signId"));
-			SignerProvider signer = api.getSigner(processorConfig.getString("signService", "DSA-1"));
+			SignerProvider signer = api.getSigner(processorConfig.getString("signService", "DSA-BC"));
 			de.mhus.lib.core.vault.VaultEntry signKeyValue = vault.getEntry(signId);
 			if (signKeyValue == null) throw new NotFoundException("sign key not found",signId);
 			PemPriv signKey = PemUtil.toKey(signKeyValue.getValue().value());

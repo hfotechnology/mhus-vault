@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+    <bean id="cmd" 
+          class="de.mhus.osgi.services.scheduler.ScheduleGogo" 
+          init-method="init" destroy-method="destroy">
+      <property name="name" value="cmd_init_vault"/>
+      <property name="interval" value="once:60000"/>
+      <property name="command" value="
+crypta:cipher -i -s CherryVaultLocalSource -d 'Test Rsa Key' RSA-BC create|cut -m array -f Ident|setvar rsaPrivId rsaPubId;
+crypta:signer -i -s CherryVaultLocalSource DSA-BC create|cut -m array -f Ident|setvar dsaPrivId dsaPubId;
+xdb:create VaultGroup name=test secretgeneratorname=password allowupdate=true targets.add=test writeacl.add=* enabled=true maximportlength=100;
+xdb:create VaultTarget name=test conditionnames=true processorname=cipher.rsa processorconfig.keyId=$rsaPubId processorconfig.signId=$dsaPrivId processorconfig.signService=DSA-BC readacl.add=*
+"/>
+      <property name="timerFactory" ref="TimerFactoryRef" />
+    </bean>
+    <reference
+       id="TimerFactoryRef" 
+       interface="de.mhus.lib.core.base.service.TimerFactory" />
+    <service 
+      interface="de.mhus.osgi.services.SimpleServiceIfc" 
+      ref="cmd">
+        <service-properties>
+            <entry key="osgi.jndi.service.name" value="cmd_init_vault"/>
+        </service-properties>
+    </service>
+</blueprint>
