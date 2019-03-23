@@ -44,8 +44,8 @@
         <bundle>mvn:org.apache.commons/commons-jexl/${commons-jexl.version}</bundle>
         <bundle><![CDATA[wrap:mvn:org.w3c.css/sac/${w3c.css.sac}/$Bundle-SymbolicName=sac&Bundle-Version=${w3c.css.sac}&Export-Package=org.w3c.css.sac;version="${w3c.css.sac}",!*]]></bundle>
 
-        <bundle>mvn:org.codehaus.jackson/jackson-core-asl/${jackson.version}</bundle>
-        <bundle>mvn:org.codehaus.jackson/jackson-mapper-asl/${jackson.version}</bundle>
+        <bundle>mvn:org.codehaus.jackson/jackson-core-asl/${jackson.asl.version}</bundle>
+        <bundle>mvn:org.codehaus.jackson/jackson-mapper-asl/${jackson.asl.version}</bundle>
         <bundle><![CDATA[wrap:mvn:org.apache.commons/commons-io/${commons-io.version}/$Bundle-SymbolicName=commons-io&Bundle-Version=${commons-io.version}&Export-Package=org.apache.commons.io;version="${commons-io.version}",!*]]></bundle>
 
         <bundle>mvn:de.mhus.lib/mhu-lib-annotations/${mhus-lib.version}</bundle>
