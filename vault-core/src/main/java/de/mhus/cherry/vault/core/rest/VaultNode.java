@@ -41,7 +41,7 @@ import de.mhus.osgi.sop.api.rest.annotation.RestNode;
 
 @Component(immediate=true,service=RestNodeService.class)
 @RestNode(name="vault",parent=Node.ROOT_ID)
-public class VaultNode extends ObjectListNode<VaultEntry>{
+public class VaultNode extends ObjectListNode<VaultEntry,VaultEntry>{
 
 	@Override
 	protected List<VaultEntry> getObjectList(CallContext callContext) throws MException {
@@ -59,10 +59,10 @@ public class VaultNode extends ObjectListNode<VaultEntry>{
 		return api.search(target, index, 100);
 	}
 
-	@Override
-	public Class<VaultEntry> getManagedClass() {
-		return VaultEntry.class;
-	}
+//	@Override
+//	public Class<VaultEntry> getManagedClass() {
+//		return VaultEntry.class;
+//	}
 
 	@Override
 	protected VaultEntry getObjectForId(CallContext context, String id) throws Exception {
