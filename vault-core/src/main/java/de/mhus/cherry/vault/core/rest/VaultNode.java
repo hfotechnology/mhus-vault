@@ -40,7 +40,7 @@ import de.mhus.osgi.sop.api.rest.annotation.RestAction;
 import de.mhus.osgi.sop.api.rest.annotation.RestNode;
 
 @Component(immediate=true,service=RestNodeService.class)
-@RestNode(name="vault",parent=Node.ROOT_ID)
+@RestNode(name="vault",parent=Node.ROOT_PARENT)
 public class VaultNode extends ObjectListNode<VaultEntry,VaultEntry>{
 
 	@Override
