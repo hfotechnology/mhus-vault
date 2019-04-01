@@ -22,12 +22,12 @@
 	<modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>de.mhus.lib</groupId>
-        <version>3.6.0-SNAPSHOT</version>
+        <version>3.6.0</version>
         <artifactId>mhus-karaf</artifactId>
     </parent>
 	<groupId>de.mhus.cherry.vault</groupId>
 	<artifactId>cherry-vault</artifactId>
-	<version>1.6.0-SNAPSHOT</version>
+	<version>1.6.0</version>
 	<packaging>pom</packaging>
 	<name>Cherry Password Vault</name>
 	<description>Central password and security store for distributed applications</description>
@@ -58,6 +58,8 @@
 		<module>vault-api</module>
 		<module>vault-core</module>
 		<module>vault-client</module>
+		<!-- 
 		<module>vault-feature</module>
+		 -->
 	</modules>
 </project>
