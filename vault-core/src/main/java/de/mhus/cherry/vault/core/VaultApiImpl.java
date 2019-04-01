@@ -89,7 +89,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		
 		// create entries by targets
 		String secretId = UUID.randomUUID().toString();
-		log().i("create secret",groupName,secretId);
+		log().d("create secret",groupName,secretId);
 		
 		// -- cache entries to save. Save if everything target was ok
 		LinkedList<VaultEntry> entriesToSave = new LinkedList<>();
@@ -150,7 +150,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		SecretContent secret = generator.generateSecret(group, properties);
 		if (secret == null) throw new MException("Secret is null");
 		
-		log().i("create update",groupName,secretId);
+		log().d("create update",groupName,secretId);
 
 		// -- cache entries to save. Save if everything target was ok
 		LinkedList<VaultEntry> entriesToSave = new LinkedList<>();
@@ -186,7 +186,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		
 		// create entries by targets
 		String secretId = UUID.randomUUID().toString();
-		log().i("import secret",groupName,secretId);
+		log().d("import secret",groupName,secretId);
 
 		// -- cache entries to save. Save if everything target was ok
 		LinkedList<VaultEntry> entriesToSave = new LinkedList<>();
@@ -222,7 +222,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		if (group.getMaxImportLength() > 0 && secret.getContent().length() > group.getMaxImportLength())
 			throw new MException("Secret out of bounds",group.getMaxImportLength());
 		
-		log().i("import update",groupName,secretId);
+		log().d("import update",groupName,secretId);
 
 		// -- cache entries to save. Save if everything target was ok
 		LinkedList<VaultEntry> entriesToSave = new LinkedList<>();
@@ -250,7 +250,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		if (!AaaUtil.hasAccess(aaa.getCurrentOrGuest(), acl))
 			throw new AccessDeniedException("Write access to group denied",groupName);
 
-		log().i("delete secret",groupName,secretId);
+		log().d("delete secret",groupName,secretId);
 
 //		MorphiaIterator<VaultEntry, VaultEntry> res = StaticAccess.moManager.getManager().createQuery(VaultEntry.class).field("secretId").equal(secretId).fetch();
 		DbCollection<VaultEntry> res = StaticAccess.moManager.getManager().getByQualification(Db.query(VaultEntry.class).eq("secretid", secretId));
@@ -279,7 +279,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		if (!AaaUtil.hasAccess(aaa.getCurrentOrGuest(), acl))
 			throw new AccessDeniedException("Write access to group denied",groupName);
 
-		log().i("undelete secret",groupName,secretId);
+		log().d("undelete secret",groupName,secretId);
 
 //		MorphiaIterator<VaultArchive, VaultArchive> res2 = StaticAccess.moManager.getManager().createQuery(VaultArchive.class).field("secretId").equal(secretId).fetch();
 		DbCollection<VaultArchive> res2 = StaticAccess.moManager.getManager().getByQualification(Db.query(VaultArchive.class).eq("secretid", secretId));
