@@ -27,7 +27,7 @@ import de.mhus.cherry.vault.api.ifc.TargetProcessor;
 import de.mhus.cherry.vault.api.model.WritableEntry;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.IReadProperties;
-import de.mhus.lib.core.MApi;
+import de.mhus.lib.core.M;
 import de.mhus.lib.core.crypt.MRandom;
 import de.mhus.lib.core.crypt.pem.PemBlock;
 import de.mhus.lib.core.crypt.pem.PemBlockList;
@@ -50,7 +50,7 @@ public class ShaProcessor implements TargetProcessor {
 		
 		try {
 			
-			MRandom random = MApi.lookup(MRandom.class);
+			MRandom random = M.l(MRandom.class);
 			String salt = "" + random.getChar() + random.getChar();
 			
 			MessageDigest md = MessageDigest.getInstance("SHA-256");
@@ -68,7 +68,7 @@ public class ShaProcessor implements TargetProcessor {
 			
 			if (processorConfig.isProperty("signId")) {
 				MVault vault = MVaultUtil.loadDefault();
-				CryptApi api = MApi.lookup(CryptApi.class);
+				CryptApi api = M.l(CryptApi.class);
 				UUID signId = UUID.fromString(processorConfig.getString("signId"));
 				SignerProvider signer = api.getSigner(processorConfig.getString("signService", "DSA-1"));
 				de.mhus.lib.core.vault.VaultEntry signKeyValue = vault.getEntry(signId);

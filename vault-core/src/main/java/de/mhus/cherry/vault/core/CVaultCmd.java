@@ -8,7 +8,7 @@ import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 import de.mhus.cherry.vault.api.CherryVaultApi;
 import de.mhus.cherry.vault.api.model.VaultEntry;
-import de.mhus.lib.core.MApi;
+import de.mhus.lib.core.M;
 import de.mhus.lib.core.MCollection;
 import de.mhus.lib.core.console.ConsoleTable;
 
@@ -32,7 +32,7 @@ public class CVaultCmd implements Action {
     @Override
     public Object execute() throws Exception {
 
-        CherryVaultApi api = MApi.lookup(CherryVaultApi.class);
+        CherryVaultApi api = M.l(CherryVaultApi.class);
 
         switch (cmd) {
         case "create": {

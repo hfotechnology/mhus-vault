@@ -26,7 +26,7 @@ import de.mhus.lib.annotations.adb.DbIndex;
 import de.mhus.lib.annotations.adb.DbPersistent;
 import de.mhus.lib.annotations.adb.DbType.TYPE;
 import de.mhus.lib.core.IReadProperties;
-import de.mhus.lib.core.MApi;
+import de.mhus.lib.core.M;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MSystem;
 import de.mhus.lib.core.util.ReadOnlyException;
@@ -95,7 +95,7 @@ public class VaultEntry extends DbMetadata {
 	public void preChecksum() throws NoSuchAlgorithmException, UnsupportedEncodingException, ReadOnlyException {
 		
 		if (creator == null) {
-			AccessApi aaa = MApi.lookup(AccessApi.class);
+			AccessApi aaa = M.l(AccessApi.class);
 			creator = aaa.getCurrentOrGuest().getAccountId();
 		}
 		

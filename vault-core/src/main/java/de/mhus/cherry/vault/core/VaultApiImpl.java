@@ -37,7 +37,7 @@ import de.mhus.lib.adb.query.AQuery;
 import de.mhus.lib.adb.query.Db;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.IReadProperties;
-import de.mhus.lib.core.MApi;
+import de.mhus.lib.core.M;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MString;
@@ -73,7 +73,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		VaultGroup group = getGroup(groupName);
 		
 		// check write access
-		AccessApi aaa = MApi.lookup(AccessApi.class);
+		AccessApi aaa = M.l(AccessApi.class);
 		List<String> acl = group.getWriteAcl();
 		if (!AaaUtil.hasAccess(aaa.getCurrentOrGuest(), acl))
 			throw new AccessDeniedException("Write access to group denied",groupName);
@@ -134,7 +134,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		VaultGroup group = getGroup(groupName);
 		
 		// check write access
-		AccessApi aaa = MApi.lookup(AccessApi.class);
+		AccessApi aaa = M.l(AccessApi.class);
 		List<String> acl = group.getWriteAcl();
 		if (!AaaUtil.hasAccess(aaa.getCurrentOrGuest(), acl))
 			throw new AccessDeniedException("Write access to group denied",groupName);
@@ -175,7 +175,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		VaultGroup group = getGroup(groupName);
 
 		// check write access
-		AccessApi aaa = MApi.lookup(AccessApi.class);
+		AccessApi aaa = M.l(AccessApi.class);
 		List<String> acl = group.getWriteAcl();
 		if (!AaaUtil.hasAccess(aaa.getCurrentOrGuest(), acl))
 			throw new AccessDeniedException("Write access to group denied",groupName);
@@ -211,7 +211,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		VaultGroup group = getGroup(groupName);
 		
 		// check write access
-		AccessApi aaa = MApi.lookup(AccessApi.class);
+		AccessApi aaa = M.l(AccessApi.class);
 		List<String> acl = group.getWriteAcl();
 		if (!AaaUtil.hasAccess(aaa.getCurrentOrGuest(), acl))
 			throw new AccessDeniedException("Write access to group denied",groupName);
@@ -245,7 +245,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		VaultGroup group = getGroup(groupName);
 
 		// check write access
-		AccessApi aaa = MApi.lookup(AccessApi.class);
+		AccessApi aaa = M.l(AccessApi.class);
 		List<String> acl = group.getWriteAcl();
 		if (!AaaUtil.hasAccess(aaa.getCurrentOrGuest(), acl))
 			throw new AccessDeniedException("Write access to group denied",groupName);
@@ -274,7 +274,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		VaultGroup group = getGroup(groupName);
 
 		// check write access
-		AccessApi aaa = MApi.lookup(AccessApi.class);
+		AccessApi aaa = M.l(AccessApi.class);
 		List<String> acl = group.getWriteAcl();
 		if (!AaaUtil.hasAccess(aaa.getCurrentOrGuest(), acl))
 			throw new AccessDeniedException("Write access to group denied",groupName);
@@ -298,7 +298,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		
 		VaultTarget target = getTarget(targetName);
 		// check read access
-		AccessApi aaa = MApi.lookup(AccessApi.class);
+		AccessApi aaa = M.l(AccessApi.class);
 		List<String> acl = target.getReadAcl();
 		if (!AaaUtil.hasAccess(aaa.getCurrentOrGuest(), acl))
 			throw new AccessDeniedException("Read access to target denied",targetName);
@@ -498,14 +498,14 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 	        throws MException {
 		
 		VaultGroup group = getGroup(groupName);
-		AccessApi aaa = MApi.lookup(AccessApi.class);
+		AccessApi aaa = M.l(AccessApi.class);
 		AaaContext ac = aaa.getCurrentOrGuest();
 		if (properties == null) properties = new MProperties();
 		
 		SecretContent sec = null;
 		if (PemUtil.isPemBlock(secret)) {
 			// it's encoded
-			CryptApi crypta = MApi.lookup(CryptApi.class);
+			CryptApi crypta = M.l(CryptApi.class);
 			PemBlockList encoded = new PemBlockList(secret);
 			
 			CherryVaultProcessContext context = new CherryVaultProcessContext(ac,properties);			
@@ -530,14 +530,14 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		
 		String groupName = findGroupNameForSecretId(secretId);
 		VaultGroup group = getGroup(groupName);
-		AccessApi aaa = MApi.lookup(AccessApi.class);
+		AccessApi aaa = M.l(AccessApi.class);
 		AaaContext ac = aaa.getCurrentOrGuest();
 		if (properties == null) properties = new MProperties();
 
 		SecretContent sec = null;
 		if (PemUtil.isPemBlock(secret)) {
 			// it's encoded
-			CryptApi crypta = MApi.lookup(CryptApi.class);
+			CryptApi crypta = M.l(CryptApi.class);
 			PemBlockList encoded = new PemBlockList(secret);
 			
 			CherryVaultProcessContext context = new CherryVaultProcessContext(ac,properties);			

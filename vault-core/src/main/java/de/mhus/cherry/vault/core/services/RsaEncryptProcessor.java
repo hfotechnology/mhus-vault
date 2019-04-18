@@ -23,7 +23,7 @@ import de.mhus.cherry.vault.api.ifc.TargetProcessor;
 import de.mhus.cherry.vault.api.model.WritableEntry;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.IReadProperties;
-import de.mhus.lib.core.MApi;
+import de.mhus.lib.core.M;
 import de.mhus.lib.core.crypt.pem.PemBlock;
 import de.mhus.lib.core.crypt.pem.PemBlockList;
 import de.mhus.lib.core.crypt.pem.PemPriv;
@@ -46,7 +46,7 @@ public class RsaEncryptProcessor implements TargetProcessor {
 
 		UUID keyId = UUID.fromString(processorConfig.getString("keyId"));
 		
-		CryptApi api = MApi.lookup(CryptApi.class);
+		CryptApi api = M.l(CryptApi.class);
 		CipherProvider cipher = api.getCipher(processorConfig.getString("cipherService","RSA-BC"));
 		
 		MVault vault = MVaultUtil.loadDefault();

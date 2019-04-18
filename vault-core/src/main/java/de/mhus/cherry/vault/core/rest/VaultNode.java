@@ -24,7 +24,7 @@ import org.osgi.service.component.annotations.Component;
 import de.mhus.cherry.vault.api.CherryVaultApi;
 import de.mhus.cherry.vault.api.model.VaultEntry;
 import de.mhus.cherry.vault.core.impl.StaticAccess;
-import de.mhus.lib.core.MApi;
+import de.mhus.lib.core.M;
 import de.mhus.lib.core.MDate;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.pojo.PojoModelFactory;
@@ -54,7 +54,7 @@ public class VaultNode extends ObjectListNode<VaultEntry,VaultEntry>{
         for (int i = 0; i < index.length; i++)
             index[i] = callContext.getParameter("index"+i);
 
-        CherryVaultApi api = MApi.lookup(CherryVaultApi.class);
+        CherryVaultApi api = M.l(CherryVaultApi.class);
         
 		return api.search(target, index, 100);
 	}
@@ -70,7 +70,7 @@ public class VaultNode extends ObjectListNode<VaultEntry,VaultEntry>{
 		if (p <= 0) return null;
 		String target = id.substring(p+1);
 		id = id.substring(0, p);
-		CherryVaultApi api = MApi.lookup(CherryVaultApi.class);
+		CherryVaultApi api = M.l(CherryVaultApi.class);
 		return api.getSecret(id, target);
 	}
 
@@ -101,7 +101,7 @@ public class VaultNode extends ObjectListNode<VaultEntry,VaultEntry>{
         for (int i = 0; i < index.length; i++)
             index[i] = callContext.getParameter("_index"+i);
 		
-		CherryVaultApi api = MApi.lookup(CherryVaultApi.class);
+		CherryVaultApi api = M.l(CherryVaultApi.class);
 		
 		if (secret != null) {
 			api.importUpdate(secretId, validFrom, validTo, secret, properties, index);
@@ -125,7 +125,7 @@ public class VaultNode extends ObjectListNode<VaultEntry,VaultEntry>{
 			if (name.startsWith("__"))
 				properties.put(name.substring(1), callContext.getParameter(name));
 		
-		CherryVaultApi api = MApi.lookup(CherryVaultApi.class);
+		CherryVaultApi api = M.l(CherryVaultApi.class);
 		
 		String[] index = new String[5];
         for (int i = 0; i < index.length; i++)
@@ -154,7 +154,7 @@ public class VaultNode extends ObjectListNode<VaultEntry,VaultEntry>{
 		if (secretId == null)
 			throw new UsageException("secret id not found");
 
-		CherryVaultApi api = MApi.lookup(CherryVaultApi.class);
+		CherryVaultApi api = M.l(CherryVaultApi.class);
 		
 		api.deleteSecret(secretId);
 	}
@@ -181,7 +181,7 @@ public class VaultNode extends ObjectListNode<VaultEntry,VaultEntry>{
         for (int i = 0; i < index.length; i++)
             index[i] = callContext.getParameter("_index"+i);
 
-        CherryVaultApi api = MApi.lookup(CherryVaultApi.class);
+        CherryVaultApi api = M.l(CherryVaultApi.class);
 
         api.update(secretId, index);
 
