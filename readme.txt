@@ -19,16 +19,16 @@ cp .../etc/aaa/accounts/* sop/aaa/accounts
 Examples
 =========
 
-crypta:cipher -i -s CherryVaultLocalSource -d "Test Rsa Key" RSA-BC create
-crypta:signer -i -s CherryVaultLocalSource DSA-BC create
+crypta:cipher -i -s CherryVaultLocalSource -d "Test Rsa Key" RSA-BC-01 create
+crypta:signer -i -s CherryVaultLocalSource DSA-BC-01 create
 
 
 Create test group and target:
 
-crypta:cipher -i -s CherryVaultLocalSource -d "Test Rsa Key" RSA-BC create|cut -m array -f Ident|set rsaPrivId rsaPubId
-crypta:signer -i -s CherryVaultLocalSource DSA-BC create|cut -m array -f Ident|set dsaPrivId dsaPubId
+crypta:cipher -i -s CherryVaultLocalSource -d "Test Rsa Key" RSA-BC-01 create|cut -m array -f Ident|set rsaPrivId rsaPubId
+crypta:signer -i -s CherryVaultLocalSource DSA-BC-01 create|cut -m array -f Ident|set dsaPrivId dsaPubId
 xdb:create VaultGroup name=test secretgeneratorname=password allowupdate=true targets.add=test writeacl.add=* enabled=true maximportlength=100
-xdb:create VaultTarget name=test conditionnames=true processorname=cipher.rsa processorconfig.keyId=$rsaPubId processorconfig.signId=$dsaPrivId processorconfig.signService=DSA-BC readacl.add=*
+xdb:create VaultTarget name=test conditionnames=true processorname=cipher.rsa processorconfig.keyId=$rsaPubId processorconfig.signId=$dsaPrivId processorconfig.signService=DSA-BC-01 readacl.add=*
 
 
 cvc create test
