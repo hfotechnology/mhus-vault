@@ -314,6 +314,23 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		}
 	}
 
+    @Override
+    public List<VaultEntry> getSecrets(String secretId) throws MException {
+        
+        // check read access
+        AccessApi aaa = M.l(AccessApi.class);
+
+        LinkedList<VaultEntry> res = new LinkedList<>();
+        for ( VaultEntry entry : StaticAccess.moManager.getManager().getByQualification(Db.query(VaultEntry.class).eq("secretid", secretId))) {
+            String targetName = entry.getTarget();
+            VaultTarget target = getTarget(targetName);
+            List<String> acl = target.getReadAcl();
+            if (AaaUtil.hasAccess(aaa.getCurrentOrGuest(), acl))
+                res.add(entry);
+        }
+        return res;
+    }
+    
 	private void saveEntries(String groupName, LinkedList<VaultEntry> entriesToSave, Date validFrom, Date validTo) {
 		for (VaultEntry entry : entriesToSave) {
 			try {
