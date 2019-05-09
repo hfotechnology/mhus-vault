@@ -50,12 +50,12 @@ public class CherryVaultManager extends AbstractDbSchemaService {
 	@Override
 	public void doInitialize(XdbService dbService) {
 		this.service = dbService;
-		StaticAccess.moManager = this;
+		StaticAccess.db = this;
 	}
 
 	@Override
 	public void doDestroy() {
-		StaticAccess.moManager = null;
+		StaticAccess.db = null;
 	}
 
 	@Override

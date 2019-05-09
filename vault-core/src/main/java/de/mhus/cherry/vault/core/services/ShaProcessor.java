@@ -70,12 +70,12 @@ public class ShaProcessor implements TargetProcessor {
 				MVault vault = MVaultUtil.loadDefault();
 				CryptApi api = M.l(CryptApi.class);
 				UUID signId = UUID.fromString(processorConfig.getString("signId"));
-				SignerProvider signer = api.getSigner(processorConfig.getString("signService", "DSA-1"));
+				SignerProvider signer = api.getSigner(processorConfig.getString("signService", CFG_SIGNER_DEFAULT.value()));
 				de.mhus.lib.core.vault.VaultEntry signKeyValue = vault.getEntry(signId);
 				if (signKeyValue == null) throw new NotFoundException("sign key not found",signId);
 				PemPriv signKey = PemUtil.toKey(signKeyValue.getValue().value());
 				PemBlock signed = signer.sign(signKey, cs, processorConfig.getString("signPassphrase", null));
-				result.addFirst(signed);
+				result.add(signed);
 			}
 
 			entry.setSecret(result.toString());

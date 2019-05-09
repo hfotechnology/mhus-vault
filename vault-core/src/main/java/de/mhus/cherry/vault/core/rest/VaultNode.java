@@ -46,9 +46,11 @@ public class VaultNode extends ObjectListNode<VaultEntry,VaultEntry>{
 	@Override
 	protected List<VaultEntry> getObjectList(CallContext callContext) throws MException {
 		// we will not support browsing - but searching
+
+        String group = callContext.getParameter("target");
+        if (group == null) return new EmptyList<VaultEntry>();
 	    
 	    String target = callContext.getParameter("target");
-        if (target == null) return new EmptyList<VaultEntry>();
         
 	    String[] index = new String[5];
         for (int i = 0; i < index.length; i++)
@@ -56,7 +58,7 @@ public class VaultNode extends ObjectListNode<VaultEntry,VaultEntry>{
 
         CherryVaultApi api = M.l(CherryVaultApi.class);
         
-		return api.search(target, index, 100);
+		return api.search(group, target, index, 100);
 	}
 
 //	@Override
@@ -161,7 +163,7 @@ public class VaultNode extends ObjectListNode<VaultEntry,VaultEntry>{
 	
 	@Override
 	protected PojoModelFactory getPojoModelFactory() {
-		return StaticAccess.moManager.getManager().getPojoModelFactory();
+		return StaticAccess.db.getManager().getPojoModelFactory();
 	}
 	
 	@RestAction(name="indexes")

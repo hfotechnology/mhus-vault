@@ -42,8 +42,6 @@ public class VaultEntry extends DbMetadata {
 	protected String target;
 	@DbPersistent(ro=true)
 	protected String group;
-	@DbPersistent(ro=true)
-	protected String secretKeyId;
 	@DbPersistent(type=TYPE.BLOB)
 	protected String secret;
 	@DbIndex({"1","2"})
@@ -51,6 +49,8 @@ public class VaultEntry extends DbMetadata {
 	protected String secretId;
 	@DbPersistent(ro=true)
 	protected MProperties meta;
+    @DbPersistent(ro=true)
+    protected MProperties properties;
 	@DbPersistent
 	protected Date validFrom;
 	@DbPersistent
@@ -82,7 +82,6 @@ public class VaultEntry extends DbMetadata {
 	public VaultEntry(VaultEntry clone) {
 		target = clone.getTarget();
 		group = clone.getGroup();
-		secretKeyId = clone.getSecretKeyId();
 		secretId = clone.getSecretId();
 		secret = clone.getSecret();
 		meta = new MProperties(clone.getMeta());
@@ -102,7 +101,6 @@ public class VaultEntry extends DbMetadata {
 		MessageDigest md = MessageDigest.getInstance("SHA-256");
 
 		md.update(String.valueOf(secret).getBytes("UTF-8"));
-		md.update(String.valueOf(secretKeyId).getBytes("UTF-8"));
 		md.update(String.valueOf(secretId).getBytes("UTF-8"));
 		md.update(target.getBytes("UTF-8"));
 		md.update(group.getBytes("UTF-8"));
@@ -136,11 +134,10 @@ public class VaultEntry extends DbMetadata {
 		return meta;
 	}
 
-
-	public String getSecretKeyId() {
-		return secretKeyId;
-	}
-
+    public IReadProperties getProperties() {
+        if (properties == null) properties = new MProperties();
+        return properties;
+    }
 
 	public String getSecretId() {
 		return secretId;

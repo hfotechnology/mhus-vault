@@ -19,6 +19,6 @@ import de.mhus.cherry.vault.core.CherryVaultManager;
 
 public class StaticAccess {
 
-	public static CherryVaultManager moManager;
+	public static CherryVaultManager db;
 
 }

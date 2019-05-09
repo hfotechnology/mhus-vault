@@ -52,7 +52,7 @@ public class CherryMVaultSource extends MLog implements MutableVaultSource {
 	public VaultEntry getEntry(UUID id) {
 		try {
 //			VaultKey key = StaticAccess.moManager.getManager().createQuery(VaultKey.class).filter("ident", id.toString()).get();
-			VaultKey key = StaticAccess.moManager.getManager().getObjectByQualification(Db.query(VaultKey.class).eq("ident", id));
+			VaultKey key = StaticAccess.db.getManager().getObjectByQualification(Db.query(VaultKey.class).eq("ident", id));
 			if (key == null) return null;
 			List<String> readAcl = key.getReadAcl();
 			if (readAcl != null) {
@@ -73,7 +73,7 @@ public class CherryMVaultSource extends MLog implements MutableVaultSource {
 		AaaContext acc = M.l(AccessApi.class).getCurrentOrGuest();
 		try {
 	//		for ( VaultKey obj : StaticAccess.moManager.getManager().createQuery(VaultKey.class).limit(100).fetch()) {
-			for ( VaultKey obj : StaticAccess.moManager.getManager().getByQualification(Db.query(VaultKey.class).limit(100))) {
+			for ( VaultKey obj : StaticAccess.db.getManager().getByQualification(Db.query(VaultKey.class).limit(100))) {
 				List<String> readAcl = obj.getReadAcl();
 				if (readAcl != null) {
 					if (!AaaUtil.hasAccess(acc, readAcl))
@@ -102,7 +102,7 @@ public class CherryMVaultSource extends MLog implements MutableVaultSource {
 	@Override
 	public void addEntry(VaultEntry entry) throws MException {
 		VaultKey key = new VaultKey(entry.getId().toString(), entry.getValue().value(), entry.getDescription(), entry.getType());
-		StaticAccess.moManager.getManager().inject(key).save();
+		StaticAccess.db.getManager().inject(key).save();
 	}
 	
 	@Override

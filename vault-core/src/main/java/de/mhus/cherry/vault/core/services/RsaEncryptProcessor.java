@@ -18,6 +18,7 @@ package de.mhus.cherry.vault.core.services;
 import java.util.UUID;
 
 import org.osgi.service.component.annotations.Component;
+
 import de.mhus.cherry.vault.api.ifc.SecretContent;
 import de.mhus.cherry.vault.api.ifc.TargetProcessor;
 import de.mhus.cherry.vault.api.model.WritableEntry;
@@ -40,14 +41,14 @@ import de.mhus.osgi.crypt.api.signer.SignerProvider;
 @Component(property="name=cipher.rsa")
 public class RsaEncryptProcessor implements TargetProcessor {
 
-	@Override
+    @Override
 	public void process(IProperties properties, IReadProperties processorConfig, SecretContent secret,
 			WritableEntry entry) throws MException {
 
 		UUID keyId = UUID.fromString(processorConfig.getString("keyId"));
 		
 		CryptApi api = M.l(CryptApi.class);
-		CipherProvider cipher = api.getCipher(processorConfig.getString("cipherService","RSA-BC"));
+		CipherProvider cipher = api.getCipher(processorConfig.getString("cipherService", CFG_CIPHER_DEFAULT.value()));
 		
 		MVault vault = MVaultUtil.loadDefault();
 		de.mhus.lib.core.vault.VaultEntry keyValue = vault.getEntry(keyId);
@@ -61,15 +62,14 @@ public class RsaEncryptProcessor implements TargetProcessor {
 		
 		if (processorConfig.isProperty("signId")) {
 			UUID signId = UUID.fromString(processorConfig.getString("signId"));
-			SignerProvider signer = api.getSigner(processorConfig.getString("signService", "DSA-BC"));
+			SignerProvider signer = api.getSigner(processorConfig.getString("signService", CFG_SIGNER_DEFAULT.value()));
 			de.mhus.lib.core.vault.VaultEntry signKeyValue = vault.getEntry(signId);
 			if (signKeyValue == null) throw new NotFoundException("sign key not found",signId);
 			PemPriv signKey = PemUtil.toKey(signKeyValue.getValue().value());
 			PemBlock signed = signer.sign(signKey, encoded.toString(), processorConfig.getString("signPassphrase", null));
-			result.addFirst(signed);
+			result.add(signed);
 		}
 		
-		entry.setSecretKeyId(keyId.toString());
 		entry.setSecret(result.toString());
 		
 	}

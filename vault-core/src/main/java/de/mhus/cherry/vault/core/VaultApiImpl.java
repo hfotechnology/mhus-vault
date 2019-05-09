@@ -15,9 +15,11 @@
  */
 package de.mhus.cherry.vault.core;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.osgi.service.component.annotations.Component;
@@ -62,6 +64,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 	@SuppressWarnings("deprecation")
 	private static final Date END_OF_DAYS = new Date(3000-1900,0,1);
 	private static final String DEFAULT_GROUP_NAME = "default";
+	private static final int INDEXES = 5;
 
 	@Override
 	public String createSecret(String groupName, Date validFrom, Date validTo, IProperties properties, String[] index) throws MException {
@@ -97,7 +100,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		
 		if (entriesToSave.size() == 0) return null;
 		
-		updateIndexes(entriesToSave, index);
+		updateIndexes(entriesToSave, index, properties);
 		
 		// save entries
 		saveEntries(groupName, entriesToSave, validFrom, validTo);
@@ -105,21 +108,25 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		return secretId;
 	}
 
-	private void updateIndexes(LinkedList<VaultEntry> entriesToSave, String[] index) {
-	    if (index == null || index.length == 0) return;
+	private void updateIndexes(LinkedList<VaultEntry> entriesToSave, String[] index, IProperties properties) {
+	    // if (index == null || index.length == 0) return;
 	    
         entriesToSave.forEach(e -> {
-            for (int i = 0; i < index.length; i++) {
-                String val = index[i];
-                if (MString.isEmpty(val)) continue;
-                switch(i) {
-                case 0:e.setIndex0(val); break;
-                case 1:e.setIndex1(val); break;
-                case 2:e.setIndex2(val); break;
-                case 3:e.setIndex3(val); break;
-                case 4:e.setIndex4(val); break;
+            if (index != null)
+                for (int i = 0; i < index.length; i++) {
+                    String val = index[i];
+                    if (MString.isEmpty(val)) continue;
+                    switch(i) {
+                    case 0:e.setIndex0(val); break;
+                    case 1:e.setIndex1(val); break;
+                    case 2:e.setIndex2(val); break;
+                    case 3:e.setIndex3(val); break;
+                    case 4:e.setIndex4(val); break;
+                    }
                 }
-            }
+            if (properties != null)
+                for (Map.Entry<String,Object> entry : properties.entrySet())
+                    if (!e.getProperties().containsKey(entry.getKey())) ((MProperties)e.getProperties()).put(entry.getKey(), entry.getValue());
         });
     }
 
@@ -132,7 +139,14 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		// get group
 		String groupName = findGroupNameForSecretId(secretId);
 		VaultGroup group = getGroup(groupName);
-		
+
+		if (properties == null) properties = new MProperties();
+        List<VaultEntry> secrets = getSecrets(secretId);
+        if (secrets.size() > 0) {
+            for (Map.Entry<String,Object> entry : secrets.get(0).getProperties().entrySet())
+                if (!properties.containsKey(entry.getKey())) properties.put(entry.getKey(), entry.getValue());
+            index = fillIndex(index,secrets.get(0));
+        }
 		// check write access
 		AccessApi aaa = M.l(AccessApi.class);
 		List<String> acl = group.getWriteAcl();
@@ -158,14 +172,32 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		
 		updateEntriesValidTo(secretId, validFrom);
 		
-		updateIndexes(entriesToSave, index);
+		updateIndexes(entriesToSave, index, properties);
 		
 		// save entries
 		saveEntries(groupName, entriesToSave, validFrom, validTo);
 		
 	}
 
-	@Override
+	private String[] fillIndex(String[] index, VaultEntry vaultEntry) {
+	    String[] out = new String[INDEXES];
+	    for (int i = 0; i < out.length; i++) {
+	        out[i] = null;
+	        if (index != null && index.length > i && MString.isSet(index[i]))
+	            out[i] = index[i];
+	        if (MString.isEmpty(out[i]))
+    	        switch(i) {
+    	        case 0: out[i] = vaultEntry.getIndex0();break;
+                case 1: out[i] = vaultEntry.getIndex1();break;
+                case 2: out[i] = vaultEntry.getIndex2();break;
+                case 3: out[i] = vaultEntry.getIndex3();break;
+                case 4: out[i] = vaultEntry.getIndex4();break;
+    	        }
+	    }
+        return out;
+    }
+
+    @Override
 	public String importSecret(String groupName, Date validFrom, Date validTo, SecretContent secret, IProperties properties, String[] index) throws MException {
 		
 		if (validFrom == null) validFrom = new Date();
@@ -192,7 +224,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		LinkedList<VaultEntry> entriesToSave = new LinkedList<>();
 		processGroupTargets(group, properties, secretId, secret, entriesToSave);
 		
-        updateIndexes(entriesToSave, index);
+        updateIndexes(entriesToSave, index, properties);
 		
 		// save entries
 		saveEntries(groupName, entriesToSave, validFrom, validTo);
@@ -210,6 +242,17 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		String groupName = findGroupNameForSecretId(secretId);
 		VaultGroup group = getGroup(groupName);
 		
+        if (properties == null) properties = new MProperties();
+        
+        List<VaultEntry> secrets = getSecrets(secretId);
+        if (secrets.size() > 0) {
+            for (Map.Entry<String,Object> entry : secrets.get(0).getProperties().entrySet())
+                if (!properties.containsKey(entry.getKey())) 
+                    properties.put(entry.getKey(), entry.getValue());
+            index = fillIndex(index,secrets.get(0));
+        }
+        System.out.println("Index: " + Arrays.toString(index) + " " + properties);
+        
 		// check write access
 		AccessApi aaa = M.l(AccessApi.class);
 		List<String> acl = group.getWriteAcl();
@@ -230,7 +273,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		
 		updateEntriesValidTo(secretId, validFrom);
 
-	    updateIndexes(entriesToSave, index);
+	    updateIndexes(entriesToSave, index, properties);
 
 		// save entries
 		saveEntries(groupName, entriesToSave, validFrom, validTo);
@@ -253,10 +296,10 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		log().d("delete secret",groupName,secretId);
 
 //		MorphiaIterator<VaultEntry, VaultEntry> res = StaticAccess.moManager.getManager().createQuery(VaultEntry.class).field("secretId").equal(secretId).fetch();
-		DbCollection<VaultEntry> res = StaticAccess.moManager.getManager().getByQualification(Db.query(VaultEntry.class).eq("secretid", secretId));
+		DbCollection<VaultEntry> res = StaticAccess.db.getManager().getByQualification(Db.query(VaultEntry.class).eq("secretid", secretId));
 		for (VaultEntry entry : res) {
 			VaultArchive archive = new VaultArchive(entry);
-			StaticAccess.moManager.getManager().inject(archive).save();
+			StaticAccess.db.getManager().inject(archive).save();
 			entry.delete();
 		}
 		res.close();
@@ -267,7 +310,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		
 //		List<VaultArchive> res = StaticAccess.moManager.getManager().createQuery(VaultArchive.class).field("secretId").equal(secretId).limit(1).asList();
 		
-		VaultArchive res = StaticAccess.moManager.getManager().getObjectByQualification(Db.query(VaultArchive.class).eq("secretid", secretId));
+		VaultArchive res = StaticAccess.db.getManager().getObjectByQualification(Db.query(VaultArchive.class).eq("secretid", secretId));
 		if (res == null)
 			throw new NotFoundException("secretId not found",secretId);
 		String groupName = res.getGroup();
@@ -282,10 +325,10 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		log().d("undelete secret",groupName,secretId);
 
 //		MorphiaIterator<VaultArchive, VaultArchive> res2 = StaticAccess.moManager.getManager().createQuery(VaultArchive.class).field("secretId").equal(secretId).fetch();
-		DbCollection<VaultArchive> res2 = StaticAccess.moManager.getManager().getByQualification(Db.query(VaultArchive.class).eq("secretid", secretId));
+		DbCollection<VaultArchive> res2 = StaticAccess.db.getManager().getByQualification(Db.query(VaultArchive.class).eq("secretid", secretId));
 		for (VaultEntry archive : res2) {
 			VaultEntry entry = new VaultEntry(archive);
-			StaticAccess.moManager.getManager().inject(entry).save();
+			StaticAccess.db.getManager().inject(entry).save();
 			archive.delete();
 		}
 		res2.close();
@@ -305,7 +348,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 
 //		VaultEntry obj = StaticAccess.moManager.getManager().createQuery(VaultEntry.class).field("secretId").equal(secretId).field("target").equal(targetName).get();
 		try {
-			VaultEntry obj = StaticAccess.moManager.getManager().getObjectByQualification(Db.query(VaultEntry.class).eq("secretid", secretId).eq("target", targetName));
+			VaultEntry obj = StaticAccess.db.getManager().getObjectByQualification(Db.query(VaultEntry.class).eq("secretid", secretId).eq("target", targetName));
 			if (obj == null)
 				throw new NotFoundException("secret not found",secretId,target);
 			return obj;
@@ -316,12 +359,18 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 
     @Override
     public List<VaultEntry> getSecrets(String secretId) throws MException {
-        
+
         // check read access
         AccessApi aaa = M.l(AccessApi.class);
 
+        Date now = new Date();
+        AQuery<VaultEntry> query = Db.query(VaultEntry.class)
+                .le("validfrom",now)
+                .gt("validto", now);
+        query.eq("secretid", secretId);
+
         LinkedList<VaultEntry> res = new LinkedList<>();
-        for ( VaultEntry entry : StaticAccess.moManager.getManager().getByQualification(Db.query(VaultEntry.class).eq("secretid", secretId))) {
+        for ( VaultEntry entry : StaticAccess.db.getManager().getByQualification(query)) {
             String targetName = entry.getTarget();
             VaultTarget target = getTarget(targetName);
             List<String> acl = target.getReadAcl();
@@ -380,7 +429,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 //		if (!group.isEnabled()) return null;
 //		return group;
 		try {
-			VaultGroup group = StaticAccess.moManager.getManager().getObjectByQualification(Db.query(VaultGroup.class).eq("name", DEFAULT_GROUP_NAME));
+			VaultGroup group = StaticAccess.db.getManager().getObjectByQualification(Db.query(VaultGroup.class).eq("name", DEFAULT_GROUP_NAME));
 			if (group == null) {
 				log().w("Unique group not found",DEFAULT_GROUP_NAME);
 				return null;
@@ -393,28 +442,32 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 	}
 
 	private VaultEntry processTarget(VaultGroup group, IProperties properties, VaultTarget target, String secretId, SecretContent secret) throws MException {
-		String processorName = target.getProcessorName();
-		TargetProcessor processor = getProcessor(processorName);
-		
-		WritableEntry entry = new WritableEntry();
-		// copy properties into meta
-		for (String mapping : target.getProcessorConfig().getString("properties2meta.mapping", "").split(",")) {
-			String from = mapping;
-			String to = mapping;
-			int p = mapping.indexOf('=');
-			if (p > 0) {
-				from = mapping.substring(p+1);
-				to = mapping.substring(0, p);
-			}
-			entry.getMeta().put(to, properties.get(from));
-		}
-		processor.process(properties, target.getProcessorConfig(), secret, entry);
-		
-		entry.setGroup(group.getName());
-		entry.setTarget(target.getName());
-		entry.setSecretId(secretId);
-		
-		return StaticAccess.moManager.getManager().inject( new VaultEntry(entry) );
+	    try {
+    		String processorName = target.getProcessorName();
+    		TargetProcessor processor = getProcessor(processorName);
+    		WritableEntry entry = new WritableEntry();
+    		// copy properties into meta
+    		for (String mapping : target.getProcessorConfig().getString("properties2meta.mapping", "").split(",")) {
+    			String from = mapping;
+    			String to = mapping;
+    			int p = mapping.indexOf('=');
+    			if (p > 0) {
+    				from = mapping.substring(p+1);
+    				to = mapping.substring(0, p);
+    			}
+    			entry.getMeta().put(to, properties.get(from));
+    		}
+    		processor.process(properties, target.getProcessorConfig(), secret, entry);
+    		
+    		entry.setGroup(group.getName());
+    		entry.setTarget(target.getName());
+    		entry.setSecretId(secretId);
+    		
+    		return StaticAccess.db.getManager().inject( new VaultEntry(entry) );
+	    } catch (Throwable t) {
+	        log().e("error executing target",group,target,secretId,t.toString());
+	        throw t;
+	    }
 	}
 
 	public TargetProcessor getProcessor(String processorName) throws NotFoundException {
@@ -447,7 +500,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 //		if (res.size() > 1) log().w("Not unique group name",name);
 //		VaultGroup group = res.get(0);
 		try {
-			VaultGroup group = StaticAccess.moManager.getManager().getObjectByQualification(Db.query(VaultGroup.class).eq("name", name));
+			VaultGroup group = StaticAccess.db.getManager().getObjectByQualification(Db.query(VaultGroup.class).eq("name", name));
 			if (!group.isEnabled())
 				throw new NotFoundException("Group is disabled", name);
 			return group;
@@ -462,7 +515,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 //		if (res.size() > 1) log().w("Not unique target name",name);
 //		return res.get(0);
 		try {
-			VaultTarget out = StaticAccess.moManager.getManager().getObjectByQualification(Db.query(VaultTarget.class).eq("name", name));
+			VaultTarget out = StaticAccess.db.getManager().getObjectByQualification(Db.query(VaultTarget.class).eq("name", name));
 			if (out == null)
 				throw new NotFoundException("Target not exists",name);
 			return out;
@@ -478,7 +531,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 //			throw new NotFoundException("secretId not found",secretId);
 //		return res.get(0).getGroup();
 		try {
-			VaultEntry out = StaticAccess.moManager.getManager().getObjectByQualification(Db.query(VaultEntry.class).eq("secretid", secretId));
+			VaultEntry out = StaticAccess.db.getManager().getObjectByQualification(Db.query(VaultEntry.class).eq("secretid", secretId));
 			if (out == null)
 				throw new NotFoundException("secretId not found",secretId);
 			return out.getGroup();
@@ -489,7 +542,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 
 	private void updateEntriesValidTo(String secretId, Date validTo) throws MException {
 		Date now = new Date();
-		XdbService manager = StaticAccess.moManager.getManager();
+		XdbService manager = StaticAccess.db.getManager();
 //		MorphiaIterator<VaultEntry, VaultEntry> res = manager.createQuery(VaultEntry.class)
 //			.field("secretId").equal(secretId)
 //			.field("validFrom").lessThanOrEq(now)
@@ -550,7 +603,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		AccessApi aaa = M.l(AccessApi.class);
 		AaaContext ac = aaa.getCurrentOrGuest();
 		if (properties == null) properties = new MProperties();
-
+	    
 		SecretContent sec = null;
 		if (PemUtil.isPemBlock(secret)) {
 			// it's encoded
@@ -579,7 +632,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
     public void update(String secretId, String[] index) throws MException {
 
         Date now = new Date();
-        XdbService manager = StaticAccess.moManager.getManager();
+        XdbService manager = StaticAccess.db.getManager();
         DbCollection<VaultEntry> res = manager.getByQualification(
                 Db.query(VaultEntry.class)
                     .eq("secretid", secretId)
@@ -591,7 +644,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
             entriesToSave.add(item);
         res.close();
 
-        updateIndexes(entriesToSave, index);
+        updateIndexes(entriesToSave, index, null);
 
         for (VaultEntry entry : entriesToSave) {
             try {
@@ -604,13 +657,16 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
     }
 
     @Override
-    public List<VaultEntry> search(String target, String[] index, int size) throws MException {
+    public List<VaultEntry> search(String group, String target, String[] index, int size) throws MException {
         if (index == null || index.length == 0) return new EmptyList<VaultEntry>();
 
         Date now = new Date();
         AQuery<VaultEntry> query = Db.query(VaultEntry.class)
                 .le("validfrom",now)
                 .gt("validto", now);
+        
+        if (group != null)
+            query.eq("group", group);
         
         if (target != null)
             query.eq("target", target);
@@ -623,7 +679,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
         }
         if (!found) return new EmptyList<VaultEntry>();
 
-        XdbService manager = StaticAccess.moManager.getManager();
+        XdbService manager = StaticAccess.db.getManager();
         DbCollection<VaultEntry> res = manager.getByQualification(query);
 
         LinkedList<VaultEntry> out = new LinkedList<>();

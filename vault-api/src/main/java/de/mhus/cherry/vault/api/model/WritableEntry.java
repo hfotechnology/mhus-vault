@@ -25,9 +25,6 @@ public class WritableEntry extends VaultEntry {
 	public void setGroup(String group) {
 		this.group = group;
 	}
-	public void setSecretKeyId(String secretKeyId) {
-		this.secretKeyId = secretKeyId;
-	}
 	public void setSecret(String secret) {
 		this.secret = secret;
 	}
