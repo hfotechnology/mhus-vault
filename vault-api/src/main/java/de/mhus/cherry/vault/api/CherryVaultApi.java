@@ -119,7 +119,7 @@ public interface CherryVaultApi {
 	 * @param index 
 	 * @throws MException
 	 */
-	void update(String secretId, String[] index) throws MException;
+	void indexUpdate(String secretId, String[] index) throws MException;
 	
 	void deleteSecret(String secretId) throws MException;
 		
@@ -129,6 +129,6 @@ public interface CherryVaultApi {
 
     List<VaultEntry> getSecrets(String secretId) throws MException;
     
-    List<VaultEntry> search(String group, String target, String[] index, int size) throws MException;
+    List<VaultEntry> search(String group, String target, String[] index, int size, boolean all) throws MException;
 	
 }

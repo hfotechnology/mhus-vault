@@ -51,7 +51,11 @@ public class Md5Processor implements TargetProcessor {
 		try {
 			
 			MRandom random = M.l(MRandom.class);
-			String salt = "" + random.getChar() + random.getChar();
+			String salt = null;
+			if (processorConfig.containsKey("salt"))
+			    salt = processorConfig.getString("salt");
+			else
+			    salt = "" + random.getChar() + random.getChar();
 			
 			MessageDigest md = MessageDigest.getInstance("MD5");
 			md.update(salt.getBytes("utf-8"));

@@ -50,6 +50,9 @@ public class CVaultCmd implements Action {
     @Option(name="-p", description="Properties",required=false, multiValued=true)
     String p[];
     
+    @Option(name="-a", description="All",required=false, multiValued=false)
+    boolean all = false;
+    
     @Override
     public Object execute() throws Exception {
 
@@ -69,7 +72,7 @@ public class CVaultCmd implements Action {
         case "search": {
             ConsoleTable table = new ConsoleTable(false);
             table.setHeaderValues("id","SecretId","Group","Target","From","To");
-            for (VaultEntry item : api.search(group, target, parameters, 100)) {
+            for (VaultEntry item : api.search(group, target, parameters, 100, all)) {
                 table.addRowValues(item.getId(),item.getSecretId(),item.getGroup(),item.getTarget(),item.getValidFrom(),item.getValidTo());
             }
             table.print();
@@ -92,7 +95,7 @@ public class CVaultCmd implements Action {
         case "updateindex": {
             String secretId = parameters[0];
             String[] index = MCollection.cropArray(parameters, 1, parameters.length);
-            api.update(secretId, index);
+            api.indexUpdate(secretId, index);
             System.out.println("OK");
         } break;
         case "updatecreate": {

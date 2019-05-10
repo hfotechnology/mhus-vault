@@ -58,7 +58,7 @@ public class VaultNode extends ObjectListNode<VaultEntry,VaultEntry>{
 
         CherryVaultApi api = M.l(CherryVaultApi.class);
         
-		return api.search(group, target, index, 100);
+		return api.search(group, target, index, 100, false);
 	}
 
 //	@Override
@@ -185,7 +185,7 @@ public class VaultNode extends ObjectListNode<VaultEntry,VaultEntry>{
 
         CherryVaultApi api = M.l(CherryVaultApi.class);
 
-        api.update(secretId, index);
+        api.indexUpdate(secretId, index);
 
         result.createObjectNode().put("secretId", secretId);
 	}

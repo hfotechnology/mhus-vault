@@ -16,10 +16,12 @@
 package de.mhus.cherry.vault.core.services;
 
 import org.osgi.service.component.annotations.Component;
+
 import de.mhus.cherry.vault.api.ifc.SecretContent;
 import de.mhus.cherry.vault.api.ifc.SecretGenerator;
 import de.mhus.cherry.vault.api.model.VaultGroup;
 import de.mhus.lib.core.IProperties;
+import de.mhus.lib.core.IReadProperties;
 import de.mhus.lib.core.MPassword;
 import de.mhus.lib.core.util.SecureString;
 
@@ -28,11 +30,12 @@ public class PasswordGenerator implements SecretGenerator {
 
 	@Override
 	public SecretContent generateSecret(VaultGroup group, IProperties param) {
-		int min          = param.getInt("password.min", 6);
-		int max          = param.getInt("password.max", 20);
-		boolean upper    = param.getBoolean("password.upper", true);
-		boolean numbers  = param.getBoolean("password.numbers", true);
-		boolean specials = param.getBoolean("password.specials", true);
+	    IReadProperties config = group.getSecretGeneratorConfig();
+		int min          = config.getInt("min", 6);
+		int max          = config.getInt("max", 20);
+		boolean upper    = config.getBoolean("upper", true);
+		boolean numbers  = config.getBoolean("numbers", true);
+		boolean specials = config.getBoolean("specials", true);
 		SecureString pw = new SecureString( MPassword.generate(min, max, upper, numbers, specials) );
 		return new SecretContent(pw,null);
 	}

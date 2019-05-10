@@ -22,6 +22,8 @@ import java.util.List;
 import de.mhus.lib.adb.DbMetadata;
 import de.mhus.lib.annotations.adb.DbIndex;
 import de.mhus.lib.annotations.adb.DbPersistent;
+import de.mhus.lib.core.IReadProperties;
+import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MSystem;
 import de.mhus.lib.errors.MException;
 
@@ -34,6 +36,8 @@ public class VaultGroup extends DbMetadata {
 	private LinkedList<String> targets;
 	@DbPersistent
 	private String secretGeneratorName;
+    @DbPersistent
+    private MProperties secretGeneratorConfig;
 	@DbPersistent
 	private boolean allowUpdate;
 	@DbPersistent
@@ -95,5 +99,11 @@ public class VaultGroup extends DbMetadata {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+    public synchronized IReadProperties getSecretGeneratorConfig() {
+        if (secretGeneratorConfig == null) secretGeneratorConfig = new MProperties();
+        return secretGeneratorConfig;
+    }
+
 
 }

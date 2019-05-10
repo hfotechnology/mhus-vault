@@ -43,6 +43,7 @@ import de.mhus.lib.core.M;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MString;
+import de.mhus.lib.core.cfg.CfgString;
 import de.mhus.lib.core.crypt.pem.PemBlockList;
 import de.mhus.lib.core.crypt.pem.PemUtil;
 import de.mhus.lib.core.util.EmptyList;
@@ -64,6 +65,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 	@SuppressWarnings("deprecation")
 	private static final Date END_OF_DAYS = new Date(3000-1900,0,1);
 	private static final String DEFAULT_GROUP_NAME = "default";
+	private static final CfgString CFG_DEFAULT_GROUP_NAME = new CfgString(CherryVaultApi.class, "defaultGroup", DEFAULT_GROUP_NAME);
 	private static final int INDEXES = 5;
 
 	@Override
@@ -408,7 +410,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		
 		VaultGroup ever = getMustHaveGroup(group.getName());
 		if (ever != null) {
-			for (String targetName : group.getTargets()) {
+			for (String targetName : ever.getTargets()) {
 				VaultTarget target = getTarget(targetName);
 				if (checkProcessConditions(group, properties, target)) {
 					VaultEntry entry = processTarget(ever, properties, target, secretId, secret);
@@ -429,15 +431,15 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 //		if (!group.isEnabled()) return null;
 //		return group;
 		try {
-			VaultGroup group = StaticAccess.db.getManager().getObjectByQualification(Db.query(VaultGroup.class).eq("name", DEFAULT_GROUP_NAME));
+			VaultGroup group = StaticAccess.db.getManager().getObjectByQualification(Db.query(VaultGroup.class).eq("name", CFG_DEFAULT_GROUP_NAME.value()));
 			if (group == null) {
-				log().w("Unique group not found",DEFAULT_GROUP_NAME);
+				log().w("Unique group not found",CFG_DEFAULT_GROUP_NAME.value());
 				return null;
 			}
 			if (!group.isEnabled()) return null;
 			return group;
 		} catch (MException e) {
-			throw new NotFoundException(DEFAULT_GROUP_NAME,e);
+			throw new NotFoundException(CFG_DEFAULT_GROUP_NAME.value(),e);
 		}
 	}
 
@@ -629,7 +631,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 	}
 
     @Override
-    public void update(String secretId, String[] index) throws MException {
+    public void indexUpdate(String secretId, String[] index) throws MException {
 
         Date now = new Date();
         XdbService manager = StaticAccess.db.getManager();
@@ -657,14 +659,15 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
     }
 
     @Override
-    public List<VaultEntry> search(String group, String target, String[] index, int size) throws MException {
+    public List<VaultEntry> search(String group, String target, String[] index, int size, boolean all) throws MException {
         if (index == null || index.length == 0) return new EmptyList<VaultEntry>();
 
         Date now = new Date();
-        AQuery<VaultEntry> query = Db.query(VaultEntry.class)
-                .le("validfrom",now)
+        AQuery<VaultEntry> query = Db.query(VaultEntry.class);
+        if (!all) {
+            query.le("validfrom",now)
                 .gt("validto", now);
-        
+        }
         if (group != null)
             query.eq("group", group);
         
