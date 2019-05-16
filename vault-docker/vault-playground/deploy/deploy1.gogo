@@ -1,5 +1,5 @@
 feature:repo-add camel
-feature:repo-add cxf
+feature:repo-add cxf 3.3.1
 feature:repo-add activemq 5.15.8
 
 feature:install deployer camel-blueprint aries-blueprint cxf openjpa3 activemq-client
