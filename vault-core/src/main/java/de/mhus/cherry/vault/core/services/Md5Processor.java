@@ -28,6 +28,7 @@ import de.mhus.cherry.vault.api.model.WritableEntry;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.IReadProperties;
 import de.mhus.lib.core.M;
+import de.mhus.lib.core.crypt.MCrypt;
 import de.mhus.lib.core.crypt.MRandom;
 import de.mhus.lib.core.crypt.pem.PemBlock;
 import de.mhus.lib.core.crypt.pem.PemBlockList;
@@ -82,6 +83,10 @@ public class Md5Processor implements TargetProcessor {
 				result.addFirst(signed);
 			}
 
+            entry.getMeta().setString("salt", salt );
+			entry.getMeta().setString("binary", MCrypt.md5(salt + secret.getContent().value()) );
+            entry.getMeta().setString("base64", cs);
+			
 			entry.setSecret(result.toString());
 
 		} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
