@@ -533,7 +533,12 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 //			throw new NotFoundException("secretId not found",secretId);
 //		return res.get(0).getGroup();
 		try {
-			VaultEntry out = StaticAccess.db.getManager().getObjectByQualification(Db.query(VaultEntry.class).eq("secretid", secretId));
+			VaultEntry out = StaticAccess.db.getManager()
+			        .getObjectByQualification(
+			                Db.query(VaultEntry.class)
+			                .eq("secretid", secretId)
+			                .ne("group", CFG_DEFAULT_GROUP_NAME.value())
+			                );
 			if (out == null)
 				throw new NotFoundException("secretId not found",secretId);
 			return out.getGroup();
