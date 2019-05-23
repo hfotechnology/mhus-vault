@@ -22,4 +22,6 @@ public interface SecretGenerator {
 
 	SecretContent generateSecret(VaultGroup group, IProperties param);
 
+    void test(StringBuilder out, VaultGroup group, IProperties properties);
+
 }

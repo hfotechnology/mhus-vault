@@ -19,9 +19,9 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
-import java.util.UUID;
 
 import org.osgi.service.component.annotations.Component;
+
 import de.mhus.cherry.vault.api.ifc.SecretContent;
 import de.mhus.cherry.vault.api.ifc.TargetProcessor;
 import de.mhus.cherry.vault.api.model.WritableEntry;
@@ -33,14 +33,7 @@ import de.mhus.lib.core.crypt.MRandom;
 import de.mhus.lib.core.crypt.pem.PemBlock;
 import de.mhus.lib.core.crypt.pem.PemBlockList;
 import de.mhus.lib.core.crypt.pem.PemBlockModel;
-import de.mhus.lib.core.crypt.pem.PemPriv;
-import de.mhus.lib.core.crypt.pem.PemUtil;
-import de.mhus.lib.core.vault.MVault;
-import de.mhus.lib.core.vault.MVaultUtil;
 import de.mhus.lib.errors.MException;
-import de.mhus.lib.errors.NotFoundException;
-import de.mhus.osgi.crypt.api.CryptApi;
-import de.mhus.osgi.crypt.api.signer.SignerProvider;
 
 @Component(property="name=hash.md5")
 public class Md5Processor implements TargetProcessor {
@@ -71,17 +64,7 @@ public class Md5Processor implements TargetProcessor {
 			block.setString(PemBlock.STRING_ENCODING, "utf-8");
 			result.add(block);
 			
-			if (processorConfig.isProperty("signId")) {
-				MVault vault = MVaultUtil.loadDefault();
-				CryptApi api = M.l(CryptApi.class);
-				UUID signId = UUID.fromString(processorConfig.getString("signId"));
-				SignerProvider signer = api.getSigner(processorConfig.getString("signService", "DSA-1"));
-				de.mhus.lib.core.vault.VaultEntry signKeyValue = vault.getEntry(signId);
-				if (signKeyValue == null) throw new NotFoundException("sign key not found",signId);
-				PemPriv signKey = PemUtil.toKey(signKeyValue.getValue().value());
-				PemBlock signed = signer.sign(signKey, cs, processorConfig.getString("signPassphrase", null));
-				result.addFirst(signed);
-			}
+			SignerUtil.sign(result, processorConfig, cs);
 
             entry.getMeta().setString("salt", salt );
 			entry.getMeta().setString("binary", MCrypt.md5(salt + secret.getContent().value()) );
@@ -94,5 +77,13 @@ public class Md5Processor implements TargetProcessor {
 		}
 		
 	}
+
+    @Override
+    public void test(StringBuilder out, IProperties properties, IReadProperties processorConfig) throws Exception {
+        if (processorConfig.containsKey("salt"))
+            out.append("Contains salt: ").append(processorConfig.getString("salt")).append("\n");
+        SignerUtil.test(out,properties,processorConfig);
+
+    }
 
 }

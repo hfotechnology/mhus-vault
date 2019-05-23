@@ -28,4 +28,6 @@ public interface TargetProcessor {
 
 	void process(IProperties properties, IReadProperties processorConfig, SecretContent secret, WritableEntry entry) throws MException;
 
+    void test(StringBuilder out, IProperties properties, IReadProperties processorConfig) throws Exception;
+
 }

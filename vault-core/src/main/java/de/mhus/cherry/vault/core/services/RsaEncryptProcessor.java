@@ -27,7 +27,6 @@ import de.mhus.lib.core.IReadProperties;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.crypt.pem.PemBlock;
 import de.mhus.lib.core.crypt.pem.PemBlockList;
-import de.mhus.lib.core.crypt.pem.PemPriv;
 import de.mhus.lib.core.crypt.pem.PemPub;
 import de.mhus.lib.core.crypt.pem.PemUtil;
 import de.mhus.lib.core.vault.MVault;
@@ -36,7 +35,6 @@ import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;
 import de.mhus.osgi.crypt.api.CryptApi;
 import de.mhus.osgi.crypt.api.cipher.CipherProvider;
-import de.mhus.osgi.crypt.api.signer.SignerProvider;
 
 @Component(property="name=cipher.rsa")
 public class RsaEncryptProcessor implements TargetProcessor {
@@ -60,18 +58,27 @@ public class RsaEncryptProcessor implements TargetProcessor {
 		PemBlockList result = new PemBlockList();
 		result.add(encoded);
 		
-		if (processorConfig.isProperty("signId")) {
-			UUID signId = UUID.fromString(processorConfig.getString("signId"));
-			SignerProvider signer = api.getSigner(processorConfig.getString("signService", CFG_SIGNER_DEFAULT.value()));
-			de.mhus.lib.core.vault.VaultEntry signKeyValue = vault.getEntry(signId);
-			if (signKeyValue == null) throw new NotFoundException("sign key not found",signId);
-			PemPriv signKey = PemUtil.toKey(signKeyValue.getValue().value());
-			PemBlock signed = signer.sign(signKey, encoded.toString(), processorConfig.getString("signPassphrase", null));
-			result.add(signed);
-		}
+		SignerUtil.sign(result, processorConfig, encoded.toString());
 		
 		entry.setSecret(result.toString());
 		
 	}
+
+    @Override
+    public void test(StringBuilder out, IProperties properties, IReadProperties processorConfig) throws Exception {
+     
+        UUID keyId = UUID.fromString(processorConfig.getString("keyId"));
+        out.append("Key: ").append(keyId).append("\n");
+        MVault vault = MVaultUtil.loadDefault();
+        de.mhus.lib.core.vault.VaultEntry keyValue = vault.getEntry(keyId);
+        if (keyValue == null) throw new NotFoundException("key not found",keyId);
+        out.append("Key value: ").append(keyValue).append("\n");
+        
+        CryptApi api = M.l(CryptApi.class);
+        CipherProvider cipher = api.getCipher(processorConfig.getString("cipherService", CFG_CIPHER_DEFAULT.value()));
+        out.append("Cipher: ").append(cipher).append("\n");
+        
+        SignerUtil.test(out, properties, processorConfig);
+    }
 
 }

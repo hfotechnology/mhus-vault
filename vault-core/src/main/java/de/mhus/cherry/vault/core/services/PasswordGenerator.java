@@ -40,4 +40,9 @@ public class PasswordGenerator implements SecretGenerator {
 		return new SecretContent(pw,null);
 	}
 
+    @Override
+    public void test(StringBuilder out, VaultGroup group, IProperties properties) {
+        
+    }
+
 }

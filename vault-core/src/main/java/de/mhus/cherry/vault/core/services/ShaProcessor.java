@@ -19,9 +19,9 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
-import java.util.UUID;
 
 import org.osgi.service.component.annotations.Component;
+
 import de.mhus.cherry.vault.api.ifc.SecretContent;
 import de.mhus.cherry.vault.api.ifc.TargetProcessor;
 import de.mhus.cherry.vault.api.model.WritableEntry;
@@ -32,14 +32,7 @@ import de.mhus.lib.core.crypt.MRandom;
 import de.mhus.lib.core.crypt.pem.PemBlock;
 import de.mhus.lib.core.crypt.pem.PemBlockList;
 import de.mhus.lib.core.crypt.pem.PemBlockModel;
-import de.mhus.lib.core.crypt.pem.PemPriv;
-import de.mhus.lib.core.crypt.pem.PemUtil;
-import de.mhus.lib.core.vault.MVault;
-import de.mhus.lib.core.vault.MVaultUtil;
 import de.mhus.lib.errors.MException;
-import de.mhus.lib.errors.NotFoundException;
-import de.mhus.osgi.crypt.api.CryptApi;
-import de.mhus.osgi.crypt.api.signer.SignerProvider;
 
 @Component(property="name=hash.sha")
 public class ShaProcessor implements TargetProcessor {
@@ -51,7 +44,11 @@ public class ShaProcessor implements TargetProcessor {
 		try {
 			
 			MRandom random = M.l(MRandom.class);
-			String salt = "" + random.getChar() + random.getChar();
+            String salt = null;
+            if (processorConfig.containsKey("salt"))
+                salt = processorConfig.getString("salt");
+            else
+                salt = "" + random.getChar() + random.getChar();
 			
 			MessageDigest md = MessageDigest.getInstance("SHA-256");
 			md.update(salt.getBytes("utf-8"));
@@ -66,17 +63,7 @@ public class ShaProcessor implements TargetProcessor {
 			block.setString(PemBlock.STRING_ENCODING, "utf-8");
 			result.add(block);
 			
-			if (processorConfig.isProperty("signId")) {
-				MVault vault = MVaultUtil.loadDefault();
-				CryptApi api = M.l(CryptApi.class);
-				UUID signId = UUID.fromString(processorConfig.getString("signId"));
-				SignerProvider signer = api.getSigner(processorConfig.getString("signService", CFG_SIGNER_DEFAULT.value()));
-				de.mhus.lib.core.vault.VaultEntry signKeyValue = vault.getEntry(signId);
-				if (signKeyValue == null) throw new NotFoundException("sign key not found",signId);
-				PemPriv signKey = PemUtil.toKey(signKeyValue.getValue().value());
-				PemBlock signed = signer.sign(signKey, cs, processorConfig.getString("signPassphrase", null));
-				result.add(signed);
-			}
+			SignerUtil.sign(result, processorConfig, cs);
 
 			entry.setSecret(result.toString());
 
@@ -85,5 +72,12 @@ public class ShaProcessor implements TargetProcessor {
 		}
 		
 	}
+
+    @Override
+    public void test(StringBuilder out, IProperties properties, IReadProperties processorConfig) throws Exception {
+        if (processorConfig.containsKey("salt"))
+            out.append("Contains salt: ").append(processorConfig.getString("salt")).append("\n");
+        SignerUtil.test(out, properties, processorConfig);
+    }
 
 }

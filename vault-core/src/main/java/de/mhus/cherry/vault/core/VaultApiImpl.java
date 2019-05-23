@@ -699,5 +699,77 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 
         return out;
     }
+
+    @Override
+    public String testGroup(String groupName, IProperties properties) {
+        
+        StringBuilder out = new StringBuilder();
+        try {
+            // get group
+            out.append("Group Name: ").append(groupName).append("\n");
+            VaultGroup group = getGroup(groupName);
+            out.append("Group: ").append(group).append("\n");
+            AccessApi aaa = M.l(AccessApi.class);
+            List<String> acl = group.getWriteAcl();
+            if (!AaaUtil.hasAccess(aaa.getCurrentOrGuest(), acl))
+                out.append("Access Denied\n");
+            else
+                out.append("Access Granted\n");
+            
+            String generatorName = group.getSecretGeneratorName();
+            out.append("Generator Name: ").append(generatorName).append("\n");
+            
+            if (generatorName != null) {
+                SecretGenerator generator = getGenerator(generatorName);
+                out.append("Generator: ").append(generator).append("\n");
+                out.append(group.getSecretGeneratorConfig()).append("\n");
+                generator.test(out, group, properties);
+            }
+    
+            for (String targetName : group.getTargets()) {
+                out.append("---------------------------\n").append("Target: ").append(targetName).append("\n");
+                VaultTarget target = getTarget(targetName);
+                out.append("DB: ").append(target).append("\n");
+                String processorName = target.getProcessorName();
+                out.append("Processor: ").append(processorName).append("\n");
+                TargetProcessor processor = getProcessor(processorName);
+                out.append("Instance: ").append(processor).append("\n");
+                
+                out.append(target.getProcessorConfig()).append("\n");
+                if (checkProcessConditions(group, properties, target)) {
+                    out.append("Condition: true\n");
+                } else
+                    out.append("Condition: false\n");
+                processor.test(out, properties, target.getProcessorConfig());
+                
+            }
+            
+            VaultGroup ever = getMustHaveGroup(group.getName());
+            if (ever != null) {
+                out.append("*****************************\nMust Have Group: ").append(ever).append("\n");
+                for (String targetName : ever.getTargets()) {
+                    out.append("---------------------------\n").append("Target: ").append(targetName).append("\n");
+                    VaultTarget target = getTarget(targetName);
+                    out.append("DB: ").append(target).append("\n");
+                    String processorName = target.getProcessorName();
+                    out.append("Processor: ").append(processorName).append("\n");
+                    TargetProcessor processor = getProcessor(processorName);
+                    out.append("Instance: ").append(processor).append("\n");
+                    
+                    out.append(target.getProcessorConfig()).append("\n");
+                    if (checkProcessConditions(group, properties, target)) {
+                        out.append("Condition: true\n");
+                    } else
+                        out.append("Condition: false\n");
+                    processor.test(out, properties, target.getProcessorConfig());
+                }
+            }
+            out.append("############################################\n");
+
+        } catch (Throwable t) {
+            out.append(t.toString());
+        }
+        return out.toString();
+    }
 	
 }

@@ -29,6 +29,7 @@ public class CVaultCmd implements Action {
             + " import <groupId> <secret> [index0] [index1] [index2] [index3] [index4]\n"
             + " updateimport <secretId> <secret> [index0] [index1] [index2] [index3] [index4]\n"
             + " updateindex <secretId> [index0] [index1] [index2] [index3] [index4]\n"
+            + " test <group> [key=value]*\n"
             + " ", multiValued=false)
     String cmd;
     
@@ -64,6 +65,11 @@ public class CVaultCmd implements Action {
         MProperties prop = MProperties.explodeToMProperties(p);
         
         switch (cmd) {
+        case "test": {
+            String[] p = MCollection.cropArray(parameters, 1, parameters.length);
+            String out = api.testGroup(parameters[0], MProperties.explodeToMProperties(p));
+            System.out.println(out);
+        } break;
         case "create": {
             String[] index = MCollection.cropArray(parameters, 1, parameters.length);
             String id = api.createSecret(parameters[0], from, to, prop, index);

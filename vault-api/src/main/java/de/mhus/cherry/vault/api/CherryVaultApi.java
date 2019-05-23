@@ -130,5 +130,7 @@ public interface CherryVaultApi {
     List<VaultEntry> getSecrets(String secretId) throws MException;
     
     List<VaultEntry> search(String group, String target, String[] index, int size, boolean all) throws MException;
+
+    String testGroup(String groupName, IProperties prop);
 	
 }
