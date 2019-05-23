@@ -51,15 +51,8 @@ public class CherryMVaultSource extends MLog implements MutableVaultSource {
 	@Override
 	public VaultEntry getEntry(UUID id) {
 		try {
-//			VaultKey key = StaticAccess.moManager.getManager().createQuery(VaultKey.class).filter("ident", id.toString()).get();
-			VaultKey key = StaticAccess.db.getManager().getObjectByQualification(Db.query(VaultKey.class).eq("ident", id));
-			if (key == null) return null;
-			List<String> readAcl = key.getReadAcl();
-			if (readAcl != null) {
-				AaaContext acc = M.l(AccessApi.class).getCurrentOrGuest();
-				if (!AaaUtil.hasAccess(acc, readAcl))
-					return null;
-			}
+		    VaultKey key = getVaultKey(id);
+		    if (key == null) return null;
 			return new VaultKeyEntry(key);
 		} catch (Exception e) {
 			log().t(id,e);
@@ -67,6 +60,24 @@ public class CherryMVaultSource extends MLog implements MutableVaultSource {
 		}
 	}
 
+    public VaultKey getVaultKey(UUID id) {
+        try {
+//          VaultKey key = StaticAccess.moManager.getManager().createQuery(VaultKey.class).filter("ident", id.toString()).get();
+            VaultKey key = StaticAccess.db.getManager().getObjectByQualification(Db.query(VaultKey.class).eq("ident", id));
+            if (key == null) return null;
+            List<String> readAcl = key.getReadAcl();
+            if (readAcl != null) {
+                AaaContext acc = M.l(AccessApi.class).getCurrentOrGuest();
+                if (!AaaUtil.hasAccess(acc, readAcl))
+                    return null;
+            }
+            return key;
+        } catch (Exception e) {
+            log().t(id,e);
+            return null;
+        }
+    }
+    
 	@Override
 	public Iterable<UUID> getEntryIds() {
 		LinkedList<UUID> out = new LinkedList<>();
@@ -107,7 +118,8 @@ public class CherryMVaultSource extends MLog implements MutableVaultSource {
 	
 	@Override
 	public void removeEntry(UUID id) throws MException {
-		VaultKey obj = (VaultKey) getEntry(id);
+        VaultKey obj = getVaultKey(id);
+        if (obj == null) return;
 		AaaContext acc = M.l(AccessApi.class).getCurrentOrGuest();
 		if (!acc.isAdminMode())
 			throw new RuntimeException("only admin can delete entries");

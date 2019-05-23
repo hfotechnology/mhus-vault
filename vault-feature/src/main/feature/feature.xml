@@ -38,6 +38,7 @@
 
 		<!-- mhu-lib -->
 		
+        <bundle>mvn:commons-codec/commons-codec/${commons-codec.version}</bundle>
         <bundle>mvn:org.jsoup/jsoup/${org.jsoup.version}</bundle>
         <bundle>mvn:mysql/mysql-connector-java/${mysql.version}</bundle>
 		
