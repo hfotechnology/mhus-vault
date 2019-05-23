@@ -15,6 +15,8 @@
  */
 package de.mhus.cherry.vault.api.ifc;
 
+import java.io.PrintStream;
+
 import de.mhus.cherry.vault.api.model.VaultGroup;
 import de.mhus.lib.core.IProperties;
 
@@ -22,6 +24,6 @@ public interface SecretGenerator {
 
 	SecretContent generateSecret(VaultGroup group, IProperties param);
 
-    void test(StringBuilder out, VaultGroup group, IProperties properties);
+    void test(PrintStream out, VaultGroup group, IProperties properties);
 
 }

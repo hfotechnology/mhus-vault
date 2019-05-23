@@ -1,5 +1,6 @@
 package de.mhus.cherry.vault.core.services;
 
+import java.io.PrintStream;
 import java.util.UUID;
 
 import de.mhus.lib.core.IProperties;
@@ -18,16 +19,16 @@ import de.mhus.osgi.crypt.api.signer.SignerProvider;
 
 public class SignerUtil {
 
-    public static void test(StringBuilder out, IProperties properties, IReadProperties processorConfig) throws Exception {
+    public static void test(PrintStream out, IProperties properties, IReadProperties processorConfig) throws Exception {
         if (processorConfig.isProperty("signId")) {
             UUID signId = UUID.fromString(processorConfig.getString("signId"));
-            out.append("Signature: ").append(signId).append("\n");
+            out.println("Signature: " + signId);
             MVault vault = MVaultUtil.loadDefault();
             de.mhus.lib.core.vault.VaultEntry signKeyValue = vault.getEntry(signId);
-            out.append("Key: ").append(signKeyValue).append("\n");
+            out.println("Key: " + signKeyValue);
             CryptApi api = M.l(CryptApi.class);
             SignerProvider signer = api.getSigner(processorConfig.getString("signService", "DSA-1"));
-            out.append("Signer: ").append(signer).append("\n");
+            out.println("Signer: " +  signer);
         }
     }
 

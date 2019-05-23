@@ -15,6 +15,7 @@
  */
 package de.mhus.cherry.vault.core.services;
 
+import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -79,9 +80,9 @@ public class Md5Processor implements TargetProcessor {
 	}
 
     @Override
-    public void test(StringBuilder out, IProperties properties, IReadProperties processorConfig) throws Exception {
+    public void test(PrintStream out, IProperties properties, IReadProperties processorConfig) throws Exception {
         if (processorConfig.containsKey("salt"))
-            out.append("Contains salt: ").append(processorConfig.getString("salt")).append("\n");
+            out.println("Contains salt: " + processorConfig.getString("salt"));
         SignerUtil.test(out,properties,processorConfig);
 
     }

@@ -15,6 +15,8 @@
  */
 package de.mhus.cherry.vault.api.ifc;
 
+import java.io.PrintStream;
+
 import de.mhus.cherry.vault.api.model.WritableEntry;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.IReadProperties;
@@ -28,6 +30,6 @@ public interface TargetProcessor {
 
 	void process(IProperties properties, IReadProperties processorConfig, SecretContent secret, WritableEntry entry) throws MException;
 
-    void test(StringBuilder out, IProperties properties, IReadProperties processorConfig) throws Exception;
+    void test(PrintStream out, IProperties properties, IReadProperties processorConfig) throws Exception;
 
 }

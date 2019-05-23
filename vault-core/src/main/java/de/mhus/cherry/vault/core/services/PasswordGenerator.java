@@ -15,6 +15,8 @@
  */
 package de.mhus.cherry.vault.core.services;
 
+import java.io.PrintStream;
+
 import org.osgi.service.component.annotations.Component;
 
 import de.mhus.cherry.vault.api.ifc.SecretContent;
@@ -41,8 +43,7 @@ public class PasswordGenerator implements SecretGenerator {
 	}
 
     @Override
-    public void test(StringBuilder out, VaultGroup group, IProperties properties) {
-        
+    public void test(PrintStream out, VaultGroup group, IProperties properties) {
     }
 
 }

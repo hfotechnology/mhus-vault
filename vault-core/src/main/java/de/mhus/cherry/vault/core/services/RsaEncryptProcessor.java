@@ -15,6 +15,7 @@
  */
 package de.mhus.cherry.vault.core.services;
 
+import java.io.PrintStream;
 import java.util.UUID;
 
 import org.osgi.service.component.annotations.Component;
@@ -65,18 +66,18 @@ public class RsaEncryptProcessor implements TargetProcessor {
 	}
 
     @Override
-    public void test(StringBuilder out, IProperties properties, IReadProperties processorConfig) throws Exception {
+    public void test(PrintStream out, IProperties properties, IReadProperties processorConfig) throws Exception {
      
         UUID keyId = UUID.fromString(processorConfig.getString("keyId"));
-        out.append("Key: ").append(keyId).append("\n");
+        out.println("Key: " + keyId);
         MVault vault = MVaultUtil.loadDefault();
         de.mhus.lib.core.vault.VaultEntry keyValue = vault.getEntry(keyId);
         if (keyValue == null) throw new NotFoundException("key not found",keyId);
-        out.append("Key value: ").append(keyValue).append("\n");
+        out.println("Key value: " + keyValue);
         
         CryptApi api = M.l(CryptApi.class);
         CipherProvider cipher = api.getCipher(processorConfig.getString("cipherService", CFG_CIPHER_DEFAULT.value()));
-        out.append("Cipher: ").append(cipher).append("\n");
+        out.println("Cipher: " + cipher);
         
         SignerUtil.test(out, properties, processorConfig);
     }
