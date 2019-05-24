@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.mhus.cherry.vault.core.rest;
+package de.mhus.cherry.vault.rest;
 
 import java.util.Date;
 import java.util.List;
@@ -23,7 +23,6 @@ import org.osgi.service.component.annotations.Component;
 
 import de.mhus.cherry.vault.api.CherryVaultApi;
 import de.mhus.cherry.vault.api.model.VaultEntry;
-import de.mhus.cherry.vault.core.impl.StaticAccess;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MDate;
 import de.mhus.lib.core.MProperties;
@@ -163,7 +162,7 @@ public class VaultNode extends ObjectListNode<VaultEntry,VaultEntry>{
 	
 	@Override
 	protected PojoModelFactory getPojoModelFactory() {
-		return StaticAccess.db.getManager().getPojoModelFactory();
+	    return M.l(CherryVaultApi.class).getManager().getPojoModelFactory();
 	}
 	
 	@RestAction(name="indexes")

@@ -778,4 +778,9 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
         return new String(os.toByteArray());
     }
 	
+    @Override
+    public XdbService getManager() {
+        return StaticAccess.db.getManager();
+    }
+    
 }

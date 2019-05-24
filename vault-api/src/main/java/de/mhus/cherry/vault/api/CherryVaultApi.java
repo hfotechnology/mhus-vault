@@ -25,6 +25,7 @@ import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.util.SecureString;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;
+import de.mhus.lib.xdb.XdbService;
 
 public interface CherryVaultApi {
 
@@ -133,4 +134,6 @@ public interface CherryVaultApi {
 
     String testGroup(String groupName, IProperties prop);
 	
+    public XdbService getManager();
+
 }

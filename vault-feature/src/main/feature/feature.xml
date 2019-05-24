@@ -22,6 +22,16 @@
 	<feature name='cherry-vault-dev' description='Development environment' version='${project.version}'>
 		<bundle>mvn:org.hsqldb/hsqldb/${hsqldb.version}</bundle>
 		<feature>cherry-vault</feature>
+        <feature>cherry-vault-rest</feature>
+	</feature>
+
+    <feature name='cherry-vault-rest' description='cherry-vault-rest' version='${project.version}'>
+        <details>${project.description}</details>
+        <feature>http</feature>
+        <feature>http-whiteboard</feature>
+
+        <bundle>mvn:de.mhus.osgi/mhu-sop-rest/${mhus-sop.version}</bundle>
+        <bundle>mvn:de.mhus.cherry.vault/vault-rest/${cherry-vault.version}</bundle>
 	</feature>
 	
 	<feature name='cherry-vault' description='cherry-vault' version='${project.version}'>
@@ -31,10 +41,7 @@
 		<feature>jdbc</feature>
 		<feature>openjpa</feature>
 		<feature>jndi</feature>
-		<feature>http</feature>
-		<feature>http-whiteboard</feature>
 		<feature>activemq-client</feature>
-
 
 		<!-- mhu-lib -->
 		
@@ -80,7 +87,6 @@
 		
 		<bundle>mvn:de.mhus.osgi/mhu-sop-api/${mhus-sop.version}</bundle>
 		<bundle>mvn:de.mhus.osgi/mhu-sop-core/${mhus-sop.version}</bundle>
-		<bundle>mvn:de.mhus.osgi/mhu-sop-rest/${mhus-sop.version}</bundle>
 		
 		<!-- vault -->
 		
