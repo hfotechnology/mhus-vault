@@ -30,6 +30,8 @@
         <feature>http</feature>
         <feature>http-whiteboard</feature>
 
+        <bundle>mvn:javax.xml.rpc/javax.xml.rpc-api/${javax.xml.rpc.version}</bundle>
+
         <bundle>mvn:de.mhus.osgi/mhu-sop-rest/${mhus-sop.version}</bundle>
         <bundle>mvn:de.mhus.cherry.vault/vault-rest/${cherry-vault.version}</bundle>
 	</feature>
@@ -69,7 +71,6 @@
         <bundle>mvn:de.mhus.osgi/mhu-karaf-commands/${mhus-osgi-tools.version}</bundle>
         <bundle>mvn:de.mhus.osgi/mhu-karaf-xdb/${mhus-osgi-tools.version}</bundle>
 
-        <bundle>mvn:javax.xml.rpc/javax.xml.rpc-api/${javax.xml.rpc.version}</bundle>
 
 <!--
 		<bundle>mvn:org.mongodb/mongo-java-driver/${mongo.version}</bundle>
