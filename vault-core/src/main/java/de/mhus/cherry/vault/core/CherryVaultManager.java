@@ -49,12 +49,14 @@ public class CherryVaultManager extends AbstractDbSchemaService {
 
 	@Override
 	public void doInitialize(XdbService dbService) {
+	    log().i("Init CherryVaultManager");
 		this.service = dbService;
 		StaticAccess.db = this;
 	}
 
 	@Override
 	public void doDestroy() {
+        log().i("Destroy CherryVaultManager");
 		StaticAccess.db = null;
 	}
 
@@ -84,7 +86,7 @@ public class CherryVaultManager extends AbstractDbSchemaService {
 
 	@Override
 	public String getAcl(AaaContext context, Persistable obj) throws MException {
-		return "*=" + Ace.RIGHTS_ALL; // TODO
+		return "*=" + Ace.RIGHTS_RO; // TODO
 	}
 
 }
