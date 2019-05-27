@@ -45,7 +45,7 @@ public class CherryVaultManager extends AbstractDbSchemaService {
 		list.add(VaultEntry.class);
 		list.add(VaultArchive.class);
 		list.add(VaultKey.class);
-	}
+	}  
 
 	@Override
 	public void doInitialize(XdbService dbService) {

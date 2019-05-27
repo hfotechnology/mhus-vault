@@ -113,7 +113,9 @@ public class CherryMVaultSource extends MLog implements MutableVaultSource {
 	@Override
 	public void addEntry(VaultEntry entry) throws MException {
 		VaultKey key = new VaultKey(entry.getId().toString(), entry.getValue().value(), entry.getDescription(), entry.getType());
-		StaticAccess.db.getManager().inject(key).save();
+		StaticAccess.db.getManager()
+		    .inject(key)
+		    .save();
 	}
 	
 	@Override
