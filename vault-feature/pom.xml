@@ -24,7 +24,7 @@
 	<parent>
 		<groupId>de.mhus.cherry.vault</groupId>
 		<artifactId>cherry-vault</artifactId>
-		<version>1.6.1-SNAPSHOT</version>
+		<version>1.6.1</version>
 	</parent>
 
 	<build>

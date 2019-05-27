@@ -19,16 +19,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>vault-client</artifactId>
+	<artifactId>vault-rest</artifactId>
 	<packaging>bundle</packaging>
 	<parent>
 		<groupId>de.mhus.cherry.vault</groupId>
 		<artifactId>cherry-vault</artifactId>
-		<version>1.6.1</version>
+		<version>1.6.1-SNAPSHOT</version>
 	</parent>
 
 	<build>
+
 		<plugins>
+
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
@@ -38,8 +40,9 @@
 						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
 						<Bundle-Version>${project.version}</Bundle-Version>
 						<Export-Package>
-							de.mhus.cherry.vault.client.*;version=${project.version}
+							de.mhus.cherry.vault.rest.*;version=${project.version}
 						</Export-Package>
+						<Private-Package>de.mhus.cherry.vault.rest.impl.*</Private-Package>
 						<Import-Package>*</Import-Package>
 						<DynamicImport-Package>*</DynamicImport-Package>
 						<Service-Component>*</Service-Component>
@@ -51,14 +54,39 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>jackson-mapper-asl</artifactId>
-			<type>jar</type>
-			<scope>compile</scope>
+			<groupId>de.mhus.cherry.vault</groupId>
+			<artifactId>vault-api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>de.mhus.lib</groupId>
+			<artifactId>mhu-lib-annotations</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>de.mhus.lib</groupId>
 			<artifactId>mhu-lib-core</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>de.mhus.lib</groupId>
+			<artifactId>mhu-lib-persistence</artifactId>
+		</dependency>
+       	<dependency>
+			<groupId>de.mhus.osgi</groupId>
+			<artifactId>mhu-osgi-services</artifactId>
+		</dependency>
+       	<dependency>
+			<groupId>de.mhus.osgi</groupId>
+			<artifactId>mhu-osgi-crypt-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>de.mhus.osgi</groupId>
+			<artifactId>mhu-sop-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.core</artifactId>
+		</dependency>
 	</dependencies>
+
 </project>
