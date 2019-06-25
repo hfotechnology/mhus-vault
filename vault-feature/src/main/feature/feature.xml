@@ -67,6 +67,7 @@
 		
         <bundle>mvn:org.bouncycastle/bcprov-jdk16/${bouncycastle.version}</bundle>
 		
+        <bundle>mvn:de.mhus.osgi/mhu-osgi-api/${mhus-osgi-tools.version}</bundle>
         <bundle>mvn:de.mhus.osgi/mhu-osgi-services/${mhus-osgi-tools.version}</bundle>
         <bundle>mvn:de.mhus.osgi/mhu-karaf-commands/${mhus-osgi-tools.version}</bundle>
         <bundle>mvn:de.mhus.osgi/mhu-karaf-xdb/${mhus-osgi-tools.version}</bundle>

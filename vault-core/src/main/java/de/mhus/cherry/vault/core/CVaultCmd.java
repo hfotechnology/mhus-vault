@@ -17,7 +17,6 @@ package de.mhus.cherry.vault.core;
 
 import java.util.Date;
 
-import org.apache.karaf.shell.api.action.Action;
 import org.apache.karaf.shell.api.action.Argument;
 import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.Option;
@@ -31,10 +30,11 @@ import de.mhus.lib.core.MCast;
 import de.mhus.lib.core.MCollection;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.console.ConsoleTable;
+import de.mhus.osgi.api.karaf.AbstractCmd;
 
 @Command(scope = "cherry", name = "cvc", description = "Cherry Vault Control")
 @Service
-public class CVaultCmd implements Action {
+public class CVaultCmd extends AbstractCmd {
 
     @Argument(index=0, name="cmd", required=true, description="Command:\n"
             + " search [index0] [index1] [index2] [index3] [index4]\n"
@@ -70,7 +70,7 @@ public class CVaultCmd implements Action {
     boolean all = false;
     
     @Override
-    public Object execute() throws Exception {
+    public Object execute2() throws Exception {
 
         CherryVaultApi api = M.l(CherryVaultApi.class);
 
