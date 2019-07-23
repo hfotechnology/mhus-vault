@@ -69,9 +69,6 @@ public class CVaultCmd extends AbstractCmd {
     @Option(name="-a", description="All",required=false, multiValued=false)
     boolean all = false;
     
-    @Option(name = "-ct", aliases = { "--console-table" }, description = "Console table options", required = false, multiValued = false)
-    String consoleTable;
-
     @Override
     public Object execute2() throws Exception {
 
@@ -94,7 +91,7 @@ public class CVaultCmd extends AbstractCmd {
             System.out.println(id);
         } break;
         case "search": {
-            ConsoleTable table = new ConsoleTable(consoleTable);
+            ConsoleTable table = new ConsoleTable(tableAll, tblOpt);
             table.setHeaderValues("id","SecretId","Group","Target","From","To");
             for (VaultEntry item : api.search(group, target, parameters, 100, all)) {
                 table.addRowValues(item.getId(),item.getSecretId(),item.getGroup(),item.getTarget(),item.getValidFrom(),item.getValidTo());
