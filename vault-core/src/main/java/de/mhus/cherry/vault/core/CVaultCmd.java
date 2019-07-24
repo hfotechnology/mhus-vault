@@ -91,7 +91,7 @@ public class CVaultCmd extends AbstractCmd {
             System.out.println(id);
         } break;
         case "search": {
-            ConsoleTable table = new ConsoleTable(tableAll, tblOpt);
+            ConsoleTable table = new ConsoleTable(tblOpt);
             table.setHeaderValues("id","SecretId","Group","Target","From","To");
             for (VaultEntry item : api.search(group, target, parameters, 100, all)) {
                 table.addRowValues(item.getId(),item.getSecretId(),item.getGroup(),item.getTarget(),item.getValidFrom(),item.getValidTo());
