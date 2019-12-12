@@ -107,6 +107,8 @@ https://raw.githubusercontent.com/pentaho/pentaho-karaf-assembly/master/pentaho-
                 <configuration>
                     <archiveZip>false</archiveZip>
                     <targetFile>${project.artifactId}</targetFile>
+                    <usePathPrefix>false</usePathPrefix>
+                    
 				    <blacklistedRepositories>
 				        <repository>mvn:org.apache.karaf.features/framework/4.3.0-SNAPSHOT/xml/features</repository>
 				        <repository>mvn:org.apache.karaf.features/standard/4.3.0-SNAPSHOT/xml/features</repository>

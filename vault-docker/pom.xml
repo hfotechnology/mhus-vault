@@ -52,7 +52,6 @@ https://raw.githubusercontent.com/pentaho/pentaho-karaf-assembly/master/pentaho-
                  </execution>
              </executions>
              <configuration>
-                 <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
 	             <repository>docker.io/mhus/vault-playground</repository>
 	             <tag>${project.version}</tag>
              </configuration>
