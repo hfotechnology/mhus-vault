@@ -1,0 +1,209 @@
+ <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<!-- 
+https://raw.githubusercontent.com/ANierbeck/Karaf-Decanter-Runtime/master/Decanter-Runtime/pom.xml
+https://raw.githubusercontent.com/pentaho/pentaho-karaf-assembly/master/pentaho-karaf-assembly/pom.xml
+ -->
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>de.mhus.cherry.vault</groupId>
+        <artifactId>cherry-vault</artifactId>
+        <version>1.6.3-SNAPSHOT</version>
+    </parent>
+    <artifactId>vault-assembly</artifactId>
+    <packaging>karaf-assembly</packaging>
+    
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.karaf.features</groupId>
+            <artifactId>framework</artifactId>
+            <version>${karaf.version}</version>
+            <type>kar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.karaf.features</groupId>
+            <artifactId>standard</artifactId>
+            <version>${karaf.version}</version>
+            <classifier>features</classifier>
+            <scope>runtime</scope>
+            <type>xml</type>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.karaf.features</groupId>
+            <artifactId>enterprise</artifactId>
+            <version>${karaf.version}</version>
+            <classifier>features</classifier>
+            <scope>runtime</scope>
+            <type>xml</type>
+        </dependency>
+
+        <!-- mvn:org.apache.activemq/activemq-karaf/5.15.8/xml/features -->
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-karaf</artifactId>
+            <version>${activemq.version}</version>
+            <classifier>features-core</classifier>
+            <scope>runtime</scope>
+            <type>xml</type>
+        </dependency>
+        <!-- 
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-karaf</artifactId>
+            <version>${activemq.version}</version>
+            <classifier>features</classifier>
+            <scope>runtime</scope>
+            <type>xml</type>
+        </dependency>
+         -->
+
+        <dependency>
+            <groupId>org.apache.cxf.karaf</groupId>
+            <artifactId>apache-cxf</artifactId>
+            <version>${cxf.version}</version>
+            <classifier>features</classifier>
+            <scope>runtime</scope>
+            <type>xml</type>
+        </dependency>
+
+        <dependency>
+	      <groupId>org.apache.karaf</groupId>
+	      <artifactId>apache-karaf</artifactId>
+	      <version>${karaf.version}</version>
+	      <type>tar.gz</type>
+	      <scope>runtime</scope>
+	      <exclusions>
+	        <exclusion>
+	          <artifactId>org.eclipse.osgi</artifactId>
+	          <groupId>org.eclipse</groupId>
+	        </exclusion>
+	      </exclusions>
+	    </dependency>
+	    
+        <dependency>
+	        <groupId>de.mhus.cherry.vault</groupId>
+	        <artifactId>vault-feature</artifactId>
+	        <version>${project.version}</version>
+            <classifier>features</classifier>
+            <type>xml</type>
+            <scope>runtime</scope>
+        </dependency>
+    </dependencies>
+    
+    <build>
+	    <extensions>
+	      <extension>
+	        <groupId>org.apache.maven.wagon</groupId>
+	        <artifactId>wagon-http</artifactId>
+	        <version>2.9</version>
+	      </extension>
+	    </extensions>
+        
+        <plugins>
+            <plugin>
+                <groupId>org.apache.karaf.tooling</groupId>
+                <artifactId>karaf-maven-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <archiveZip>false</archiveZip>
+                    <targetFile>${project.artifactId}</targetFile>
+				    <blacklistedRepositories>
+				        <repository>mvn:org.apache.karaf.features/framework/4.3.0-SNAPSHOT/xml/features</repository>
+				        <repository>mvn:org.apache.karaf.features/standard/4.3.0-SNAPSHOT/xml/features</repository>
+				        <repository>mvn:org.apache.karaf.features/enterprise/4.3.0-SNAPSHOT/xml/features</repository>
+				        <repository>mvn:org.apache.karaf.features/enterprise-legacy/4.3.0-SNAPSHOT/xml/features</repository>
+				        <repository>mvn:org.apache.karaf.features/spring/4.3.0-SNAPSHOT/xml/features</repository>
+				        <!--
+				        <repository>mvn:org.apache.karaf.features/spring-legacy/4.3.0-SNAPSHOT/xml/features</repository>
+				        <repository>mvn:org.ops4j.pax.web/pax-web-features/7.2.10/xml/features</repository>
+				        -->
+				        <repository>mvn:org.ops4j.pax.web/pax-web-features/7.2.11/xml/features</repository>
+				        <repository>mvn:org.ops4j.pax.web/pax-web-features/7.2.12/xml/features</repository>
+				    </blacklistedRepositories>
+                    <bootFeatures>
+                        <feature>standard</feature>
+                        
+                        <feature>scr</feature>
+                        <feature>http-whiteboard</feature>
+                         <feature>deployer/${karaf.version}</feature>
+                         <feature>aries-blueprint/${karaf.version}</feature>
+                         <feature>cxf-core/${cxf.version}</feature>
+                         <feature>openjpa3/3.0.0</feature>
+                         <feature>activemq-client/${activemq.version}</feature>
+                         
+                        <feature>bundle</feature>
+                        <feature>config</feature>
+                        <feature>diagnostic</feature>
+                        <feature>feature</feature>
+                        <feature>jaas</feature>
+                        <feature>shell</feature>
+                        <feature>log</feature>
+                        <feature>management</feature>
+                        <feature>package</feature>
+                        <feature>shell-compat</feature>
+                        <feature>ssh</feature>
+                        <feature>system</feature>
+                        <feature>wrap</feature>
+                        <feature>wrapper</feature>
+
+                        <feature>cherry-vault-dev</feature>
+                         
+                    </bootFeatures>
+                    <installedFeatures>
+                    </installedFeatures>
+                    <javase>11</javase>
+                </configuration>
+                
+				<executions>
+				  <execution>
+				    <phase>compile</phase>
+				      <goals>
+				        <goal>assembly</goal>
+				      </goals>
+				    </execution>
+				    <execution>
+				      <id>package</id>
+				      <goals>
+				        <goal>archive</goal>
+				      </goals>
+				    </execution>
+				</executions>                
+            </plugin>
+        </plugins>
+        <pluginManagement>
+        	<plugins>
+        		<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+        		<plugin>
+        			<groupId>org.eclipse.m2e</groupId>
+        			<artifactId>lifecycle-mapping</artifactId>
+        			<version>1.0.0</version>
+        			<configuration>
+        				<lifecycleMappingMetadata>
+        					<pluginExecutions>
+        						<pluginExecution>
+        							<pluginExecutionFilter>
+        								<groupId>
+        									org.apache.karaf.tooling
+        								</groupId>
+        								<artifactId>
+        									karaf-maven-plugin
+        								</artifactId>
+        								<versionRange>
+        									[4.2.6,)
+        								</versionRange>
+        								<goals>
+        									<goal>assembly</goal>
+        								</goals>
+        							</pluginExecutionFilter>
+        							<action>
+        								<ignore></ignore>
+        							</action>
+        						</pluginExecution>
+        					</pluginExecutions>
+        				</lifecycleMappingMetadata>
+        			</configuration>
+        		</plugin>
+        	</plugins>
+        </pluginManagement>
+    </build>
+</project>
