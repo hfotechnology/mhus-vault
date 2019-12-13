@@ -55,32 +55,14 @@
 		</developer>
 	</developers>
 	
-    <profiles>
-      <profile>
-         <id>release-mhus</id>
-         <modules>
-	        <module>vault-api</module>
-	        <module>vault-core</module>
-	        <module>vault-client</module>
-	        <module>vault-rest</module>
-	        <module>vault-feature</module>
-         </modules>
-      </profile>
-      <profile>
-         <id>default</id>
-         <activation>
-            <activeByDefault>true</activeByDefault>
-         </activation>
-         <modules>
-	        <module>vault-api</module>
-	        <module>vault-core</module>
-	        <module>vault-client</module>
-	        <module>vault-rest</module>
-	        <module>vault-feature</module>
-	        <module>vault-assembly</module>
-            <module>vault-docker</module>
-         </modules>
-      </profile>
-   </profiles>
+    <modules>
+	    <module>vault-api</module>
+	    <module>vault-core</module>
+	    <module>vault-client</module>
+	    <module>vault-rest</module>
+	    <module>vault-feature</module>
+	    <module>vault-assembly</module>
+        <module>vault-docker</module>
+    </modules>
    	
 </project>

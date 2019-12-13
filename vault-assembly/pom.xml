@@ -13,6 +13,10 @@ https://raw.githubusercontent.com/pentaho/pentaho-karaf-assembly/master/pentaho-
     <artifactId>vault-assembly</artifactId>
     <packaging>karaf-assembly</packaging>
     
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.karaf.features</groupId>
