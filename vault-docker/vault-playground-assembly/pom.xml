@@ -7,16 +7,12 @@ https://raw.githubusercontent.com/pentaho/pentaho-karaf-assembly/master/pentaho-
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>de.mhus.cherry.vault</groupId>
-        <artifactId>cherry-vault</artifactId>
+        <artifactId>vault-docker</artifactId>
         <version>1.6.3-SNAPSHOT</version>
     </parent>
-    <artifactId>vault-assembly</artifactId>
+    <artifactId>vault-playground-assembly</artifactId>
     <packaging>karaf-assembly</packaging>
     
-    <properties>
-        <maven.deploy.skip>true</maven.deploy.skip>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.karaf.features</groupId>
@@ -110,7 +106,7 @@ https://raw.githubusercontent.com/pentaho/pentaho-karaf-assembly/master/pentaho-
                 <extensions>true</extensions>
                 <configuration>
                     <archiveZip>false</archiveZip>
-                    <targetFile>${project.artifactId}</targetFile>
+                    <targetFile>assembly</targetFile>
                     <usePathPrefix>false</usePathPrefix>
                     
 				    <blacklistedRepositories>

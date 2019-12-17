@@ -1,0 +1,61 @@
+ <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<!-- 
+https://raw.githubusercontent.com/ANierbeck/Karaf-Decanter-Runtime/master/Decanter-Runtime/pom.xml
+https://raw.githubusercontent.com/pentaho/pentaho-karaf-assembly/master/pentaho-karaf-assembly/pom.xml
+ -->
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>de.mhus.cherry.vault</groupId>
+        <artifactId>vault-docker</artifactId>
+        <version>1.6.3-SNAPSHOT</version>
+    </parent>
+    <artifactId>vault-playground-docker</artifactId>
+    <packaging>pom</packaging>
+
+    <build>
+        <plugins>
+        
+	        <plugin>
+		        <artifactId>maven-antrun-plugin</artifactId>
+		        <executions>
+		          <execution>
+		            <phase>compile</phase>
+		            <configuration>
+		              <tasks>
+		                  <copy 
+		                      file="../vault-playground-assembly/target/assembly.tar.gz" 
+		                      tofile="target/assembly.tar.gz"
+		                  />
+		              </tasks>
+		            </configuration>
+		            <goals>
+		              <goal>run</goal>
+		            </goals>
+		          </execution>
+		        </executions>
+	      </plugin>
+              
+           <plugin>
+             <groupId>com.spotify</groupId>
+             <artifactId>dockerfile-maven-plugin</artifactId>
+             <version>1.4.13</version>
+             <executions>
+                 <execution>
+                     <id>default</id>
+                     <goals>
+                         <goal>build</goal>
+                         <!-- 
+                         <goal>push</goal>
+                          -->
+                     </goals>
+                 </execution>
+             </executions>
+             <configuration>
+	             <repository>docker.io/mhus/vault-playground</repository>
+	             <tag>${project.version}</tag>
+             </configuration>
+         </plugin>
+      </plugins>
+    </build>
+</project>

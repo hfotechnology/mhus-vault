@@ -1,65 +1,40 @@
- <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-<!-- 
-https://raw.githubusercontent.com/ANierbeck/Karaf-Decanter-Runtime/master/Decanter-Runtime/pom.xml
-https://raw.githubusercontent.com/pentaho/pentaho-karaf-assembly/master/pentaho-karaf-assembly/pom.xml
- -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright 2018 Mike Hummel
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>de.mhus.cherry.vault</groupId>
-        <artifactId>cherry-vault</artifactId>
         <version>1.6.3-SNAPSHOT</version>
+        <artifactId>cherry-vault</artifactId>
     </parent>
     <artifactId>vault-docker</artifactId>
     <packaging>pom</packaging>
-
+    
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
+
+    <modules>
+        <module>vault-playground-assembly</module>
+        <module>vault-playground-docker</module>
+    </modules>
     
-    <build>
-        <plugins>
-        
-	        <plugin>
-		        <artifactId>maven-antrun-plugin</artifactId>
-		        <executions>
-		          <execution>
-		            <phase>compile</phase>
-		            <configuration>
-		              <tasks>
-		                  <copy 
-		                      file="../vault-assembly/target/vault-assembly.tar.gz" 
-		                      tofile="target/vault-assembly.tar.gz"
-		                  />
-		              </tasks>
-		            </configuration>
-		            <goals>
-		              <goal>run</goal>
-		            </goals>
-		          </execution>
-		        </executions>
-	      </plugin>
-              
-           <plugin>
-             <groupId>com.spotify</groupId>
-             <artifactId>dockerfile-maven-plugin</artifactId>
-             <version>1.4.13</version>
-             <executions>
-                 <execution>
-                     <id>default</id>
-                     <goals>
-                         <goal>build</goal>
-                         <!-- 
-                         <goal>push</goal>
-                          -->
-                     </goals>
-                 </execution>
-             </executions>
-             <configuration>
-	             <repository>docker.io/mhus/vault-playground</repository>
-	             <tag>${project.version}</tag>
-             </configuration>
-         </plugin>
-      </plugins>
-    </build>
 </project>
