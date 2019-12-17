@@ -18,4 +18,6 @@
 docker push "mhus/vault-playground:1.6.3-SNAPSHOT"
 
 
-docker run -it --name vault -v ~/.m2:/home/user/.m2 -p 8181:8181 mhus/vault-playground:1.6.3-SNAPSHOT
+docker run -it --name vault -h vault -v ~/.m2:/home/user/.m2 -p 8181:8181 mhus/vault-playground:1.6.3-SNAPSHOT
+
+docker rm vault
