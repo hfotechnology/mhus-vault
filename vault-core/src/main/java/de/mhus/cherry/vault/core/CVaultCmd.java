@@ -48,7 +48,7 @@ public class CVaultCmd extends AbstractCmd {
             + " updateindex <secretId> [index0..4]            - modify index of an existing entry\n"
             + " test <group> [key=value]*                     - test the creation of a group, use -exec to create a real entry (not saved)\n"
             + " dbexport <public key id> <file> [group]       - Export data for the management tool\n"
-            + " dbimport <private key id> <file>              - Import a merged export\n"
+            + " dbimport <private key id> <file>              - Import a merged export, use -a to import targets and groups\n"
             + " cleanup [group]                               - Remove expired entries of the group/all"
             + " ", multiValued=false)
     String cmd;
@@ -94,7 +94,7 @@ public class CVaultCmd extends AbstractCmd {
                 System.out.println("Key not found");
                 return null;
             }
-            new ImportUtil().importDb(key.getValue().value(), parameters[1]);
+            new ImportUtil().importDb(key.getValue().value(), parameters[1], parameters[2], all);
         } break;
         case "dbexport": {
             de.mhus.lib.core.vault.VaultEntry key = MVaultUtil.loadDefault().getEntry(UUID.fromString(parameters[0]));

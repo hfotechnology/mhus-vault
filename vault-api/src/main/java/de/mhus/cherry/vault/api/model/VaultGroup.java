@@ -105,5 +105,9 @@ public class VaultGroup extends DbMetadata {
         return secretGeneratorConfig;
     }
 
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
 
 }

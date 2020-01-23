@@ -13,6 +13,8 @@ import java.util.zip.ZipInputStream;
 import org.codehaus.jackson.JsonNode;
 
 import de.mhus.cherry.vault.api.model.VaultEntry;
+import de.mhus.cherry.vault.api.model.VaultGroup;
+import de.mhus.cherry.vault.api.model.VaultTarget;
 import de.mhus.cherry.vault.core.impl.StaticAccess;
 import de.mhus.lib.core.MFile;
 import de.mhus.lib.core.MJson;
@@ -32,7 +34,7 @@ public class ImportUtil extends MLog {
     private ZipFile zip;
     private String passphrase;
 
-    public void importDb(String privateKey, String passphrase, String file) throws MException, IOException {
+    public void importDb(String privateKey, String passphrase, String file, boolean all) throws MException, IOException {
         this.privateKey = privateKey;
         this.passphrase = passphrase;
         this.file = new File(file);
@@ -49,7 +51,82 @@ public class ImportUtil extends MLog {
         // import entries
         importEntries();
         
+        if (all) {
+            importGroups();
+            
+            importTargets();
+        }
+        
         zip.close();
+    }
+
+    private void importTargets() throws MException {
+        XdbService db = StaticAccess.db.getManager();
+        
+        for (VaultTarget target : db.getAll(VaultTarget.class)) {
+            if (target.isEnabled()) {
+                System.out.println(">>> Disable Target: " + target.getName() + " " + target.getId());
+                target.setEnabled(false);
+                target.save();
+            }
+        }
+        
+        for (ZipEntry zipEntry : new EnumerationIterator<ZipEntry>(zip.entries())) {
+            try {
+                if (zipEntry.getName().startsWith("target/")) {
+                    UUID id = UUID.fromString(zipEntry.getName().substring(7));
+                    VaultTarget target = db.getObject(VaultTarget.class, id);
+                    if (target == null) {
+                        target = db.inject(new VaultTarget());
+                        System.out.println(">>> Create Target: "+ id);
+                    } else {
+                        System.out.println(">>> Update Target: "+ id);
+                    }
+                    
+                    JsonNode json = MJson.load(load(zipEntry.getName()));
+                    MPojo.jsonToPojo(json, target);
+                    
+                    target.save();
+
+                }
+            } catch (Throwable t) {
+                log().e(zipEntry.getName(),t);
+            }
+        }
+    }
+
+    private void importGroups() throws MException {
+        XdbService db = StaticAccess.db.getManager();
+        
+        for (VaultGroup group : db.getAll(VaultGroup.class)) {
+            if (group.isEnabled()) {
+                System.out.println(">>> Disable Group: " + group.getName() + " " + group.getId());
+                group.setEnabled(false);
+                group.save();
+            }
+        }
+        
+        for (ZipEntry zipEntry : new EnumerationIterator<ZipEntry>(zip.entries())) {
+            try {
+                if (zipEntry.getName().startsWith("group/")) {
+                    UUID id = UUID.fromString(zipEntry.getName().substring(6));
+                    VaultGroup group = db.getObject(VaultGroup.class, id);
+                    if (group == null) {
+                        group = db.inject(new VaultGroup());
+                        System.out.println(">>> Create Group: "+ id);
+                    } else {
+                        System.out.println(">>> Update Group: "+ id);
+                    }
+                    
+                    JsonNode json = MJson.load(load(zipEntry.getName()));
+                    MPojo.jsonToPojo(json, group);
+                    
+                    group.save();
+                }
+            } catch (Throwable t) {
+                log().e(zipEntry.getName(),t);
+            }
+        }
     }
 
     private void importEntries() {
@@ -61,9 +138,9 @@ public class ImportUtil extends MLog {
                     VaultEntry entry = db.getObject(VaultEntry.class, id);
                     if (entry == null) {
                         entry = db.inject(new VaultEntry());
-                        System.out.println(">>> Create " + entry.getGroup() + " " + entry.getTarget() + " " + entry.getId());
+                        System.out.println(">>> Create Entry " + id);
                     } else {
-                        System.out.println(">>> Update " + entry.getGroup() + " " + entry.getTarget() + " " + entry.getId());
+                        System.out.println(">>> Update Entry " + id);
                     }
                     
                     JsonNode json = MJson.load(load(zipEntry.getName()));

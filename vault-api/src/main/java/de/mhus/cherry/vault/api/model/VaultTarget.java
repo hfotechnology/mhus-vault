@@ -67,6 +67,9 @@ public class VaultTarget extends DbMetadata {
 	public boolean isEnabled() {
 		return enabled;
 	}
+	public void setEnabled(boolean enabled) {
+	    this.enabled = enabled;
+	}
 	public List<String> getReadAcl() {
 		if (readAcl == null) readAcl = new LinkedList<>();
 		return Collections.unmodifiableList(readAcl);
