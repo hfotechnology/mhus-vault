@@ -132,7 +132,7 @@ public interface CherryVaultApi {
     
     List<VaultEntry> search(String group, String target, String[] index, int size, boolean all) throws MException;
 
-    String testGroup(String groupName, IProperties prop);
+    String testGroup(String groupName, boolean execute,IProperties prop);
 	
     public XdbService getManager();
 

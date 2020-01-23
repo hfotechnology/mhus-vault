@@ -704,7 +704,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
     }
 
     @Override
-    public String testGroup(String groupName, IProperties properties) {
+    public String testGroup(String groupName, boolean execute, IProperties properties) {
         
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         PrintStream out = new PrintStream(os);
@@ -723,16 +723,29 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
             String generatorName = group.getSecretGeneratorName();
             out.println("Generator Name: " + generatorName);
             
+            SecretContent secret = null;
+            UUID secretId = UUID.randomUUID();
             if (generatorName != null) {
                 SecretGenerator generator = getGenerator(generatorName);
+                out.println("---------------------------");
                 out.println("Generator: " + generator);
+                out.println("---------------------------");
                 out.println(group.getSecretGeneratorConfig());
                 generator.test(out, group, properties);
+                if (execute) {
+                    out.println(">>> Execute Generator");
+                    secret = generator.generateSecret(group, properties);
+                    out.println("=== Result:" + secret.getContent().value());
+                    out.println("Properties: " + secret.getProperties());
+                    out.println("<<< End Generator");
+                }
             }
     
             for (String targetName : group.getTargets()) {
+                out.println();
                 out.println("---------------------------");
                 out.println("Target: " + targetName);
+                out.println("---------------------------");
                 VaultTarget target = getTarget(targetName);
                 out.println("DB: " + target);
                 String processorName = target.getProcessorName();
@@ -741,21 +754,34 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
                 out.println("Instance: " + processor);
                 
                 out.println(target.getProcessorConfig());
-                if (checkProcessConditions(group, properties, target)) {
-                    out.println("Condition: true");
-                } else
-                    out.println("Condition: false");
+                boolean cond = checkProcessConditions(group, properties, target);
+                out.println("Condition: " + cond);
                 processor.test(out, properties, target.getProcessorConfig());
-                
+                if (cond && execute) {
+                    out.println(">>> Execute Target " + targetName);
+                    WritableEntry entry = new WritableEntry();
+                    entry.setSecretId(secretId.toString());
+                    entry.setTarget(targetName);
+                    entry.setGroup(groupName);
+                    processor.process(properties, target.getProcessorConfig(), secret, entry);
+                    out.println("=== Result:");
+                    out.println("Secret:");
+                    out.println(entry.getSecret());
+                    out.println("Meta: " + entry.getMeta());
+                    out.println("<<< End Target");
+                }
             }
             
             VaultGroup ever = getMustHaveGroup(group.getName());
             if (ever != null) {
+                out.println();
                 out.println("*****************************);");
                 out.println("Must Have Group: " + ever);
                 for (String targetName : ever.getTargets()) {
+                    out.println();
                     out.println("---------------------------");
                     out.println("Target: " + targetName);
+                    out.println("---------------------------");
                     VaultTarget target = getTarget(targetName);
                     out.println("DB: " + target);
                     String processorName = target.getProcessorName();
@@ -764,11 +790,22 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
                     out.println("Instance: " + processor);
                     
                     out.println(target.getProcessorConfig());
-                    if (checkProcessConditions(group, properties, target)) {
-                        out.println("Condition: true");
-                    } else
-                        out.println("Condition: false");
+                    boolean cond = checkProcessConditions(group, properties, target);
+                    out.println("Condition: " + cond);
                     processor.test(out, properties, target.getProcessorConfig());
+                    if (cond && execute) {
+                        out.println(">>> Execute Default Target " + targetName);
+                        WritableEntry entry = new WritableEntry();
+                        entry.setSecretId(secretId.toString());
+                        entry.setTarget(targetName);
+                        entry.setGroup(groupName);
+                        processor.process(properties, target.getProcessorConfig(), secret, entry);
+                        out.println("=== Result:");
+                        out.println("Secret:");
+                        out.println(entry.getSecret());
+                        out.println("Meta: " + entry.getMeta());
+                        out.println("<<< End Default Target");
+                    }
                 }
             }
             out.append("############################################\n");

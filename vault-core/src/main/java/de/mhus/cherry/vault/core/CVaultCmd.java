@@ -69,6 +69,9 @@ public class CVaultCmd extends AbstractCmd {
     @Option(name="-a", description="All",required=false, multiValued=false)
     boolean all = false;
     
+    @Option(name="-exec", description="Execute Test",required=false, multiValued=false)
+    boolean execute = false;
+    
     @Override
     public Object execute2() throws Exception {
 
@@ -82,7 +85,7 @@ public class CVaultCmd extends AbstractCmd {
         switch (cmd) {
         case "test": {
             String[] p = MCollection.cropArray(parameters, 1, parameters.length);
-            String out = api.testGroup(parameters[0], MProperties.explodeToMProperties(p));
+            String out = api.testGroup(parameters[0], execute, MProperties.explodeToMProperties(p));
             System.out.println(out);
         } break;
         case "create": {
