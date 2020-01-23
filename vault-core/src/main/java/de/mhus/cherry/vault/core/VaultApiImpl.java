@@ -24,7 +24,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.osgi.service.component.ComponentContext;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
 
 import de.mhus.cherry.vault.api.CherryVaultApi;
 import de.mhus.cherry.vault.api.ifc.SecretContent;
@@ -65,11 +68,23 @@ import de.mhus.osgi.sop.api.aaa.AccessApi;
 public class VaultApiImpl extends MLog implements CherryVaultApi {
 
 	@SuppressWarnings("deprecation")
-	private static final Date END_OF_DAYS = new Date(3000-1900,0,1);
+	public static final Date END_OF_DAYS = new Date(3000-1900,0,1);
 	private static final String DEFAULT_GROUP_NAME = "default";
 	private static final CfgString CFG_DEFAULT_GROUP_NAME = new CfgString(CherryVaultApi.class, "defaultGroup", DEFAULT_GROUP_NAME);
 	private static final int INDEXES = 5;
+    public static VaultApiImpl instance;
 
+	
+    @Activate
+    public void doActivate(ComponentContext ctx) {
+        instance = this;
+    }
+
+    @Deactivate
+    public void doDeactivate(ComponentContext ctx) {
+        instance = null;
+    }
+    
 	@Override
 	public String createSecret(String groupName, Date validFrom, Date validTo, IProperties properties, String[] index) throws MException {
 		
@@ -112,7 +127,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		return secretId;
 	}
 
-	private void updateIndexes(LinkedList<VaultEntry> entriesToSave, String[] index, IProperties properties) {
+	public void updateIndexes(LinkedList<VaultEntry> entriesToSave, String[] index, IProperties properties) {
 	    // if (index == null || index.length == 0) return;
 	    
         entriesToSave.forEach(e -> {
@@ -384,7 +399,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
         return res;
     }
     
-	private void saveEntries(String groupName, LinkedList<VaultEntry> entriesToSave, Date validFrom, Date validTo) {
+	public void saveEntries(String groupName, LinkedList<VaultEntry> entriesToSave, Date validFrom, Date validTo) {
 		for (VaultEntry entry : entriesToSave) {
 			try {
 				entry.setValidFrom(validFrom);
@@ -400,12 +415,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 	        LinkedList<VaultEntry> entriesToSave) throws MException {
 		
 		for (String targetName : group.getTargets()) {
-			VaultTarget target = getTarget(targetName);
-			if (checkProcessConditions(group, properties, target)) {
-				VaultEntry entry = processTarget(group, properties, target, secretId, secret);
-				if (entry != null)
-					entriesToSave.add(entry);
-			}
+		    processTarget(group, targetName, properties, secretId, secret, entriesToSave);
 		}
 		
 		if (entriesToSave.isEmpty()) return;
@@ -413,16 +423,21 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		VaultGroup ever = getMustHaveGroup(group.getName());
 		if (ever != null) {
 			for (String targetName : ever.getTargets()) {
-				VaultTarget target = getTarget(targetName);
-				if (checkProcessConditions(group, properties, target)) {
-					VaultEntry entry = processTarget(ever, properties, target, secretId, secret);
-					if (entry != null)
-						entriesToSave.add(entry);
-				}
+			    processTarget(group, targetName, properties, secretId, secret, entriesToSave);
 			}
 		}
 
 		
+	}
+	
+	public void processTarget(VaultGroup group, String targetName, IProperties properties, 
+	        String secretId, SecretContent secret, LinkedList<VaultEntry> entriesToSave) throws NotFoundException, MException {
+        VaultTarget target = getTarget(targetName);
+        if (checkProcessConditions(group, properties, target)) {
+            VaultEntry entry = processTarget(group, properties, target, secretId, secret);
+            if (entry != null)
+                entriesToSave.add(entry);
+        }
 	}
 
 	private VaultGroup getMustHaveGroup(String groupName) throws NotFoundException {
@@ -445,7 +460,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 		}
 	}
 
-	private VaultEntry processTarget(VaultGroup group, IProperties properties, VaultTarget target, String secretId, SecretContent secret) throws MException {
+	public VaultEntry processTarget(VaultGroup group, IProperties properties, VaultTarget target, String secretId, SecretContent secret) throws MException {
 	    try {
     		String processorName = target.getProcessorName();
     		TargetProcessor processor = getProcessor(processorName);
