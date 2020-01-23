@@ -136,4 +136,6 @@ public interface CherryVaultApi {
 	
     public XdbService getManager();
 
+    void cleanup(String group) throws MException;
+
 }

@@ -16,6 +16,7 @@
 package de.mhus.cherry.vault.core;
 
 import java.util.Date;
+import java.util.UUID;
 
 import org.apache.karaf.shell.api.action.Argument;
 import org.apache.karaf.shell.api.action.Command;
@@ -30,6 +31,7 @@ import de.mhus.lib.core.MCast;
 import de.mhus.lib.core.MCollection;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.console.ConsoleTable;
+import de.mhus.lib.core.vault.MVaultUtil;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 
 @Command(scope = "cherry", name = "cvc", description = "Cherry Vault Control")
@@ -37,14 +39,17 @@ import de.mhus.osgi.api.karaf.AbstractCmd;
 public class CVaultCmd extends AbstractCmd {
 
     @Argument(index=0, name="cmd", required=true, description="Command:\n"
-            + " search [index0] [index1] [index2] [index3] [index4]\n"
-            + " entry <id> | <secretid> (-t <target>)\n"
-            + " create <groupId> [index0] [index1] [index2] [index3] [index4]\n"
-            + " updatecreate <secretId> [index0] [index1] [index2] [index3] [index4]\n"
-            + " import <groupId> <secret> [index0] [index1] [index2] [index3] [index4]\n"
-            + " updateimport <secretId> <secret> [index0] [index1] [index2] [index3] [index4]\n"
-            + " updateindex <secretId> [index0] [index1] [index2] [index3] [index4]\n"
-            + " test <group> [key=value]*\n"
+            + " search [index0..4]                            - Search for entries (blank index will not be searched)\n"
+            + " entry <id> | <secretid> (-t <target>)         - return entries\n"
+            + " create <groupId> [index0..4]                  - create a new entry with given data\n"
+            + " updatecreate <secretId> [index0..4]           - update an existing secret\n"
+            + " import <groupId> <secret> [index0..4]         - import an existing secret into a new entry\n"
+            + " updateimport <secretId> <secret> [index0..4]  - import a new secret into an existing entry\n"
+            + " updateindex <secretId> [index0..4]            - modify index of an existing entry\n"
+            + " test <group> [key=value]*                     - test the creation of a group, use -exec to create a real entry (not saved)\n"
+            + " dbexport <public key id> <file> [group]       - Export data for the management tool\n"
+            + " dbimport <private key id> <file>              - Import a merged export\n"
+            + " cleanup [group]                               - Remove expired entries of the group/all"
             + " ", multiValued=false)
     String cmd;
     
@@ -83,6 +88,25 @@ public class CVaultCmd extends AbstractCmd {
         MProperties prop = MProperties.explodeToMProperties(p);
         
         switch (cmd) {
+        case "dbimport": {
+            de.mhus.lib.core.vault.VaultEntry key = MVaultUtil.loadDefault().getEntry(UUID.fromString(parameters[0]));
+            if (key == null) {
+                System.out.println("Key not found");
+                return null;
+            }
+            new ImportUtil().importDb(key.getValue().value(), parameters[1]);
+        } break;
+        case "dbexport": {
+            de.mhus.lib.core.vault.VaultEntry key = MVaultUtil.loadDefault().getEntry(UUID.fromString(parameters[0]));
+            if (key == null) {
+                System.out.println("Key not found");
+                return null;
+            }
+            new ExportUtil().exportDb(key.getValue().value(), parameters[1], parameters.length > 2 ? parameters[2] : null);
+        } break;
+        case "cleanup": {
+            api.cleanup(parameters == null || parameters.length < 1 ? null : parameters[0]);
+        } break;
         case "test": {
             String[] p = MCollection.cropArray(parameters, 1, parameters.length);
             String out = api.testGroup(parameters[0], execute, MProperties.explodeToMProperties(p));

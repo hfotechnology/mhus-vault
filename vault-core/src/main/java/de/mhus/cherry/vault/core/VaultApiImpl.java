@@ -820,5 +820,24 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
     public XdbService getManager() {
         return StaticAccess.db.getManager();
     }
+
+    @Override
+    public void cleanup(String group) {
+        Date now = new Date();
+        AQuery<VaultEntry> query = Db.query(VaultEntry.class).le("validto",now);
+        try {
+            for (VaultEntry entry : StaticAccess.db.getManager().getByQualification(query)) {
+                try {
+                    log().i("cleanup",entry.getId());
+                    entry.delete();
+                } catch (Throwable t) {
+                    log().e(entry,t);
+                }
+            }
+        } catch (Throwable t) {
+            log().e(t);
+        }
+        
+    }
     
 }
