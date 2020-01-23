@@ -23,7 +23,6 @@ import de.mhus.cherry.vault.api.model.VaultEntry;
 import de.mhus.cherry.vault.api.model.VaultGroup;
 import de.mhus.cherry.vault.api.model.VaultKey;
 import de.mhus.cherry.vault.api.model.VaultTarget;
-import de.mhus.cherry.vault.core.impl.StaticAccess;
 import de.mhus.lib.adb.Persistable;
 import de.mhus.lib.basics.Ace;
 import de.mhus.lib.errors.MException;

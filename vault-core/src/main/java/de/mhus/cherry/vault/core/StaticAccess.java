@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.mhus.cherry.vault.core.impl;
-
-import de.mhus.cherry.vault.core.CherryVaultManager;
+package de.mhus.cherry.vault.core;
 
 public class StaticAccess {
 

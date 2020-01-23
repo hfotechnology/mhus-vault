@@ -58,6 +58,7 @@
     <modules>
 	    <module>vault-api</module>
 	    <module>vault-core</module>
+        <module>vault-manager</module>
 	    <module>vault-client</module>
 	    <module>vault-rest</module>
 	    <module>vault-feature</module>

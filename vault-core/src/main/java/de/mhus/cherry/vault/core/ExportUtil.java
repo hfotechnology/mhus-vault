@@ -17,7 +17,6 @@ import de.mhus.cherry.vault.api.model.VaultEntry;
 import de.mhus.cherry.vault.api.model.VaultGroup;
 import de.mhus.cherry.vault.api.model.VaultKey;
 import de.mhus.cherry.vault.api.model.VaultTarget;
-import de.mhus.cherry.vault.core.impl.StaticAccess;
 import de.mhus.lib.adb.query.Db;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MJson;

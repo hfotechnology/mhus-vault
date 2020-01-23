@@ -25,7 +25,6 @@ import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 import de.mhus.cherry.vault.api.CherryVaultApi;
 import de.mhus.cherry.vault.api.model.VaultEntry;
-import de.mhus.cherry.vault.core.impl.StaticAccess;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MCast;
 import de.mhus.lib.core.MCollection;

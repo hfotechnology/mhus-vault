@@ -25,7 +25,6 @@ import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import de.mhus.cherry.vault.api.model.VaultKey;
-import de.mhus.cherry.vault.core.impl.StaticAccess;
 import de.mhus.lib.adb.query.Db;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MLog;
