@@ -480,6 +480,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 	}
 
 	public boolean checkProcessConditions(VaultGroup group, IProperties properties, VaultTarget target) throws NotFoundException {
+	    if (!target.isEnabled()) return false;
 		String conditions = target.getConditionNames();
 		if (conditions == null) return false;
 		String[] parts = conditions.split(",");
