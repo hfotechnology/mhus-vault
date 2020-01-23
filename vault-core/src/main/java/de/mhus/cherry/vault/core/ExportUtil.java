@@ -15,6 +15,7 @@ import org.codehaus.jackson.node.ObjectNode;
 import de.mhus.cherry.vault.api.CherryVaultApi;
 import de.mhus.cherry.vault.api.model.VaultEntry;
 import de.mhus.cherry.vault.api.model.VaultGroup;
+import de.mhus.cherry.vault.api.model.VaultKey;
 import de.mhus.cherry.vault.api.model.VaultTarget;
 import de.mhus.cherry.vault.core.impl.StaticAccess;
 import de.mhus.lib.adb.query.Db;
@@ -66,9 +67,23 @@ public class ExportUtil {
         // exportEntries
         exportEntries();
         
+        // export MVault entries (CherryMVaultSource only)
+        exportVault();
+        
         zip.close();
         fos.close();
         
+    }
+
+    private void exportVault() throws MException, IOException {
+        PojoModelFactory factory = StaticAccess.db.getManager().getPojoModelFactory();
+        for (VaultKey key : StaticAccess.db.getManager().getAll(VaultKey.class)) {
+            System.out.println(">>> Save Key " + key);
+            ObjectNode json = MJson.createObjectNode();
+            MPojo.pojoToJson(key, json, factory);
+            String content = MJson.toString(json);
+            save("key/" + key.getId(), content);
+        }
     }
 
     private void exportEntries() throws MException, IOException {

@@ -14,6 +14,7 @@ import org.codehaus.jackson.JsonNode;
 
 import de.mhus.cherry.vault.api.model.VaultEntry;
 import de.mhus.cherry.vault.api.model.VaultGroup;
+import de.mhus.cherry.vault.api.model.VaultKey;
 import de.mhus.cherry.vault.api.model.VaultTarget;
 import de.mhus.cherry.vault.core.impl.StaticAccess;
 import de.mhus.lib.core.MFile;
@@ -55,9 +56,38 @@ public class ImportUtil extends MLog {
             importGroups();
             
             importTargets();
+            
+            importVault();
         }
         
         zip.close();
+    }
+
+    private void importVault() {
+        XdbService db = StaticAccess.db.getManager();
+
+        for (ZipEntry zipEntry : new EnumerationIterator<ZipEntry>(zip.entries())) {
+            try {
+                if (zipEntry.getName().startsWith("key/")) {
+                    UUID id = UUID.fromString(zipEntry.getName().substring(4));
+                    VaultKey key = db.getObject(VaultKey.class, id);
+                    if (key == null) {
+                        key = db.inject(new VaultKey());
+                        System.out.println(">>> Create Key: "+ id);
+                    } else {
+                        System.out.println(">>> Update Key: "+ id);
+                    }
+                    
+                    JsonNode json = MJson.load(load(zipEntry.getName()));
+                    MPojo.jsonToPojo(json, key);
+
+                    key.save();
+
+                }
+            } catch (Throwable t) {
+                log().e(zipEntry.getName(),t);
+            }
+        }
     }
 
     private void importTargets() throws MException {
