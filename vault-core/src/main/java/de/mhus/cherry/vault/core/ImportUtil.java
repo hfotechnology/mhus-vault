@@ -1,10 +1,12 @@
 package de.mhus.cherry.vault.core;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -21,9 +23,13 @@ import de.mhus.lib.core.MJson;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.pojo.MPojo;
+import de.mhus.lib.core.pojo.PojoModelFactory;
+import de.mhus.lib.core.util.Base64;
 import de.mhus.lib.core.util.EnumerationIterator;
 import de.mhus.lib.errors.MException;
+import de.mhus.lib.errors.NotFoundException;
 import de.mhus.lib.xdb.XdbService;
+import de.mhus.lib.xdb.XdbType;
 import de.mhus.osgi.crypt.api.util.CryptUtil;
 
 public class ImportUtil extends MLog {
@@ -33,6 +39,8 @@ public class ImportUtil extends MLog {
     private File file;
     private ZipFile zip;
     private String passphrase;
+    private boolean raw = false;
+    private PojoModelFactory factory;
 
     public void importDb(String privateKey, String passphrase, String file, boolean all) throws MException, IOException {
         this.privateKey = privateKey;
@@ -41,6 +49,8 @@ public class ImportUtil extends MLog {
 
         if (CryptUtil.getCipher(privateKey) == null) throw new MException("cipher not found");
 
+        factory = StaticAccess.db.getManager().getPojoModelFactory();
+        
         zip = new ZipFile(file);
         
         // load meta data
@@ -62,9 +72,10 @@ public class ImportUtil extends MLog {
         zip.close();
     }
 
-    private void importVault() {
+    private void importVault() throws NotFoundException {
         XdbService db = StaticAccess.db.getManager();
-
+        XdbType<?> type = db.getType(VaultKey.class);
+        
         for (ZipEntry zipEntry : new EnumerationIterator<ZipEntry>(zip.entries())) {
             try {
                 if (zipEntry.getName().startsWith("key/")) {
@@ -77,11 +88,15 @@ public class ImportUtil extends MLog {
                         System.out.println(">>> Update Key: "+ id);
                     }
                     
-                    JsonNode json = MJson.load(load(zipEntry.getName()));
-                    MPojo.jsonToPojo(json, key);
+                    String content = load(zipEntry.getName());
+                    MPojo.base64ToObject(content, key, factory);
 
-                    key.save();
-
+                    //key.save();
+                    if (key.isAdbPersistent())
+                        type.saveObjectForce(key, raw);
+                    else
+                        type.createObject(key);
+                    
                 }
             } catch (Throwable t) {
                 log().e(zipEntry.getName(),t);
@@ -91,6 +106,7 @@ public class ImportUtil extends MLog {
 
     private void importTargets() throws MException {
         XdbService db = StaticAccess.db.getManager();
+        XdbType<?> type = db.getType(VaultTarget.class);
         
         for (VaultTarget target : db.getAll(VaultTarget.class)) {
             if (target.isEnabled()) {
@@ -112,10 +128,14 @@ public class ImportUtil extends MLog {
                         System.out.println(">>> Update Target: "+ id);
                     }
                     
-                    JsonNode json = MJson.load(load(zipEntry.getName()));
-                    MPojo.jsonToPojo(json, target);
+                    String content = load(zipEntry.getName());
+                    MPojo.base64ToObject(content, target, factory);
                     
-                    target.save();
+                    // target.save();
+                    if (target.isAdbPersistent())
+                        type.saveObjectForce(target, raw);
+                    else
+                        type.createObject(target);
 
                 }
             } catch (Throwable t) {
@@ -126,6 +146,7 @@ public class ImportUtil extends MLog {
 
     private void importGroups() throws MException {
         XdbService db = StaticAccess.db.getManager();
+        XdbType<?> type = db.getType(VaultGroup.class);
         
         for (VaultGroup group : db.getAll(VaultGroup.class)) {
             if (group.isEnabled()) {
@@ -147,10 +168,15 @@ public class ImportUtil extends MLog {
                         System.out.println(">>> Update Group: "+ id);
                     }
                     
-                    JsonNode json = MJson.load(load(zipEntry.getName()));
-                    MPojo.jsonToPojo(json, group);
+                    String content = load(zipEntry.getName());
+                    MPojo.base64ToObject(content, group, factory);
                     
-                    group.save();
+                    //group.save();
+                    if (group.isAdbPersistent())
+                        type.saveObjectForce(group, raw);
+                    else
+                        type.createObject(group);
+                    
                 }
             } catch (Throwable t) {
                 log().e(zipEntry.getName(),t);
@@ -158,8 +184,10 @@ public class ImportUtil extends MLog {
         }
     }
 
-    private void importEntries() {
+    private void importEntries() throws NotFoundException {
         XdbService db = StaticAccess.db.getManager();
+        XdbType<?> type = db.getType(VaultEntry.class);
+
         for (ZipEntry zipEntry : new EnumerationIterator<ZipEntry>(zip.entries())) {
             try {
                 if (zipEntry.getName().startsWith("entry/")) {
@@ -172,10 +200,14 @@ public class ImportUtil extends MLog {
                         System.out.println(">>> Update Entry " + id);
                     }
                     
-                    JsonNode json = MJson.load(load(zipEntry.getName()));
-                    MPojo.jsonToPojo(json, entry);
-                    System.out.println(entry);
-                    entry.save();
+                    String content = load(zipEntry.getName());
+                    MPojo.base64ToObject(content, entry, factory);
+                    
+                    // entry.save();
+                    if (entry.isAdbPersistent())
+                        type.saveObjectForce(entry, raw);
+                    else
+                        type.createObject(entry);
                     
                 }
             } catch (Throwable t) {
@@ -184,6 +216,7 @@ public class ImportUtil extends MLog {
         }
         
     }
+
 
     private String loadPlain(String name) throws IOException {
         ZipEntry entry = zip.getEntry(name);

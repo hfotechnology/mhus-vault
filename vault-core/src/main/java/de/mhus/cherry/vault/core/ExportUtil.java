@@ -1,33 +1,24 @@
 package de.mhus.cherry.vault.core;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.io.ObjectOutputStream;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.node.ObjectNode;
-
-import de.mhus.cherry.vault.api.CherryVaultApi;
 import de.mhus.cherry.vault.api.model.VaultEntry;
 import de.mhus.cherry.vault.api.model.VaultGroup;
 import de.mhus.cherry.vault.api.model.VaultKey;
 import de.mhus.cherry.vault.api.model.VaultTarget;
 import de.mhus.lib.adb.query.Db;
-import de.mhus.lib.core.M;
-import de.mhus.lib.core.MJson;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MString;
 import de.mhus.lib.core.pojo.MPojo;
-import de.mhus.lib.core.pojo.PojoModel;
 import de.mhus.lib.core.pojo.PojoModelFactory;
+import de.mhus.lib.core.util.Base64;
 import de.mhus.lib.errors.MException;
-import de.mhus.osgi.crypt.api.CryptApi;
-import de.mhus.osgi.crypt.api.cipher.CipherProvider;
 import de.mhus.osgi.crypt.api.util.CryptUtil;
 
 public class ExportUtil {
@@ -37,6 +28,7 @@ public class ExportUtil {
     private String publicKey;
     private String group;
     private ZipOutputStream zip;
+    private PojoModelFactory factory;
 
     public void exportDb(String publicKey, String file, String group) throws IOException, MException {
         this.publicKey = publicKey;
@@ -44,6 +36,8 @@ public class ExportUtil {
         this.group = group;
         
         if (CryptUtil.getCipher(publicKey) == null) throw new MException("cipher not found");
+        
+        factory = StaticAccess.db.getManager().getPojoModelFactory();
         
         FileOutputStream fos = new FileOutputStream(file);
         zip = new ZipOutputStream(fos);
@@ -75,48 +69,36 @@ public class ExportUtil {
     }
 
     private void exportVault() throws MException, IOException {
-        PojoModelFactory factory = StaticAccess.db.getManager().getPojoModelFactory();
         for (VaultKey key : StaticAccess.db.getManager().getAll(VaultKey.class)) {
             System.out.println(">>> Save Key " + key);
-            ObjectNode json = MJson.createObjectNode();
-            MPojo.pojoToJson(key, json, factory);
-            String content = MJson.toString(json);
+            String content = MPojo.objectToBase64(key, factory);
             save("key/" + key.getId(), content);
         }
     }
 
     private void exportEntries() throws MException, IOException {
-        PojoModelFactory factory = StaticAccess.db.getManager().getPojoModelFactory();
         for (VaultEntry entry : group == null ? 
                 StaticAccess.db.getManager().getAll(VaultEntry.class) :
                 StaticAccess.db.getManager().getByQualification(Db.query(VaultEntry.class).eq("group", group))
                 ) {
             System.out.println(">>> Save Entry " + entry);
-            ObjectNode json = MJson.createObjectNode();
-            MPojo.pojoToJson(entry, json, factory);
-            String content = MJson.toString(json);
+            String content = MPojo.objectToBase64(entry, factory);
             save("entry/" + entry.getId(), content);
         }
     }
 
     private void exportTargets() throws MException, IOException {
-        PojoModelFactory factory = StaticAccess.db.getManager().getPojoModelFactory();
         for (VaultTarget target : StaticAccess.db.getManager().getAll(VaultTarget.class)) {
             System.out.println(">>> Save Target " + target);
-            ObjectNode json = MJson.createObjectNode();
-            MPojo.pojoToJson(target, json, factory);
-            String content = MJson.toString(json);
+            String content = MPojo.objectToBase64(target, factory);
             save("target/" + target.getId(), content);
         }
     }
 
     private void exportGroups() throws MException, IOException {
-        PojoModelFactory factory = StaticAccess.db.getManager().getPojoModelFactory();
         for (VaultGroup group : StaticAccess.db.getManager().getAll(VaultGroup.class)) {
             System.out.println(">>> Save Group " + group);
-            ObjectNode json = MJson.createObjectNode();
-            MPojo.pojoToJson(group, json, factory);
-            String content = MJson.toString(json);
+            String content = MPojo.objectToBase64(group, factory);
             save("group/" + group.getId(), content);
         }
     }
