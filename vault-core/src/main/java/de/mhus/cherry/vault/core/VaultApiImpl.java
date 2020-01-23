@@ -667,8 +667,8 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
     }
 
     @Override
-    public List<VaultEntry> search(String group, String target, String[] index, int size, boolean all) throws MException {
-        if (index == null || index.length == 0) return new EmptyList<VaultEntry>();
+    public List<VaultEntry> search(String group, String target, String[] index, int size, boolean all, boolean secure) throws MException {
+        if (secure && (index == null || index.length == 0)) return new EmptyList<VaultEntry>();
 
         Date now = new Date();
         AQuery<VaultEntry> query = Db.query(VaultEntry.class);
@@ -683,12 +683,13 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
             query.eq("target", target);
         
         boolean found = false;
-        for (int i = 0; i < index.length; i++) {
-            if (MString.isEmpty(index[i]) || i > 4) continue;
-            found = true;
-            query.eq("index" + i, index[i]);
-        }
-        if (!found) return new EmptyList<VaultEntry>();
+        if (index != null)
+            for (int i = 0; i < index.length; i++) {
+                if (MString.isEmpty(index[i]) || i > 4) continue;
+                found = true;
+                query.eq("index" + i, index[i]);
+            }
+        if (secure && !found) return new EmptyList<VaultEntry>();
 
         XdbService manager = StaticAccess.db.getManager();
         DbCollection<VaultEntry> res = manager.getByQualification(query);

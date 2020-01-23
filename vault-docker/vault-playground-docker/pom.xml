@@ -43,6 +43,7 @@ https://raw.githubusercontent.com/pentaho/pentaho-karaf-assembly/master/pentaho-
              <executions>
                  <execution>
                      <id>default</id>
+                     <phase></phase>
                      <goals>
                          <goal>build</goal>
                          <!-- 

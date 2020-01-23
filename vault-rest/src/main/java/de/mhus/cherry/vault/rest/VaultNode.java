@@ -57,7 +57,7 @@ public class VaultNode extends ObjectListNode<VaultEntry,VaultEntry>{
 
         CherryVaultApi api = M.l(CherryVaultApi.class);
         
-		return api.search(group, target, index, 100, false);
+		return api.search(group, target, index, 100, false, true);
 	}
 
 //	@Override

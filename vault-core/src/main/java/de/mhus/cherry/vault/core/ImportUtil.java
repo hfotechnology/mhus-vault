@@ -174,7 +174,7 @@ public class ImportUtil extends MLog {
                     
                     JsonNode json = MJson.load(load(zipEntry.getName()));
                     MPojo.jsonToPojo(json, entry);
-                    
+                    System.out.println(entry);
                     entry.save();
                     
                 }

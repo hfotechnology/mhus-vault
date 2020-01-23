@@ -1,4 +1,5 @@
-====
+<!--
+
     Copyright 2018 Mike Hummel
 
     Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,26 +13,23 @@
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
-====
 
-Create docker image:
-
-mvn dockerfile:build
-
-
-Publish docker image:
-
-docker push "mhus/vault-playground:1.6.3-SNAPSHOT"
-
-
-Create Docker playground as single node with in memory db:
-
-docker run -it --name vault-playground \
- -h vault \
- -v ~/.m2:/home/user/.m2 \
- -p 8182:8181 \
- -p 15006:5005 \
- mhus/vault-playground:1.6.3-SNAPSHOT debug
-
-docker rm vault-playground
+-->
+<mhus>
+  <system
+    log.factory="de.mhus.lib.logging.Log4JFactory"
+    level.mapper="de.mhus.lib.logging.level.ThreadBasedMapper"
+    parameter.mapper="de.mhus.lib.logging.parameter.MutableParameterMapper"
+    log.console.redirect="true"
+  >
+    <parameter.mapper name="javax.jms.Message" class="de.mhus.lib.jms.util.MessageParameterMapper" />
+  </system>
+<de.mhus.lib.sql.DbConnection 
+  traceCallers="true" 
+  traceRuntime="true" 
+  tracePoolSize="true"
+  timeoutUnused="5s"
+  timeoutLifetime="10s"
+/>
+</mhus>
 

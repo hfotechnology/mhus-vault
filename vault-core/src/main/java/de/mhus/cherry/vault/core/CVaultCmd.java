@@ -16,6 +16,8 @@
 package de.mhus.cherry.vault.core;
 
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.UUID;
 
 import org.apache.karaf.shell.api.action.Argument;
@@ -25,6 +27,10 @@ import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 import de.mhus.cherry.vault.api.CherryVaultApi;
 import de.mhus.cherry.vault.api.model.VaultEntry;
+import de.mhus.cherry.vault.api.model.VaultGroup;
+import de.mhus.cherry.vault.api.model.VaultTarget;
+import de.mhus.lib.adb.query.AQuery;
+import de.mhus.lib.adb.query.Db;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MCast;
 import de.mhus.lib.core.MCollection;
@@ -33,7 +39,7 @@ import de.mhus.lib.core.console.ConsoleTable;
 import de.mhus.lib.core.vault.MVaultUtil;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 
-@Command(scope = "cherry", name = "cvc", description = "Cherry Vault Control")
+@Command(scope = "cherry", name = "vault", description = "Cherry Vault Control")
 @Service
 public class CVaultCmd extends AbstractCmd {
 
@@ -48,7 +54,10 @@ public class CVaultCmd extends AbstractCmd {
             + " test <group> [key=value]*                     - test the creation of a group, use -exec to create a real entry (not saved)\n"
             + " dbexport <public key id> <file> [group]       - Export data for the management tool\n"
             + " dbimport <private key id> <file>              - Import a merged export, use -a to import targets and groups\n"
-            + " cleanup [group]                               - Remove expired entries of the group/all"
+            + " cleanup [group]                               - Remove expired entries of the group/all\n"
+            + " groups\n"
+            + " targets\n"
+            + " secret <secretId>\n"
             + " ", multiValued=false)
     String cmd;
     
@@ -87,6 +96,70 @@ public class CVaultCmd extends AbstractCmd {
         MProperties prop = MProperties.explodeToMProperties(p);
         
         switch (cmd) {
+        case "secret": {
+            List<VaultEntry> res = null;
+            if (target == null)
+                res = api.getSecrets(parameters[0]);
+            else {
+                res = new LinkedList<>();
+                VaultEntry r = api.getSecret(parameters[0], target);
+                if (r != null)
+                    res.add(r);
+            }
+            ConsoleTable table = new ConsoleTable(tblOpt);
+            table.setHeaderValues("id","Group","Target","From","To");
+            for (VaultEntry item : res) {
+                table.addRowValues(item.getId(),item.getGroup(),item.getTarget(),item.getValidFrom(),item.getValidTo());
+            }
+            table.print();
+        } break;
+        case "groups": {
+            AQuery<VaultGroup> query = Db.query(VaultGroup.class);
+            if (!all)
+                query.eq("enabled", true);
+            query.asc("name");
+            ConsoleTable out = new ConsoleTable(tblOpt);
+            out.setHeaderValues("Name","Targets","Generator","Config","Id","Modified");
+            for (VaultGroup item : StaticAccess.db.getManager().getByQualification(query)) {
+                out.addRowValues(
+                        item.getName() + (item.isEnabled() ? "" : "\n[disabled]"),
+                        item.getTargets(),
+                        item.getSecretGeneratorName(),
+                        item.getSecretGeneratorConfig(),
+                        item.getId(),
+                        item.getModifyDate()
+                        );
+            }
+            out.print();
+        } break;
+        case "targets": {
+            List<String> filter = null;
+            AQuery<VaultTarget> query = Db.query(VaultTarget.class);
+            if (!all)
+                query.eq("enabled", true);
+            if (group != null) {
+                VaultGroup g = StaticAccess.db.getManager().getObjectByQualification(Db.query(VaultGroup.class).eq("name", group));
+                if (g == null) return null;
+                filter = g.getTargets();
+            }
+
+            query.asc("name");
+            ConsoleTable out = new ConsoleTable(tblOpt);
+            out.setHeaderValues("Name","Processor","Config","Condition","Config","Id","Modified");
+            for (VaultTarget item : StaticAccess.db.getManager().getByQualification(query)) {
+                if (filter == null || filter.contains(item.getName()))
+                    out.addRowValues(
+                            item.getName() + (item.isEnabled() ? "" : "\n[disabled]"),
+                            item.getProcessorName(),
+                            item.getProcessorConfig(),
+                            item.getConditionNames(),
+                            item.getConditionConfig(null),
+                            item.getId(),
+                            item.getModifyDate()
+                            );
+            }
+            out.print();
+        } break;
         case "dbimport": {
             de.mhus.lib.core.vault.VaultEntry key = MVaultUtil.loadDefault().getEntry(UUID.fromString(parameters[0]));
             if (key == null) {
@@ -119,7 +192,7 @@ public class CVaultCmd extends AbstractCmd {
         case "search": {
             ConsoleTable table = new ConsoleTable(tblOpt);
             table.setHeaderValues("id","SecretId","Group","Target","From","To");
-            for (VaultEntry item : api.search(group, target, parameters, 100, all)) {
+            for (VaultEntry item : api.search(group, target, parameters, 100, all, false)) {
                 table.addRowValues(item.getId(),item.getSecretId(),item.getGroup(),item.getTarget(),item.getValidFrom(),item.getValidTo());
             }
             table.print();

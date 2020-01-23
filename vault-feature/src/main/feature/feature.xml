@@ -25,6 +25,12 @@
         <feature>cherry-vault-rest</feature>
 	</feature>
 
+    <feature name='cherry-vault-manager' description='cherry-vault-rest' version='${project.version}'>
+        <details>${project.description}</details>
+        <feature>cherry-vault</feature>
+        <bundle>mvn:de.mhus.cherry.vault/vault-manager/${cherry-vault.version}</bundle>
+    </feature>
+    
     <feature name='cherry-vault-rest' description='cherry-vault-rest' version='${project.version}'>
         <details>${project.description}</details>
         <feature>http</feature>

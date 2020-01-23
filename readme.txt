@@ -35,6 +35,8 @@ cp .../etc/aaa/accounts/* sop/aaa/accounts
 Examples
 =========
 
+crypt:cipher -ip -is -d "Rsa Transfer" AESWITHRSA-BC-01 create
+
 crypt:cipher -ip -is -s CherryVaultLocalSource -d "Test Rsa Key" RSA-BC-01 create
 
 
@@ -43,10 +45,10 @@ Create test group and target:
 crypt:cipher -ip -is -s CherryVaultLocalSource -d "Test Rsa Key" RSA-BC-01 create|cut -m array -f Ident|setvar rsaPrivId rsaPubId
 crypt:signer -ip -is -s CherryVaultLocalSource DSA-BC-01 create|cut -m array -f Ident|setvar dsaPrivId dsaPubId
 xdb:create VaultGroup name=test secretgeneratorname=password allowupdate=true targets.add=test writeacl.add=* enabled=true maximportlength=100
-xdb:create VaultTarget name=test conditionnames=true processorname=cipher.rsa processorconfig.keyId=$rsaPubId processorconfig.signId=$dsaPrivId processorconfig.signService=DSA-BC-01 readacl.add=*
+xdb:create VaultTarget name=test enabled=true conditionnames=true processorname=cipher.rsa processorconfig.keyId=$rsaPubId processorconfig.signId=$dsaPrivId processorconfig.signService=DSA-BC-01 readacl.add=*
 
 
-cvc create test
+vault create test
 
 Result: dbc02d77-0e70-4e30-9a28-110f55300e11
 
@@ -76,3 +78,18 @@ xdb:delete VaultGroup "()"
 xdb:delete VaultTarget "()"
 xdb:delete VaultEntry "()"
 xdb:delete VaultKey "()"
+
+
+
+
+Test export / import:
+
+
+
+dbexport b83731dd-4d89-46c6-af3a-12363f7b07da export.zip
+dbdelete
+dbimport a60b8531-b445-487d-8222-0c25446e38c9 "" export.zip
+
+
+
+

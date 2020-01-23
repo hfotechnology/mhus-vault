@@ -36,6 +36,14 @@ https://raw.githubusercontent.com/pentaho/pentaho-karaf-assembly/master/pentaho-
             <scope>runtime</scope>
             <type>xml</type>
         </dependency>
+        <dependency>
+            <groupId>org.apache.karaf.features</groupId>
+            <artifactId>spring-legacy</artifactId>
+            <version>${karaf.version}</version>
+            <classifier>features</classifier>
+            <scope>runtime</scope>
+            <type>xml</type>
+        </dependency>
 
         <!-- mvn:org.apache.activemq/activemq-karaf/5.15.8/xml/features -->
         <dependency>
@@ -109,6 +117,20 @@ https://raw.githubusercontent.com/pentaho/pentaho-karaf-assembly/master/pentaho-
                     <targetFile>assembly</targetFile>
                     
 				    <blacklistedRepositories>
+                        <repository>mvn:org.apache.karaf.features/framework/4.2.8/xml/features</repository>
+                        <repository>mvn:org.apache.karaf.features/standard/4.2.8/xml/features</repository>
+                        <repository>mvn:org.apache.karaf.features/enterprise/4.2.8/xml/features</repository>
+                        <repository>mvn:org.apache.karaf.features/enterprise-legacy/4.2.8/xml/features</repository>
+                        <repository>mvn:org.apache.karaf.features/spring/4.2.8/xml/features</repository>
+                        <repository>mvn:org.apache.karaf.features/spring-legacy/4.2.8/xml/features</repository>
+                        
+                        <repository>mvn:org.apache.karaf.features/framework/4.2.7/xml/features</repository>
+                        <repository>mvn:org.apache.karaf.features/standard/4.2.7/xml/features</repository>
+                        <repository>mvn:org.apache.karaf.features/enterprise/4.2.7/xml/features</repository>
+                        <repository>mvn:org.apache.karaf.features/enterprise-legacy/4.2.7/xml/features</repository>
+                        <repository>mvn:org.apache.karaf.features/spring/4.2.7/xml/features</repository>
+                        <repository>mvn:org.apache.karaf.features/spring-legacy/4.2.7/xml/features</repository>
+                        
 				        <repository>mvn:org.apache.karaf.features/framework/4.3.0-SNAPSHOT/xml/features</repository>
 				        <repository>mvn:org.apache.karaf.features/standard/4.3.0-SNAPSHOT/xml/features</repository>
 				        <repository>mvn:org.apache.karaf.features/enterprise/4.3.0-SNAPSHOT/xml/features</repository>
@@ -148,7 +170,8 @@ https://raw.githubusercontent.com/pentaho/pentaho-karaf-assembly/master/pentaho-
                         <feature>wrapper</feature>
 
                         <feature>cherry-vault-dev</feature>
-                         
+                        <feature>cherry-vault-manager</feature>
+
                     </bootFeatures>
                     <installedFeatures>
                     </installedFeatures>

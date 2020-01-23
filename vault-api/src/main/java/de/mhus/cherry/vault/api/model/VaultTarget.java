@@ -62,6 +62,7 @@ public class VaultTarget extends DbMetadata {
 	}
 	public synchronized IReadProperties getConditionConfig(String name) {
 		if (conditionConfigs == null) conditionConfigs = new MProperties();
+		if (name == null) return conditionConfigs;
 		return new PropertiesSubset(conditionConfigs,name + ".");
 	}
 	public boolean isEnabled() {
