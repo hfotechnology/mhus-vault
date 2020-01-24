@@ -96,4 +96,8 @@ public class VaultKey extends DbMetadata {
         this.name = name;
     }
 
+    public void setType(String type) {
+        this.type = type;
+    }
+
 }

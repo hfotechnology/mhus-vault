@@ -33,6 +33,7 @@ import de.mhus.lib.core.vault.MutableVaultSource;
 import de.mhus.lib.core.vault.VaultEntry;
 import de.mhus.lib.core.vault.VaultSource;
 import de.mhus.lib.errors.MException;
+import de.mhus.lib.errors.NotFoundException;
 import de.mhus.osgi.sop.api.aaa.AaaContext;
 import de.mhus.osgi.sop.api.aaa.AaaUtil;
 import de.mhus.osgi.sop.api.aaa.AccessApi;
@@ -146,7 +147,19 @@ public class CherryMVaultSource extends MLog implements MutableVaultSource {
 		    .inject(key)
 		    .save();
 	}
-	
+
+    @Override
+    public void updateEntry(VaultEntry entry) throws MException {
+        VaultKey key = getVaultKey(entry.getId());
+        if (key == null) throw new NotFoundException("entry not found",entry.getId());
+        
+        key.setType(entry.getType());
+        key.setName(entry.getName());
+        key.setDescription(entry.getDescription());
+        key.save();
+    }
+
+
 	@Override
 	public void removeEntry(UUID id) throws MException {
         VaultKey obj = getVaultKey(id);
