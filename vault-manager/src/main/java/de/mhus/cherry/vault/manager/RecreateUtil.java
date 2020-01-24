@@ -3,14 +3,12 @@ package de.mhus.cherry.vault.manager;
 import java.util.Date;
 import java.util.LinkedList;
 
-import de.mhus.cherry.vault.api.CherryVaultApi;
 import de.mhus.cherry.vault.api.ifc.SecretContent;
 import de.mhus.cherry.vault.api.model.VaultEntry;
 import de.mhus.cherry.vault.api.model.VaultGroup;
 import de.mhus.cherry.vault.core.StaticAccess;
 import de.mhus.cherry.vault.core.VaultApiImpl;
 import de.mhus.lib.adb.query.Db;
-import de.mhus.lib.core.M;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.util.SecureString;
 import de.mhus.lib.errors.MException;
@@ -21,7 +19,6 @@ public class RecreateUtil {
 
     public void recreate(String target, String recTarget, String recPrivateKey, String recPassphrase, String filter) throws MException {
         XdbService db = StaticAccess.db.getManager();
-        CherryVaultApi api = M.l(CherryVaultApi.class);
         
         Date now = new Date();
         System.out.println("Now: " + now.getTime() + " " + now);

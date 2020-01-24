@@ -35,6 +35,8 @@ public class VaultKey extends DbMetadata {
 	private String value;
 	@DbPersistent
 	private String description;
+    @DbPersistent
+    private String name;
 	@DbPersistent
 	private String type;
 	@DbPersistent
@@ -42,11 +44,12 @@ public class VaultKey extends DbMetadata {
 
 	public VaultKey() {}
 	
-	public VaultKey(String ident, String value, String description, String type) {
+	public VaultKey(String ident, String value, String description, String type, String name) {
 		this.ident = ident;
 		this.value = value;
 		this.description = description;
 		this.type = type;
+		this.name = name;
 	}
 	
 	public String getValue() {
@@ -84,5 +87,13 @@ public class VaultKey extends DbMetadata {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
 }

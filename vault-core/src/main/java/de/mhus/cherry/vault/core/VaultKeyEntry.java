@@ -21,7 +21,7 @@ import de.mhus.lib.core.vault.DefaultEntry;
 public class VaultKeyEntry extends DefaultEntry {
 
 	public VaultKeyEntry(VaultKey key) {
-		super(key.getId(), key.getType(),key.getDescription(),key.getValue());
+		super(key.getId(), key.getType(),key.getName(), key.getDescription(),key.getValue());
 	}
 
 }

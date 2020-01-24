@@ -59,6 +59,18 @@ public class CherryMVaultSource extends MLog implements MutableVaultSource {
 		}
 	}
 
+    @Override
+    public VaultEntry getEntry(String name) {
+        try {
+            VaultKey key = getVaultKey(name);
+            if (key == null) return null;
+            return new VaultKeyEntry(key);
+        } catch (Exception e) {
+            log().t(name,e);
+            return null;
+        }
+    }
+    
     public VaultKey getVaultKey(UUID id) {
         try {
 //          VaultKey key = StaticAccess.moManager.getManager().createQuery(VaultKey.class).filter("ident", id.toString()).get();
@@ -73,6 +85,24 @@ public class CherryMVaultSource extends MLog implements MutableVaultSource {
             return key;
         } catch (Exception e) {
             log().t(id,e);
+            return null;
+        }
+    }
+    
+    public VaultKey getVaultKey(String name) {
+        try {
+//          VaultKey key = StaticAccess.moManager.getManager().createQuery(VaultKey.class).filter("ident", id.toString()).get();
+            VaultKey key = StaticAccess.db.getManager().getObjectByQualification(Db.query(VaultKey.class).eq("name", name));
+            if (key == null) return null;
+            List<String> readAcl = key.getReadAcl();
+            if (readAcl != null) {
+                AaaContext acc = M.l(AccessApi.class).getCurrentOrGuest();
+                if (!AaaUtil.hasAccess(acc, readAcl))
+                    return null;
+            }
+            return key;
+        } catch (Exception e) {
+            log().t(name,e);
             return null;
         }
     }
@@ -111,7 +141,7 @@ public class CherryMVaultSource extends MLog implements MutableVaultSource {
 
 	@Override
 	public void addEntry(VaultEntry entry) throws MException {
-		VaultKey key = new VaultKey(entry.getId().toString(), entry.getValue().value(), entry.getDescription(), entry.getType());
+		VaultKey key = new VaultKey(entry.getId().toString(), entry.getValue().value(), entry.getDescription(), entry.getType(), entry.getName());
 		StaticAccess.db.getManager()
 		    .inject(key)
 		    .save();

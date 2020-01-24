@@ -1,30 +1,21 @@
 package de.mhus.cherry.vault.core;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
-
-import org.codehaus.jackson.JsonNode;
 
 import de.mhus.cherry.vault.api.model.VaultEntry;
 import de.mhus.cherry.vault.api.model.VaultGroup;
 import de.mhus.cherry.vault.api.model.VaultKey;
 import de.mhus.cherry.vault.api.model.VaultTarget;
 import de.mhus.lib.core.MFile;
-import de.mhus.lib.core.MJson;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.pojo.MPojo;
 import de.mhus.lib.core.pojo.PojoModelFactory;
-import de.mhus.lib.core.util.Base64;
 import de.mhus.lib.core.util.EnumerationIterator;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;

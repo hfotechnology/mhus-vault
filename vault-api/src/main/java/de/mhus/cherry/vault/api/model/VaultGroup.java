@@ -50,6 +50,8 @@ public class VaultGroup extends DbMetadata {
 	private boolean allowImports;
 	@DbPersistent
 	private int maxImportLength;
+    @DbPersistent
+    private String description;
 	
 	public String getName() {
 		return name;
@@ -107,6 +109,14 @@ public class VaultGroup extends DbMetadata {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
 

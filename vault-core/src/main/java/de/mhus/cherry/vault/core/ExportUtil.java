@@ -1,10 +1,8 @@
 package de.mhus.cherry.vault.core;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -17,7 +15,6 @@ import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MString;
 import de.mhus.lib.core.pojo.MPojo;
 import de.mhus.lib.core.pojo.PojoModelFactory;
-import de.mhus.lib.core.util.Base64;
 import de.mhus.lib.errors.MException;
 import de.mhus.osgi.crypt.api.util.CryptUtil;
 

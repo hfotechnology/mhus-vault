@@ -45,6 +45,8 @@ public class VaultTarget extends DbMetadata {
 	private boolean enabled;
 	@DbPersistent
 	private LinkedList<String> readAcl;
+    @DbPersistent
+    private String description;
 
 	
 	public String getName() {
@@ -85,6 +87,12 @@ public class VaultTarget extends DbMetadata {
 		// TODO Auto-generated method stub
 		return null;
 	}
+    public String getDescription() {
+        return description;
+    }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
 	
 }
