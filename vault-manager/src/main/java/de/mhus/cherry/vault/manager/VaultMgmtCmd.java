@@ -15,9 +15,9 @@ import de.mhus.lib.core.vault.MVaultUtil;
 import de.mhus.lib.errors.MException;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 
-@Command(scope = "cherry", name = "cvmgmt", description = "Cherry Vault Management")
+@Command(scope = "cherry", name = "mgmt", description = "Cherry Vault Management")
 @Service
-public class AdminCmd extends AbstractCmd {
+public class VaultMgmtCmd extends AbstractCmd {
 
     @Argument(index=0, name="cmd", required=true, description="Command:\n"
             + " dbdelete - delete all from database\n"
