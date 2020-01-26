@@ -1,16 +1,14 @@
 /**
  * Copyright 2018 Mike Hummel
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * <p>Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
 package de.mhus.cherry.vault.core;
@@ -31,29 +29,31 @@ import de.mhus.osgi.sop.api.aaa.AaaContext;
 
 public class CherryVaultProcessContext extends SimplePemProcessContext {
 
-	private IReadProperties properties;
-	private AaaContext ac;
-	
-	public CherryVaultProcessContext(AaaContext ac, IReadProperties properties) {
-		this.ac = ac;
-		this.properties = properties;
-	}
-	
-	@Override
-	public PemPriv getPrivateKey(String privId) throws MException {
-		PemPriv privKey = super.getPrivateKey(privId);
-		if (privKey != null) return privKey;
-		
-		if (!MCollection.contains( ac.getAccount().getAttributes().getString("privateKey", ""), ',', privId))
-			throw new AccessDeniedException("The private key is not owned by the current user",ac,privId);
-		de.mhus.lib.core.vault.VaultEntry privKeyObj = MVaultUtil.loadDefault().getEntry(UUID.fromString(privId ) );
-		if (privKeyObj == null) throw new NotFoundException("Private key not found",privId);
+    private IReadProperties properties;
+    private AaaContext ac;
 
-		privKey = PemUtil.toKey(privKeyObj.getValue().value());
-		
-		addPassphrase(privId, new SecureString(properties.getString("passphrase", null)));
-		
-		return privKey;
-	}
+    public CherryVaultProcessContext(AaaContext ac, IReadProperties properties) {
+        this.ac = ac;
+        this.properties = properties;
+    }
 
+    @Override
+    public PemPriv getPrivateKey(String privId) throws MException {
+        PemPriv privKey = super.getPrivateKey(privId);
+        if (privKey != null) return privKey;
+
+        if (!MCollection.contains(
+                ac.getAccount().getAttributes().getString("privateKey", ""), ',', privId))
+            throw new AccessDeniedException(
+                    "The private key is not owned by the current user", ac, privId);
+        de.mhus.lib.core.vault.VaultEntry privKeyObj =
+                MVaultUtil.loadDefault().getEntry(UUID.fromString(privId));
+        if (privKeyObj == null) throw new NotFoundException("Private key not found", privId);
+
+        privKey = PemUtil.toKey(privKeyObj.getValue().value());
+
+        addPassphrase(privId, new SecureString(properties.getString("passphrase", null)));
+
+        return privKey;
+    }
 }

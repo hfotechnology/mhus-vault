@@ -26,14 +26,17 @@ import de.mhus.osgi.crypt.api.util.CryptUtil;
 public class ImportUtil extends MLog {
 
     private String privateKey;
+
     @SuppressWarnings("unused")
     private File file;
+
     private ZipFile zip;
     private String passphrase;
     private boolean raw = false;
     private PojoModelFactory factory;
 
-    public void importDb(String privateKey, String passphrase, String file, boolean all) throws MException, IOException {
+    public void importDb(String privateKey, String passphrase, String file, boolean all)
+            throws MException, IOException {
         this.privateKey = privateKey;
         this.passphrase = passphrase;
         this.file = new File(file);
@@ -41,32 +44,31 @@ public class ImportUtil extends MLog {
         if (CryptUtil.getCipher(privateKey) == null) throw new MException("cipher not found");
 
         factory = StaticAccess.db.getManager().getPojoModelFactory();
-        
+
         zip = new ZipFile(file);
-        
+
         // load meta data
         MProperties meta = MProperties.loadFromString(loadPlain("meta.properties"));
-        if (!"export".equals(meta.getString("type")))
-                throw new MException("file is not an export");
-        
+        if (!"export".equals(meta.getString("type"))) throw new MException("file is not an export");
+
         // import entries
         importEntries();
-        
+
         if (all) {
             importGroups();
-            
+
             importTargets();
-            
+
             importVault();
         }
-        
+
         zip.close();
     }
 
     private void importVault() throws NotFoundException {
         XdbService db = StaticAccess.db.getManager();
         XdbType<?> type = db.getType(VaultKey.class);
-        
+
         for (ZipEntry zipEntry : new EnumerationIterator<ZipEntry>(zip.entries())) {
             try {
                 if (zipEntry.getName().startsWith("key/")) {
@@ -74,23 +76,20 @@ public class ImportUtil extends MLog {
                     VaultKey key = db.getObject(VaultKey.class, id);
                     if (key == null) {
                         key = db.inject(new VaultKey());
-                        System.out.println(">>> Create Key: "+ id);
+                        System.out.println(">>> Create Key: " + id);
                     } else {
-                        System.out.println(">>> Update Key: "+ id);
+                        System.out.println(">>> Update Key: " + id);
                     }
-                    
+
                     String content = load(zipEntry.getName());
                     MPojo.base64ToObject(content, key, factory);
 
-                    //key.save();
-                    if (key.isAdbPersistent())
-                        type.saveObjectForce(key, raw);
-                    else
-                        type.createObject(key);
-                    
+                    // key.save();
+                    if (key.isAdbPersistent()) type.saveObjectForce(key, raw);
+                    else type.createObject(key);
                 }
             } catch (Throwable t) {
-                log().e(zipEntry.getName(),t);
+                log().e(zipEntry.getName(), t);
             }
         }
     }
@@ -98,15 +97,16 @@ public class ImportUtil extends MLog {
     private void importTargets() throws MException {
         XdbService db = StaticAccess.db.getManager();
         XdbType<?> type = db.getType(VaultTarget.class);
-        
+
         for (VaultTarget target : db.getAll(VaultTarget.class)) {
             if (target.isEnabled()) {
-                System.out.println(">>> Disable Target: " + target.getName() + " " + target.getId());
+                System.out.println(
+                        ">>> Disable Target: " + target.getName() + " " + target.getId());
                 target.setEnabled(false);
                 target.save();
             }
         }
-        
+
         for (ZipEntry zipEntry : new EnumerationIterator<ZipEntry>(zip.entries())) {
             try {
                 if (zipEntry.getName().startsWith("target/")) {
@@ -114,23 +114,20 @@ public class ImportUtil extends MLog {
                     VaultTarget target = db.getObject(VaultTarget.class, id);
                     if (target == null) {
                         target = db.inject(new VaultTarget());
-                        System.out.println(">>> Create Target: "+ id);
+                        System.out.println(">>> Create Target: " + id);
                     } else {
-                        System.out.println(">>> Update Target: "+ id);
+                        System.out.println(">>> Update Target: " + id);
                     }
-                    
+
                     String content = load(zipEntry.getName());
                     MPojo.base64ToObject(content, target, factory);
-                    
-                    // target.save();
-                    if (target.isAdbPersistent())
-                        type.saveObjectForce(target, raw);
-                    else
-                        type.createObject(target);
 
+                    // target.save();
+                    if (target.isAdbPersistent()) type.saveObjectForce(target, raw);
+                    else type.createObject(target);
                 }
             } catch (Throwable t) {
-                log().e(zipEntry.getName(),t);
+                log().e(zipEntry.getName(), t);
             }
         }
     }
@@ -138,7 +135,7 @@ public class ImportUtil extends MLog {
     private void importGroups() throws MException {
         XdbService db = StaticAccess.db.getManager();
         XdbType<?> type = db.getType(VaultGroup.class);
-        
+
         for (VaultGroup group : db.getAll(VaultGroup.class)) {
             if (group.isEnabled()) {
                 System.out.println(">>> Disable Group: " + group.getName() + " " + group.getId());
@@ -146,7 +143,7 @@ public class ImportUtil extends MLog {
                 group.save();
             }
         }
-        
+
         for (ZipEntry zipEntry : new EnumerationIterator<ZipEntry>(zip.entries())) {
             try {
                 if (zipEntry.getName().startsWith("group/")) {
@@ -154,23 +151,20 @@ public class ImportUtil extends MLog {
                     VaultGroup group = db.getObject(VaultGroup.class, id);
                     if (group == null) {
                         group = db.inject(new VaultGroup());
-                        System.out.println(">>> Create Group: "+ id);
+                        System.out.println(">>> Create Group: " + id);
                     } else {
-                        System.out.println(">>> Update Group: "+ id);
+                        System.out.println(">>> Update Group: " + id);
                     }
-                    
+
                     String content = load(zipEntry.getName());
                     MPojo.base64ToObject(content, group, factory);
-                    
-                    //group.save();
-                    if (group.isAdbPersistent())
-                        type.saveObjectForce(group, raw);
-                    else
-                        type.createObject(group);
-                    
+
+                    // group.save();
+                    if (group.isAdbPersistent()) type.saveObjectForce(group, raw);
+                    else type.createObject(group);
                 }
             } catch (Throwable t) {
-                log().e(zipEntry.getName(),t);
+                log().e(zipEntry.getName(), t);
             }
         }
     }
@@ -190,35 +184,29 @@ public class ImportUtil extends MLog {
                     } else {
                         System.out.println(">>> Update Entry " + id);
                     }
-                    
+
                     String content = load(zipEntry.getName());
                     MPojo.base64ToObject(content, entry, factory);
-                    
+
                     // entry.save();
-                    if (entry.isAdbPersistent())
-                        type.saveObjectForce(entry, raw);
-                    else
-                        type.createObject(entry);
-                    
+                    if (entry.isAdbPersistent()) type.saveObjectForce(entry, raw);
+                    else type.createObject(entry);
                 }
             } catch (Throwable t) {
-                log().e(zipEntry.getName(),t);
+                log().e(zipEntry.getName(), t);
             }
         }
-        
     }
-
 
     private String loadPlain(String name) throws IOException {
         ZipEntry entry = zip.getEntry(name);
         InputStream is = zip.getInputStream(entry);
         return MFile.readFile(is);
     }
-    
+
     private String load(String name) throws MException, IOException {
         String content = loadPlain(name);
         content = CryptUtil.decrypt(privateKey, passphrase, content);
         return content;
     }
-    
 }

@@ -22,47 +22,48 @@ public class ExportUtil {
 
     @SuppressWarnings("unused")
     private File file;
+
     private String publicKey;
     private String group;
     private ZipOutputStream zip;
     private PojoModelFactory factory;
 
-    public void exportDb(String publicKey, String file, String group) throws IOException, MException {
+    public void exportDb(String publicKey, String file, String group)
+            throws IOException, MException {
         this.publicKey = publicKey;
         this.file = new File(file);
         this.group = group;
-        
+
         if (CryptUtil.getCipher(publicKey) == null) throw new MException("cipher not found");
-        
+
         factory = StaticAccess.db.getManager().getPojoModelFactory();
-        
+
         FileOutputStream fos = new FileOutputStream(file);
         zip = new ZipOutputStream(fos);
 
         // remember the key
         savePlain("public_key", publicKey);
-        
+
         // remember metadata
         MProperties prop = new MProperties();
         prop.setString("group", group);
         prop.setString("type", "export");
         savePlain("meta.properties", prop.saveToString());
-        
+
         // exportAllGroups
         exportGroups();
-        
+
         // exportAllTargets
         exportTargets();
-        
+
         // exportEntries
         exportEntries();
-        
+
         // export MVault entries (CherryMVaultSource only)
         exportVault();
-        
+
         zip.close();
         fos.close();
-        
     }
 
     private void exportVault() throws MException, IOException {
@@ -74,10 +75,13 @@ public class ExportUtil {
     }
 
     private void exportEntries() throws MException, IOException {
-        for (VaultEntry entry : group == null ? 
-                StaticAccess.db.getManager().getAll(VaultEntry.class) :
-                StaticAccess.db.getManager().getByQualification(Db.query(VaultEntry.class).eq("group", group))
-                ) {
+        for (VaultEntry entry :
+                group == null
+                        ? StaticAccess.db.getManager().getAll(VaultEntry.class)
+                        : StaticAccess.db
+                                .getManager()
+                                .getByQualification(
+                                        Db.query(VaultEntry.class).eq("group", group))) {
             System.out.println(">>> Save Entry " + entry);
             String content = MPojo.objectToBase64(entry, factory);
             save("entry/" + entry.getId(), content);
@@ -111,5 +115,4 @@ public class ExportUtil {
         content = CryptUtil.encrypt(publicKey, content);
         savePlain(name, content);
     }
-
 }

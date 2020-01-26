@@ -1,16 +1,14 @@
 /**
  * Copyright 2018 Mike Hummel
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * <p>Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
 package de.mhus.cherry.vault.core.services;
@@ -34,7 +32,9 @@ import de.mhus.osgi.crypt.api.signer.SignerProvider;
 
 public class SignerUtil {
 
-    public static void test(PrintStream out, IProperties properties, IReadProperties processorConfig) throws Exception {
+    public static void test(
+            PrintStream out, IProperties properties, IReadProperties processorConfig)
+            throws Exception {
         if (processorConfig.isProperty("signId")) {
             UUID signId = UUID.fromString(processorConfig.getString("signId"));
             out.println("Signature: " + signId);
@@ -42,23 +42,26 @@ public class SignerUtil {
             de.mhus.lib.core.vault.VaultEntry signKeyValue = vault.getEntry(signId);
             out.println("Key: " + signKeyValue);
             CryptApi api = M.l(CryptApi.class);
-            SignerProvider signer = api.getSigner(processorConfig.getString("signService", "DSA-1"));
-            out.println("Signer: " +  signer);
+            SignerProvider signer =
+                    api.getSigner(processorConfig.getString("signService", "DSA-1"));
+            out.println("Signer: " + signer);
         }
     }
 
-    public static void sign(PemBlockList result, IReadProperties processorConfig, String cs) throws MException {
+    public static void sign(PemBlockList result, IReadProperties processorConfig, String cs)
+            throws MException {
         if (processorConfig.isProperty("signId")) {
             MVault vault = MVaultUtil.loadDefault();
             CryptApi api = M.l(CryptApi.class);
             UUID signId = UUID.fromString(processorConfig.getString("signId"));
-            SignerProvider signer = api.getSigner(processorConfig.getString("signService", "DSA-1"));
+            SignerProvider signer =
+                    api.getSigner(processorConfig.getString("signService", "DSA-1"));
             de.mhus.lib.core.vault.VaultEntry signKeyValue = vault.getEntry(signId);
-            if (signKeyValue == null) throw new NotFoundException("sign key not found",signId);
+            if (signKeyValue == null) throw new NotFoundException("sign key not found", signId);
             PemPriv signKey = PemUtil.toKey(signKeyValue.getValue().value());
-            PemBlock signed = signer.sign(signKey, cs, processorConfig.getString("signPassphrase", null));
+            PemBlock signed =
+                    signer.sign(signKey, cs, processorConfig.getString("signPassphrase", null));
             result.add(signed);
         }
     }
-
 }

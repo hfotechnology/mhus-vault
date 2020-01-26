@@ -1,16 +1,14 @@
 /**
  * Copyright 2018 Mike Hummel
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * <p>Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
 package de.mhus.cherry.vault.core.services;
@@ -37,49 +35,56 @@ import de.mhus.lib.errors.NotFoundException;
 import de.mhus.osgi.crypt.api.CryptApi;
 import de.mhus.osgi.crypt.api.cipher.CipherProvider;
 
-@Component(property="name=cipher.rsa")
+@Component(property = "name=cipher.rsa")
 public class RsaEncryptProcessor implements TargetProcessor {
 
     @Override
-	public void process(IProperties properties, IReadProperties processorConfig, SecretContent secret,
-			WritableEntry entry) throws MException {
+    public void process(
+            IProperties properties,
+            IReadProperties processorConfig,
+            SecretContent secret,
+            WritableEntry entry)
+            throws MException {
 
-		UUID keyId = UUID.fromString(processorConfig.getString("keyId"));
-		
-		CryptApi api = M.l(CryptApi.class);
-		CipherProvider cipher = api.getCipher(processorConfig.getString("cipherService", CFG_CIPHER_DEFAULT.value()));
-		
-		MVault vault = MVaultUtil.loadDefault();
-		de.mhus.lib.core.vault.VaultEntry keyValue = vault.getEntry(keyId);
-		if (keyValue == null) throw new NotFoundException("key not found",keyId);
-		
-		PemPub key = PemUtil.toKey(keyValue.getValue().value());
-		PemBlock encoded = cipher.encrypt(key, secret.getContent().value());
-		
-		PemBlockList result = new PemBlockList();
-		result.add(encoded);
-		
-		SignerUtil.sign(result, processorConfig, encoded.toString());
-		
-		entry.setSecret(result.toString());
-		
-	}
+        UUID keyId = UUID.fromString(processorConfig.getString("keyId"));
+
+        CryptApi api = M.l(CryptApi.class);
+        CipherProvider cipher =
+                api.getCipher(
+                        processorConfig.getString("cipherService", CFG_CIPHER_DEFAULT.value()));
+
+        MVault vault = MVaultUtil.loadDefault();
+        de.mhus.lib.core.vault.VaultEntry keyValue = vault.getEntry(keyId);
+        if (keyValue == null) throw new NotFoundException("key not found", keyId);
+
+        PemPub key = PemUtil.toKey(keyValue.getValue().value());
+        PemBlock encoded = cipher.encrypt(key, secret.getContent().value());
+
+        PemBlockList result = new PemBlockList();
+        result.add(encoded);
+
+        SignerUtil.sign(result, processorConfig, encoded.toString());
+
+        entry.setSecret(result.toString());
+    }
 
     @Override
-    public void test(PrintStream out, IProperties properties, IReadProperties processorConfig) throws Exception {
-     
+    public void test(PrintStream out, IProperties properties, IReadProperties processorConfig)
+            throws Exception {
+
         UUID keyId = UUID.fromString(processorConfig.getString("keyId"));
         out.println("Key: " + keyId);
         MVault vault = MVaultUtil.loadDefault();
         de.mhus.lib.core.vault.VaultEntry keyValue = vault.getEntry(keyId);
-        if (keyValue == null) throw new NotFoundException("key not found",keyId);
+        if (keyValue == null) throw new NotFoundException("key not found", keyId);
         out.println("Key value: " + keyValue);
-        
+
         CryptApi api = M.l(CryptApi.class);
-        CipherProvider cipher = api.getCipher(processorConfig.getString("cipherService", CFG_CIPHER_DEFAULT.value()));
+        CipherProvider cipher =
+                api.getCipher(
+                        processorConfig.getString("cipherService", CFG_CIPHER_DEFAULT.value()));
         out.println("Cipher: " + cipher);
-        
+
         SignerUtil.test(out, properties, processorConfig);
     }
-
 }

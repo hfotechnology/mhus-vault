@@ -1,16 +1,14 @@
 /**
  * Copyright 2018 Mike Hummel
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * <p>Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
 package de.mhus.cherry.vault.api.model;
@@ -29,79 +27,70 @@ import de.mhus.lib.errors.MException;
 
 public class VaultGroup extends DbMetadata {
 
-	@DbIndex("u1")
-	@DbPersistent
-	private String name;
-	@DbPersistent
-	private LinkedList<String> targets;
-	@DbPersistent
-	private String secretGeneratorName;
+    @DbIndex("u1")
     @DbPersistent
-    private MProperties secretGeneratorConfig;
-	@DbPersistent
-	private boolean allowUpdate;
-	@DbPersistent
-	private boolean enabled;
-	@DbPersistent
-	private LinkedList<String> writeAcl;
-	@DbPersistent
-	private boolean allowUnencrypted;
-	@DbPersistent
-	private boolean allowImports;
-	@DbPersistent
-	private int maxImportLength;
-    @DbPersistent
-    private String description;
-	
-	public String getName() {
-		return name;
-	}
+    private String name;
 
-	public List<String> getTargets() {
-		if (targets == null) targets = new LinkedList<>();
-		return Collections.unmodifiableList(targets);
-	}
+    @DbPersistent private LinkedList<String> targets;
+    @DbPersistent private String secretGeneratorName;
+    @DbPersistent private MProperties secretGeneratorConfig;
+    @DbPersistent private boolean allowUpdate;
+    @DbPersistent private boolean enabled;
+    @DbPersistent private LinkedList<String> writeAcl;
+    @DbPersistent private boolean allowUnencrypted;
+    @DbPersistent private boolean allowImports;
+    @DbPersistent private int maxImportLength;
+    @DbPersistent private String description;
 
-	public List<String> getWriteAcl() {
-		if (writeAcl == null) writeAcl = new LinkedList<>();
-		return Collections.unmodifiableList(writeAcl);
-	}
-	
-	public String getSecretGeneratorName() {
-		return secretGeneratorName;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public boolean isAllowUpdate() {
-		return allowUpdate;
-	}
+    public List<String> getTargets() {
+        if (targets == null) targets = new LinkedList<>();
+        return Collections.unmodifiableList(targets);
+    }
 
-	public boolean isEnabled() {
-		return enabled;
-	}
+    public List<String> getWriteAcl() {
+        if (writeAcl == null) writeAcl = new LinkedList<>();
+        return Collections.unmodifiableList(writeAcl);
+    }
 
-	public boolean isAllowUnencrypted() {
-		return allowUnencrypted;
-	}
+    public String getSecretGeneratorName() {
+        return secretGeneratorName;
+    }
 
-	public boolean isAllowImports() {
-		return allowImports;
-	}
-	
-	@Override
-	public String toString() {
-		return MSystem.toString(this, name);
-	}
+    public boolean isAllowUpdate() {
+        return allowUpdate;
+    }
 
-	public int getMaxImportLength() {
-		return maxImportLength;
-	}
+    public boolean isEnabled() {
+        return enabled;
+    }
 
-	@Override
-	public DbMetadata findParentObject() throws MException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
+    public boolean isAllowUnencrypted() {
+        return allowUnencrypted;
+    }
+
+    public boolean isAllowImports() {
+        return allowImports;
+    }
+
+    @Override
+    public String toString() {
+        return MSystem.toString(this, name);
+    }
+
+    public int getMaxImportLength() {
+        return maxImportLength;
+    }
+
+    @Override
+    public DbMetadata findParentObject() throws MException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
     public synchronized IReadProperties getSecretGeneratorConfig() {
         if (secretGeneratorConfig == null) secretGeneratorConfig = new MProperties();
         return secretGeneratorConfig;
@@ -118,6 +107,4 @@ public class VaultGroup extends DbMetadata {
     public void setDescription(String description) {
         this.description = description;
     }
-
-
 }
