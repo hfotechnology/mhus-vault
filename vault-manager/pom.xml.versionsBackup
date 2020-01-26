@@ -19,12 +19,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>vault-rest</artifactId>
+	<artifactId>vault-manager</artifactId>
 	<packaging>bundle</packaging>
 	<parent>
 		<groupId>de.mhus.cherry.vault</groupId>
 		<artifactId>cherry-vault</artifactId>
-		<version>6.3.0</version>
+		<version>1.6.3-SNAPSHOT</version>
 	</parent>
 
 	<build>
@@ -39,11 +39,11 @@
 					<instructions>
 						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
 						<Bundle-Version>${project.version}</Bundle-Version>
-						<Export-Package>
-							de.mhus.cherry.vault.rest.*;version=${project.version}
-						</Export-Package>
-						<Private-Package>de.mhus.cherry.vault.rest.impl.*</Private-Package>
-						<Import-Package>*</Import-Package>
+						<Private-Package>de.mhus.cherry.vault.manager.*</Private-Package>
+						<Import-Package>
+						  javax.servlet;resolution:=optional,
+						  *
+						</Import-Package>
 						<DynamicImport-Package>*</DynamicImport-Package>
 						<Service-Component>*</Service-Component>
 					</instructions>
@@ -58,6 +58,11 @@
 			<artifactId>vault-api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+        <dependency>
+            <groupId>de.mhus.cherry.vault</groupId>
+            <artifactId>vault-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
 		<dependency>
 			<groupId>de.mhus.lib</groupId>
@@ -73,7 +78,7 @@
 		</dependency>
        	<dependency>
 			<groupId>de.mhus.osgi</groupId>
-			<artifactId>mhu-osgi-services</artifactId>
+			<artifactId>mhu-osgi-api</artifactId>
 		</dependency>
        	<dependency>
 			<groupId>de.mhus.osgi</groupId>
