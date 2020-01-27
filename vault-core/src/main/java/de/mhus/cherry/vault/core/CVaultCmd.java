@@ -232,7 +232,7 @@ public class CVaultCmd extends AbstractCmd {
                 {
                     ConsoleTable table = new ConsoleTable(tblOpt);
                     table.setHeaderValues("id", "SecretId", "Group", "Target", "From", "To");
-                    for (VaultEntry item : api.search(group, target, parameters, 100, all, false)) {
+                    for (VaultEntry item : VaultApiImpl.instance.search(group, target, parameters, 100, all, false)) {
                         table.addRowValues(
                                 item.getId(),
                                 item.getSecretId(),

@@ -784,6 +784,12 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 
     @Override
     public List<VaultEntry> search(
+            String group, String target, String[] index, int size, boolean all)
+            throws MException {
+        return search(group, target, index, size, all, true);
+    }
+
+    public List<VaultEntry> search(
             String group, String target, String[] index, int size, boolean all, boolean secure)
             throws MException {
         if (secure && (index == null || index.length == 0)) return new EmptyList<VaultEntry>();
