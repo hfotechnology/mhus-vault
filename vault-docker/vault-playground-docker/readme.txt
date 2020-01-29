@@ -31,7 +31,7 @@ docker run -it --name vault-playground \
  -v ~/.m2:/home/user/.m2 \
  -p 8182:8181 \
  -p 15006:5005 \
- mhus/vault-playground:1.6.3-SNAPSHOT debug
+ mhus/vault-playground:6.3.1-SNAPSHOT debug
 
 docker rm vault-playground
 
