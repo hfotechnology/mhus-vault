@@ -23,9 +23,12 @@
 	<packaging>feature</packaging>
 	<parent>
 		<groupId>de.mhus.cherry.vault</groupId>
-		<artifactId>cherry-vault</artifactId>
+		<artifactId>assembly</artifactId>
 		<version>6.3.1-SNAPSHOT</version>
 	</parent>
+    <properties>
+        <maven.deploy.skip>false</maven.deploy.skip>
+    </properties>
 
 	<build>
 		<pluginManagement>

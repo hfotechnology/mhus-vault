@@ -12,7 +12,7 @@ https://raw.githubusercontent.com/pentaho/pentaho-karaf-assembly/master/pentaho-
     </parent>
     <artifactId>vault-playground-assembly</artifactId>
     <packaging>karaf-assembly</packaging>
-    
+
     <dependencies>
         <dependency>
             <groupId>org.apache.karaf.features</groupId>

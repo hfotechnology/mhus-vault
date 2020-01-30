@@ -63,8 +63,7 @@
         <module>vault-manager</module>
 	    <module>vault-client</module>
 	    <module>vault-rest</module>
-	    <module>vault-feature</module>
-        <module>vault-docker</module>
+        <module>assembly</module>
     </modules>
    	
 </project>

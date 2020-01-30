@@ -25,14 +25,14 @@
         <version>6.3.1-SNAPSHOT</version>
         <artifactId>cherry-vault</artifactId>
     </parent>
-    <artifactId>vault-docker</artifactId>
+    <artifactId>assembly</artifactId>
     <packaging>pom</packaging>
-    
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
 
     <modules>
+        <module>vault-feature</module>
         <module>vault-playground-assembly</module>
         <module>vault-playground-docker</module>
     </modules>
