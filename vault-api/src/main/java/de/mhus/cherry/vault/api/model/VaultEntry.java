@@ -27,11 +27,11 @@ import de.mhus.lib.core.IReadProperties;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MSystem;
+import de.mhus.lib.core.security.AccessApi;
 import de.mhus.lib.core.util.ReadOnlyException;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.MRuntimeException;
 import de.mhus.lib.sql.DbConnection;
-import de.mhus.osgi.sop.api.aaa.AccessApi;
 
 public class VaultEntry extends DbMetadata {
 

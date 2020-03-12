@@ -49,6 +49,9 @@ import de.mhus.lib.core.MString;
 import de.mhus.lib.core.cfg.CfgString;
 import de.mhus.lib.core.crypt.pem.PemBlockList;
 import de.mhus.lib.core.crypt.pem.PemUtil;
+import de.mhus.lib.core.security.AaaContext;
+import de.mhus.lib.core.security.AaaUtil;
+import de.mhus.lib.core.security.AccessApi;
 import de.mhus.lib.core.util.EmptyList;
 import de.mhus.lib.core.util.SecureString;
 import de.mhus.lib.errors.AccessDeniedException;
@@ -58,9 +61,6 @@ import de.mhus.lib.errors.UsageException;
 import de.mhus.lib.xdb.XdbService;
 import de.mhus.osgi.api.services.MOsgi;
 import de.mhus.osgi.crypt.api.CryptApi;
-import de.mhus.osgi.sop.api.aaa.AaaContext;
-import de.mhus.osgi.sop.api.aaa.AaaUtil;
-import de.mhus.osgi.sop.api.aaa.AccessApi;
 
 @Component(immediate = true)
 public class VaultApiImpl extends MLog implements CherryVaultApi {

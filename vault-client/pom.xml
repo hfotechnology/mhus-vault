@@ -24,7 +24,7 @@
 	<parent>
 		<groupId>de.mhus.cherry.vault</groupId>
 		<artifactId>cherry-vault</artifactId>
-		<version>6.4.0-SNAPSHOT</version>
+		<version>7.0.0-SNAPSHOT</version>
 	</parent>
 
 	<build>
@@ -58,7 +58,7 @@
 		</dependency>
 		<dependency>
 			<groupId>de.mhus.lib</groupId>
-			<artifactId>mhu-lib-core</artifactId>
+			<artifactId>lib-core</artifactId>
 		</dependency>
 	</dependencies>
 </project>

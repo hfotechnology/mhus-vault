@@ -19,13 +19,13 @@ import de.mhus.lib.core.IReadProperties;
 import de.mhus.lib.core.MCollection;
 import de.mhus.lib.core.crypt.pem.PemPriv;
 import de.mhus.lib.core.crypt.pem.PemUtil;
+import de.mhus.lib.core.security.AaaContext;
 import de.mhus.lib.core.util.SecureString;
 import de.mhus.lib.core.vault.MVaultUtil;
 import de.mhus.lib.errors.AccessDeniedException;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;
 import de.mhus.osgi.crypt.api.util.SimplePemProcessContext;
-import de.mhus.osgi.sop.api.aaa.AaaContext;
 
 public class CherryVaultProcessContext extends SimplePemProcessContext {
 

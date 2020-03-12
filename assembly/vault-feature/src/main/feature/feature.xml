@@ -38,7 +38,8 @@
 
         <bundle>mvn:javax.xml.rpc/javax.xml.rpc-api/${javax.xml.rpc.version}</bundle>
 
-        <bundle>mvn:de.mhus.osgi/mhu-sop-rest/${mhus-sop.version}</bundle>
+        <bundle>mvn:de.mhus.rest/rest-osgi/${mhus-rest.version}</bundle>
+        <bundle>mvn:de.mhus.rest/rest-karaf/${mhus-rest.version}</bundle>
         <bundle>mvn:de.mhus.cherry.vault/vault-rest/${cherry-vault.version}</bundle>
 	</feature>
 	
@@ -64,19 +65,19 @@
         <bundle>mvn:org.codehaus.jackson/jackson-mapper-asl/${jackson.asl.version}</bundle>
         <bundle><![CDATA[wrap:mvn:org.apache.commons/commons-io/${commons-io.version}/$Bundle-SymbolicName=commons-io&Bundle-Version=${commons-io.version}&Export-Package=org.apache.commons.io;version="${commons-io.version}",!*]]></bundle>
 
-        <bundle>mvn:de.mhus.lib/mhu-lib-annotations/${mhus-lib.version}</bundle>
-        <bundle>mvn:de.mhus.lib/mhu-lib-core/${mhus-lib.version}</bundle>
-        <bundle>mvn:de.mhus.lib/mhu-lib-persistence/${mhus-lib.version}</bundle>
-        <bundle>mvn:de.mhus.lib/mhu-lib-jms/${mhus-lib.version}</bundle>
+        <bundle>mvn:de.mhus.lib/lib-annotations/${mhus-lib.version}</bundle>
+        <bundle>mvn:de.mhus.lib/lib-core/${mhus-lib.version}</bundle>
+        <bundle>mvn:de.mhus.lib/lib-persistence/${mhus-lib.version}</bundle>
+        <bundle>mvn:de.mhus.lib/lib-jms/${mhus-lib.version}</bundle>
 
 		<!-- osgi tools -->
 		
         <bundle>mvn:org.bouncycastle/bcprov-jdk16/${bouncycastle.version}</bundle>
 		
-        <bundle>mvn:de.mhus.osgi/mhu-osgi-api/${mhus-osgi-tools.version}</bundle>
-        <bundle>mvn:de.mhus.osgi/mhu-osgi-services/${mhus-osgi-tools.version}</bundle>
-        <bundle>mvn:de.mhus.osgi/mhu-karaf-commands/${mhus-osgi-tools.version}</bundle>
-        <bundle>mvn:de.mhus.osgi/mhu-karaf-xdb/${mhus-osgi-tools.version}</bundle>
+        <bundle>mvn:de.mhus.osgi/osgi-api/${mhus-osgi-tools.version}</bundle>
+        <bundle>mvn:de.mhus.osgi/osgi-services/${mhus-osgi-tools.version}</bundle>
+        <bundle>mvn:de.mhus.osgi/karaf-commands/${mhus-osgi-tools.version}</bundle>
+        <bundle>mvn:de.mhus.osgi/karaf-xdb/${mhus-osgi-tools.version}</bundle>
 
 
 <!--
@@ -85,16 +86,17 @@
     	<bundle>mvn:org.mongodb.morphia/morphia/${mongo.morphia.version}</bundle>	
 		<bundle>mvn:de.mhus.osgi/mhu-karaf-mongo/${osgitools.version}</bundle>
 -->		
-		<bundle>mvn:de.mhus.osgi/mhu-osgi-crypt-api/${mhus-crypt.version}</bundle>
-		<bundle>mvn:de.mhus.osgi/mhu-osgi-crypt-bc/${mhus-crypt.version}</bundle>
-		<bundle>mvn:de.mhus.osgi/mhu-karaf-crypt/${mhus-crypt.version}</bundle>
+		<bundle>mvn:de.mhus.osgi/osgi-crypt-api/${mhus-crypt.version}</bundle>
+		<bundle>mvn:de.mhus.osgi/osgi-crypt-bc/${mhus-crypt.version}</bundle>
+		<bundle>mvn:de.mhus.osgi/karaf-crypt/${mhus-crypt.version}</bundle>
 		
 		<!-- sop -->
 
         <bundle>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcomponents.httpcore.version}</bundle>
-		
+		<!-- 
 		<bundle>mvn:de.mhus.osgi/mhu-sop-api/${mhus-sop.version}</bundle>
 		<bundle>mvn:de.mhus.osgi/mhu-sop-core/${mhus-sop.version}</bundle>
+		 -->
 		
 		<!-- vault -->
 		

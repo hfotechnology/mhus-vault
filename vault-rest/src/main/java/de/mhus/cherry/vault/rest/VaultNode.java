@@ -28,13 +28,13 @@ import de.mhus.lib.core.pojo.PojoModelFactory;
 import de.mhus.lib.core.util.EmptyList;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.UsageException;
-import de.mhus.osgi.sop.api.rest.CallContext;
-import de.mhus.osgi.sop.api.rest.JsonResult;
-import de.mhus.osgi.sop.api.rest.Node;
-import de.mhus.osgi.sop.api.rest.ObjectListNode;
-import de.mhus.osgi.sop.api.rest.RestNodeService;
-import de.mhus.osgi.sop.api.rest.annotation.RestAction;
-import de.mhus.osgi.sop.api.rest.annotation.RestNode;
+import de.mhus.rest.core.CallContext;
+import de.mhus.rest.core.annotation.RestAction;
+import de.mhus.rest.core.annotation.RestNode;
+import de.mhus.rest.core.api.Node;
+import de.mhus.rest.core.api.RestNodeService;
+import de.mhus.rest.core.node.ObjectListNode;
+import de.mhus.rest.core.result.JsonResult;
 
 @Component(immediate = true, service = RestNodeService.class)
 @RestNode(name = "vault", parent = Node.ROOT_PARENT)
