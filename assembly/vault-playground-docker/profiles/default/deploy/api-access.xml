@@ -19,16 +19,16 @@
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
 	<reference id="accountRef" interface="de.mhus.lib.core.security.AccountSource"/>
-	<reference id="trustRef" interface="de.mhus.osgi.sop.api.aaa.TrustSource"/>
+	<reference id="trustRef" interface="de.mhus.lib.core.security.TrustSource"/>
 	<reference id="authRef" interface="de.mhus.lib.core.security.AuthorizationSource"/>
 	
-    <bean id="impl" class="de.mhus.osgi.sop.impl.aaa.AccessApiImpl">
+    <bean id="impl" class="de.mhus.osgi.services.aaa.AccessApiImpl">
     	<property name="accountSource" ref="accountRef"/>
     	<property name="trustSource" ref="trustRef"/>
     	<property name="authorizationSource" ref="authRef"/>
     </bean>
 
-    <service interface="de.mhus.osgi.sop.api.aaa.AccessApi" ref="impl">
+    <service interface="de.mhus.lib.core.security.AccessApi" ref="impl">
     </service>
 
 </blueprint>
