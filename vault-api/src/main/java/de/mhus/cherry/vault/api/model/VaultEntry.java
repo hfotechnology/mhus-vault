@@ -19,15 +19,16 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Date;
 
+import org.apache.shiro.subject.Subject;
+
 import de.mhus.lib.adb.DbMetadata;
 import de.mhus.lib.annotations.adb.DbIndex;
 import de.mhus.lib.annotations.adb.DbPersistent;
 import de.mhus.lib.annotations.adb.DbType.TYPE;
 import de.mhus.lib.core.IReadProperties;
-import de.mhus.lib.core.M;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MSystem;
-import de.mhus.lib.core.security.AccessApi;
+import de.mhus.lib.core.shiro.ShiroUtil;
 import de.mhus.lib.core.util.ReadOnlyException;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.MRuntimeException;
@@ -102,8 +103,8 @@ public class VaultEntry extends DbMetadata {
             throws NoSuchAlgorithmException, UnsupportedEncodingException, ReadOnlyException {
 
         if (creator == null) {
-            AccessApi aaa = M.l(AccessApi.class);
-            creator = aaa.getCurrentOrGuest().getAccountId();
+            Subject subject = ShiroUtil.getSubject();
+            creator = ShiroUtil.getPrincipal(subject);
         }
 
         MessageDigest md = MessageDigest.getInstance("SHA-256");

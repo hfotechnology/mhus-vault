@@ -23,8 +23,6 @@ import de.mhus.cherry.vault.api.model.VaultGroup;
 import de.mhus.cherry.vault.api.model.VaultKey;
 import de.mhus.cherry.vault.api.model.VaultTarget;
 import de.mhus.lib.adb.Persistable;
-import de.mhus.lib.basics.Ace;
-import de.mhus.lib.core.security.AaaContext;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.xdb.XdbService;
 import de.mhus.osgi.api.adb.AbstractDbSchemaService;
@@ -69,15 +67,11 @@ public class CherryVaultManager extends AbstractDbSchemaService {
     }
 
     @Override
-    public boolean canCreate(AaaContext context, Persistable obj) throws MException {
+    public boolean canCreate(Persistable obj) throws MException {
         return true;
     }
 
     @Override
     public void doPostInitialize(XdbService manager) throws Exception {}
 
-    @Override
-    public String getAcl(AaaContext context, Persistable obj) throws MException {
-        return "*=" + Ace.RIGHTS_RO; // TODO
-    }
 }

@@ -24,12 +24,10 @@ import org.osgi.service.component.annotations.Component;
 
 import de.mhus.cherry.vault.api.model.VaultKey;
 import de.mhus.lib.adb.query.Db;
-import de.mhus.lib.core.M;
+import de.mhus.lib.basics.Ace;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MSystem;
-import de.mhus.lib.core.security.AaaContext;
-import de.mhus.lib.core.security.AaaUtil;
-import de.mhus.lib.core.security.AccessApi;
+import de.mhus.lib.core.shiro.ShiroUtil;
 import de.mhus.lib.core.vault.MutableVaultSource;
 import de.mhus.lib.core.vault.VaultEntry;
 import de.mhus.lib.core.vault.VaultSource;
@@ -82,8 +80,7 @@ public class CherryMVaultSource extends MLog implements MutableVaultSource {
             if (key == null) return null;
             List<String> readAcl = key.getReadAcl();
             if (readAcl != null) {
-                AaaContext acc = M.l(AccessApi.class).getCurrentOrGuest();
-                if (!AaaUtil.hasAccess(acc, readAcl)) return null;
+                if (!ShiroUtil.isPermitted(readAcl, VaultKey.class, Ace.READ, key.getIdent())) return null;
             }
             return key;
         } catch (Exception e) {
@@ -104,8 +101,7 @@ public class CherryMVaultSource extends MLog implements MutableVaultSource {
             if (key == null) return null;
             List<String> readAcl = key.getReadAcl();
             if (readAcl != null) {
-                AaaContext acc = M.l(AccessApi.class).getCurrentOrGuest();
-                if (!AaaUtil.hasAccess(acc, readAcl)) return null;
+                if (!ShiroUtil.isPermitted(readAcl, VaultKey.class, Ace.READ, key.getIdent())) return null;
             }
             return key;
         } catch (Exception e) {
@@ -117,7 +113,6 @@ public class CherryMVaultSource extends MLog implements MutableVaultSource {
     @Override
     public Iterable<UUID> getEntryIds() {
         LinkedList<UUID> out = new LinkedList<>();
-        AaaContext acc = M.l(AccessApi.class).getCurrentOrGuest();
         try {
             //		for ( VaultKey obj :
             // StaticAccess.moManager.getManager().createQuery(VaultKey.class).limit(100).fetch()) {
@@ -127,7 +122,7 @@ public class CherryMVaultSource extends MLog implements MutableVaultSource {
                             .getByQualification(Db.query(VaultKey.class).limit(100))) {
                 List<String> readAcl = obj.getReadAcl();
                 if (readAcl != null) {
-                    if (!AaaUtil.hasAccess(acc, readAcl)) continue;
+                    if (!ShiroUtil.isPermitted(readAcl, VaultKey.class, Ace.READ, obj.getIdent())) return null;
                 }
                 out.add(UUID.fromString(obj.getIdent()));
             }
@@ -176,8 +171,7 @@ public class CherryMVaultSource extends MLog implements MutableVaultSource {
     public void removeEntry(UUID id) throws MException {
         VaultKey obj = getVaultKey(id);
         if (obj == null) return;
-        AaaContext acc = M.l(AccessApi.class).getCurrentOrGuest();
-        if (!acc.isAdminMode()) throw new RuntimeException("only admin can delete entries");
+        if (!ShiroUtil.isAdmin()) throw new RuntimeException("only admin can delete entries");
         //		StaticAccess.moManager.getManager().delete(obj);
         obj.delete();
     }

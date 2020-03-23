@@ -40,6 +40,7 @@ import de.mhus.cherry.vault.api.model.WritableEntry;
 import de.mhus.lib.adb.DbCollection;
 import de.mhus.lib.adb.query.AQuery;
 import de.mhus.lib.adb.query.Db;
+import de.mhus.lib.basics.Ace;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.IReadProperties;
 import de.mhus.lib.core.M;
@@ -49,9 +50,7 @@ import de.mhus.lib.core.MString;
 import de.mhus.lib.core.cfg.CfgString;
 import de.mhus.lib.core.crypt.pem.PemBlockList;
 import de.mhus.lib.core.crypt.pem.PemUtil;
-import de.mhus.lib.core.security.AaaContext;
-import de.mhus.lib.core.security.AaaUtil;
-import de.mhus.lib.core.security.AccessApi;
+import de.mhus.lib.core.shiro.ShiroUtil;
 import de.mhus.lib.core.util.EmptyList;
 import de.mhus.lib.core.util.SecureString;
 import de.mhus.lib.errors.AccessDeniedException;
@@ -96,9 +95,8 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
         VaultGroup group = getGroup(groupName);
 
         // check write access
-        AccessApi aaa = M.l(AccessApi.class);
         List<String> acl = group.getWriteAcl();
-        if (!AaaUtil.hasAccess(aaa.getCurrentOrGuest(), acl))
+        if (!ShiroUtil.isPermitted(acl, VaultGroup.class, Ace.UPDATE, group.getName()))
             throw new AccessDeniedException("Write access to group denied", groupName);
 
         // get and execute secret generation
@@ -186,9 +184,8 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
             index = fillIndex(index, secrets.get(0));
         }
         // check write access
-        AccessApi aaa = M.l(AccessApi.class);
         List<String> acl = group.getWriteAcl();
-        if (!AaaUtil.hasAccess(aaa.getCurrentOrGuest(), acl))
+        if (!ShiroUtil.isPermitted(acl, VaultGroup.class, Ace.UPDATE, group.getName()))
             throw new AccessDeniedException("Write access to group denied", groupName);
 
         if (!group.isAllowUpdate())
@@ -262,9 +259,8 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
         VaultGroup group = getGroup(groupName);
 
         // check write access
-        AccessApi aaa = M.l(AccessApi.class);
         List<String> acl = group.getWriteAcl();
-        if (!AaaUtil.hasAccess(aaa.getCurrentOrGuest(), acl))
+        if (!ShiroUtil.isPermitted(acl, VaultGroup.class, Ace.UPDATE, group.getName()))
             throw new AccessDeniedException("Write access to group denied", groupName);
 
         if (secret == null || secret.getContent() == null || secret.getContent().isNull())
@@ -318,9 +314,8 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
         System.out.println("Index: " + Arrays.toString(index) + " " + properties);
 
         // check write access
-        AccessApi aaa = M.l(AccessApi.class);
         List<String> acl = group.getWriteAcl();
-        if (!AaaUtil.hasAccess(aaa.getCurrentOrGuest(), acl))
+        if (!ShiroUtil.isPermitted(acl, VaultGroup.class, Ace.UPDATE, group.getName()))
             throw new AccessDeniedException("Write access to group denied", groupName);
 
         if (!group.isAllowUpdate())
@@ -354,9 +349,8 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
         VaultGroup group = getGroup(groupName);
 
         // check write access
-        AccessApi aaa = M.l(AccessApi.class);
         List<String> acl = group.getWriteAcl();
-        if (!AaaUtil.hasAccess(aaa.getCurrentOrGuest(), acl))
+        if (!ShiroUtil.isPermitted(acl, VaultGroup.class, Ace.UPDATE, group.getName()))
             throw new AccessDeniedException("Write access to group denied", groupName);
 
         log().d("delete secret", groupName, secretId);
@@ -391,9 +385,8 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
         VaultGroup group = getGroup(groupName);
 
         // check write access
-        AccessApi aaa = M.l(AccessApi.class);
         List<String> acl = group.getWriteAcl();
-        if (!AaaUtil.hasAccess(aaa.getCurrentOrGuest(), acl))
+        if (!ShiroUtil.isPermitted(acl, VaultGroup.class, Ace.UPDATE, group.getName()))
             throw new AccessDeniedException("Write access to group denied", groupName);
 
         log().d("undelete secret", groupName, secretId);
@@ -417,9 +410,8 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 
         VaultTarget target = getTarget(targetName);
         // check read access
-        AccessApi aaa = M.l(AccessApi.class);
         List<String> acl = target.getReadAcl();
-        if (!AaaUtil.hasAccess(aaa.getCurrentOrGuest(), acl))
+        if (!ShiroUtil.isPermitted(acl, VaultTarget.class, Ace.READ, target.getName()))
             throw new AccessDeniedException("Read access to target denied", targetName);
 
         //		VaultEntry obj =
@@ -443,8 +435,6 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
     public List<VaultEntry> getSecrets(String secretId) throws MException {
 
         // check read access
-        AccessApi aaa = M.l(AccessApi.class);
-
         Date now = new Date();
         AQuery<VaultEntry> query =
                 Db.query(VaultEntry.class).le("validfrom", now).gt("validto", now);
@@ -455,7 +445,8 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
             String targetName = entry.getTarget();
             VaultTarget target = getTarget(targetName);
             List<String> acl = target.getReadAcl();
-            if (AaaUtil.hasAccess(aaa.getCurrentOrGuest(), acl)) res.add(entry);
+            if (ShiroUtil.isPermitted(acl, VaultTarget.class, Ace.READ, target.getName()))
+                res.add(entry);
         }
         return res;
     }
@@ -692,8 +683,6 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
             throws MException {
 
         VaultGroup group = getGroup(groupName);
-        AccessApi aaa = M.l(AccessApi.class);
-        AaaContext ac = aaa.getCurrentOrGuest();
         if (properties == null) properties = new MProperties();
 
         SecretContent sec = null;
@@ -702,7 +691,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
             CryptApi crypta = M.l(CryptApi.class);
             PemBlockList encoded = new PemBlockList(secret);
 
-            CherryVaultProcessContext context = new CherryVaultProcessContext(ac, properties);
+            CherryVaultProcessContext context = new CherryVaultProcessContext(properties);
             crypta.processPemBlocks(context, encoded);
 
             if (context.getLastSecret() == null) throw new MException("can't decode secret");
@@ -729,8 +718,6 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 
         String groupName = findGroupNameForSecretId(secretId);
         VaultGroup group = getGroup(groupName);
-        AccessApi aaa = M.l(AccessApi.class);
-        AaaContext ac = aaa.getCurrentOrGuest();
         if (properties == null) properties = new MProperties();
 
         SecretContent sec = null;
@@ -739,7 +726,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
             CryptApi crypta = M.l(CryptApi.class);
             PemBlockList encoded = new PemBlockList(secret);
 
-            CherryVaultProcessContext context = new CherryVaultProcessContext(ac, properties);
+            CherryVaultProcessContext context = new CherryVaultProcessContext(properties);
 
             crypta.processPemBlocks(context, encoded);
 
@@ -835,10 +822,11 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
             out.println("Group Name: " + groupName);
             VaultGroup group = getGroup(groupName);
             out.println("Group: " + group);
-            AccessApi aaa = M.l(AccessApi.class);
             List<String> acl = group.getWriteAcl();
-            if (!AaaUtil.hasAccess(aaa.getCurrentOrGuest(), acl)) out.println("Access Denied");
-            else out.println("Access Granted");
+            if (!ShiroUtil.isPermitted(acl, VaultGroup.class, Ace.UPDATE, group.getName()))
+                out.println("Access Denied");
+            else
+                out.println("Access Granted");
 
             String generatorName = group.getSecretGeneratorName();
             out.println("Generator Name: " + generatorName);
