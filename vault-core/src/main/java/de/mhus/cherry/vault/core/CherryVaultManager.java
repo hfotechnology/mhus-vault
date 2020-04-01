@@ -22,12 +22,12 @@ import de.mhus.cherry.vault.api.model.VaultEntry;
 import de.mhus.cherry.vault.api.model.VaultGroup;
 import de.mhus.cherry.vault.api.model.VaultKey;
 import de.mhus.cherry.vault.api.model.VaultTarget;
+import de.mhus.db.osgi.api.adb.AbstractDbSchemaService;
+import de.mhus.db.osgi.api.adb.DbSchemaService;
+import de.mhus.db.osgi.api.adb.ReferenceCollector;
 import de.mhus.lib.adb.Persistable;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.xdb.XdbService;
-import de.mhus.osgi.api.adb.AbstractDbSchemaService;
-import de.mhus.osgi.api.adb.DbSchemaService;
-import de.mhus.osgi.api.adb.ReferenceCollector;
 
 @Component(immediate = true, service = DbSchemaService.class)
 public class CherryVaultManager extends AbstractDbSchemaService {
