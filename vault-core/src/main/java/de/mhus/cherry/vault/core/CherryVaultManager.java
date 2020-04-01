@@ -22,17 +22,15 @@ import de.mhus.cherry.vault.api.model.VaultEntry;
 import de.mhus.cherry.vault.api.model.VaultGroup;
 import de.mhus.cherry.vault.api.model.VaultKey;
 import de.mhus.cherry.vault.api.model.VaultTarget;
-import de.mhus.db.osgi.api.adb.AbstractDbSchemaService;
-import de.mhus.db.osgi.api.adb.DbSchemaService;
+import de.mhus.db.osgi.api.adb.AbstractCommonAdbConsumer;
+import de.mhus.db.osgi.api.adb.CommonAdbConsumer;
 import de.mhus.db.osgi.api.adb.ReferenceCollector;
 import de.mhus.lib.adb.Persistable;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.xdb.XdbService;
 
-@Component(immediate = true, service = DbSchemaService.class)
-public class CherryVaultManager extends AbstractDbSchemaService {
-
-    private XdbService service;
+@Component(immediate = true, service = CommonAdbConsumer.class)
+public class CherryVaultManager extends AbstractCommonAdbConsumer {
 
     @Override
     public void registerObjectTypes(List<Class<? extends Persistable>> list) {
@@ -44,9 +42,8 @@ public class CherryVaultManager extends AbstractDbSchemaService {
     }
 
     @Override
-    public void doInitialize(XdbService dbService) {
+    public void doInitialize() {
         log().i("Init CherryVaultManager");
-        this.service = dbService;
         StaticAccess.db = this;
     }
 
@@ -61,10 +58,6 @@ public class CherryVaultManager extends AbstractDbSchemaService {
 
     @Override
     public void doCleanup() {}
-
-    public XdbService getManager() {
-        return service;
-    }
 
     @Override
     public boolean canCreate(Persistable obj) throws MException {
