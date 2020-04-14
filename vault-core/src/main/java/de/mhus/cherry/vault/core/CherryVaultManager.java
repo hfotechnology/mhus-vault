@@ -25,7 +25,6 @@ import de.mhus.cherry.vault.api.model.VaultTarget;
 import de.mhus.db.osgi.api.adb.AbstractCommonAdbConsumer;
 import de.mhus.db.osgi.api.adb.CommonAdbConsumer;
 import de.mhus.db.osgi.api.adb.ReferenceCollector;
-import de.mhus.lib.adb.Persistable;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.xdb.XdbService;
 
@@ -33,7 +32,7 @@ import de.mhus.lib.xdb.XdbService;
 public class CherryVaultManager extends AbstractCommonAdbConsumer {
 
     @Override
-    public void registerObjectTypes(List<Class<? extends Persistable>> list) {
+    public void registerObjectTypes(List<Class<?>> list) {
         list.add(VaultGroup.class);
         list.add(VaultTarget.class);
         list.add(VaultEntry.class);
@@ -54,13 +53,13 @@ public class CherryVaultManager extends AbstractCommonAdbConsumer {
     }
 
     @Override
-    public void collectReferences(Persistable object, ReferenceCollector collector) {}
+    public void collectReferences(Object object, ReferenceCollector collector) {}
 
     @Override
     public void doCleanup() {}
 
     @Override
-    public boolean canCreate(Persistable obj) throws MException {
+    public boolean canCreate(Object obj) throws MException {
         return true;
     }
 
