@@ -23,12 +23,12 @@ import de.mhus.cherry.vault.api.model.VaultGroup;
 import de.mhus.cherry.vault.api.model.VaultKey;
 import de.mhus.cherry.vault.api.model.VaultTarget;
 import de.mhus.db.osgi.api.adb.AbstractCommonAdbConsumer;
-import de.mhus.db.osgi.api.adb.CommonAdbConsumer;
+import de.mhus.db.osgi.api.adb.CommonDbConsumer;
 import de.mhus.db.osgi.api.adb.ReferenceCollector;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.xdb.XdbService;
 
-@Component(immediate = true, service = CommonAdbConsumer.class)
+@Component(immediate = true, service = CommonDbConsumer.class)
 public class CherryVaultManager extends AbstractCommonAdbConsumer {
 
     @Override
