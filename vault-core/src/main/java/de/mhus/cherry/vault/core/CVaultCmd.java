@@ -29,6 +29,7 @@ import de.mhus.cherry.vault.api.model.VaultGroup;
 import de.mhus.cherry.vault.api.model.VaultTarget;
 import de.mhus.lib.adb.query.AQuery;
 import de.mhus.lib.adb.query.Db;
+import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MCast;
 import de.mhus.lib.core.MCollection;
@@ -102,7 +103,7 @@ public class CVaultCmd extends AbstractCmd {
         Date from = MCast.toDate(fromStr, null);
         Date to = MCast.toDate(toStr, null);
 
-        MProperties prop = MProperties.explodeToMProperties(p);
+        MProperties prop = IProperties.explodeToMProperties(p);
 
         switch (cmd) {
             case "secret":
@@ -217,7 +218,7 @@ public class CVaultCmd extends AbstractCmd {
                     String[] p = MCollection.cropArray(parameters, 1, parameters.length);
                     String out =
                             api.testGroup(
-                                    parameters[0], execute, MProperties.explodeToMProperties(p));
+                                    parameters[0], execute, IProperties.explodeToMProperties(p));
                     System.out.println(out);
                 }
                 break;
