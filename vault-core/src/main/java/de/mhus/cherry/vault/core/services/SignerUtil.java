@@ -23,8 +23,8 @@ import de.mhus.lib.core.crypt.pem.PemBlock;
 import de.mhus.lib.core.crypt.pem.PemBlockList;
 import de.mhus.lib.core.crypt.pem.PemPriv;
 import de.mhus.lib.core.crypt.pem.PemUtil;
-import de.mhus.lib.core.vault.MVault;
-import de.mhus.lib.core.vault.MVaultUtil;
+import de.mhus.lib.core.keychain.MKeychain;
+import de.mhus.lib.core.keychain.MKeychainUtil;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;
 import de.mhus.osgi.crypt.api.CryptApi;
@@ -38,8 +38,8 @@ public class SignerUtil {
         if (processorConfig.isProperty("signId")) {
             UUID signId = UUID.fromString(processorConfig.getString("signId"));
             out.println("Signature: " + signId);
-            MVault vault = MVaultUtil.loadDefault();
-            de.mhus.lib.core.vault.VaultEntry signKeyValue = vault.getEntry(signId);
+            MKeychain vault = MKeychainUtil.loadDefault();
+            de.mhus.lib.core.keychain.KeyEntry signKeyValue = vault.getEntry(signId);
             out.println("Key: " + signKeyValue);
             CryptApi api = M.l(CryptApi.class);
             SignerProvider signer =
@@ -51,12 +51,12 @@ public class SignerUtil {
     public static void sign(PemBlockList result, IReadProperties processorConfig, String cs)
             throws MException {
         if (processorConfig.isProperty("signId")) {
-            MVault vault = MVaultUtil.loadDefault();
+            MKeychain vault = MKeychainUtil.loadDefault();
             CryptApi api = M.l(CryptApi.class);
             UUID signId = UUID.fromString(processorConfig.getString("signId"));
             SignerProvider signer =
                     api.getSigner(processorConfig.getString("signService", "DSA-1"));
-            de.mhus.lib.core.vault.VaultEntry signKeyValue = vault.getEntry(signId);
+            de.mhus.lib.core.keychain.KeyEntry signKeyValue = vault.getEntry(signId);
             if (signKeyValue == null) throw new NotFoundException("sign key not found", signId);
             PemPriv signKey = PemUtil.toKey(signKeyValue.getValue().value());
             PemBlock signed =

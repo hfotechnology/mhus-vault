@@ -14,7 +14,7 @@
 package de.mhus.cherry.vault.core;
 
 import de.mhus.cherry.vault.api.model.VaultKey;
-import de.mhus.lib.core.vault.DefaultEntry;
+import de.mhus.lib.core.keychain.DefaultEntry;
 
 public class VaultKeyEntry extends DefaultEntry {
 

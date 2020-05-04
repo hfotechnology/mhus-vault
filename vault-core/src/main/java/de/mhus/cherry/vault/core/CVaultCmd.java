@@ -35,7 +35,7 @@ import de.mhus.lib.core.MCast;
 import de.mhus.lib.core.MCollection;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.console.ConsoleTable;
-import de.mhus.lib.core.vault.MVaultUtil;
+import de.mhus.lib.core.keychain.MKeychainUtil;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 
 @Command(scope = "cherry", name = "vault", description = "Cherry Vault Control")
@@ -183,8 +183,8 @@ public class CVaultCmd extends AbstractCmd {
                 break;
             case "dbimport":
                 {
-                    de.mhus.lib.core.vault.VaultEntry key =
-                            MVaultUtil.loadDefault().getEntry(UUID.fromString(parameters[0]));
+                    de.mhus.lib.core.keychain.KeyEntry key =
+                            MKeychainUtil.loadDefault().getEntry(UUID.fromString(parameters[0]));
                     if (key == null) {
                         System.out.println("Key not found");
                         return null;
@@ -195,8 +195,8 @@ public class CVaultCmd extends AbstractCmd {
                 break;
             case "dbexport":
                 {
-                    de.mhus.lib.core.vault.VaultEntry key =
-                            MVaultUtil.loadDefault().getEntry(UUID.fromString(parameters[0]));
+                    de.mhus.lib.core.keychain.KeyEntry key =
+                            MKeychainUtil.loadDefault().getEntry(UUID.fromString(parameters[0]));
                     if (key == null) {
                         System.out.println("Key not found");
                         return null;

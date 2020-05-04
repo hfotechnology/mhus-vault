@@ -11,7 +11,7 @@ import de.mhus.cherry.vault.api.model.VaultGroup;
 import de.mhus.cherry.vault.api.model.VaultKey;
 import de.mhus.cherry.vault.api.model.VaultTarget;
 import de.mhus.cherry.vault.core.StaticAccess;
-import de.mhus.lib.core.vault.MVaultUtil;
+import de.mhus.lib.core.keychain.MKeychainUtil;
 import de.mhus.lib.errors.MException;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 
@@ -54,8 +54,8 @@ public class VaultMgmtCmd extends AbstractCmd {
                     String recPassphrase = parameters[3];
                     String filter = parameters.length > 4 ? parameters[4] : null;
 
-                    de.mhus.lib.core.vault.VaultEntry recPrivEntry =
-                            MVaultUtil.loadDefault().getEntry(UUID.fromString(recPrivKey));
+                    de.mhus.lib.core.keychain.KeyEntry recPrivEntry =
+                            MKeychainUtil.loadDefault().getEntry(UUID.fromString(recPrivKey));
                     if (recPrivEntry == null) throw new MException("key not found");
 
                     new RecreateUtil()

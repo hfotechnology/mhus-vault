@@ -27,14 +27,14 @@ import de.mhus.lib.adb.query.Db;
 import de.mhus.lib.basics.Ace;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MSystem;
+import de.mhus.lib.core.keychain.MutableVaultSource;
+import de.mhus.lib.core.keychain.KeyEntry;
+import de.mhus.lib.core.keychain.KeychainSource;
 import de.mhus.lib.core.shiro.AccessUtil;
-import de.mhus.lib.core.vault.MutableVaultSource;
-import de.mhus.lib.core.vault.VaultEntry;
-import de.mhus.lib.core.vault.VaultSource;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;
 
-@Component(service = VaultSource.class)
+@Component(service = KeychainSource.class)
 public class CherryMVaultSource extends MLog implements MutableVaultSource {
 
     private String name;
@@ -45,7 +45,7 @@ public class CherryMVaultSource extends MLog implements MutableVaultSource {
     }
 
     @Override
-    public VaultEntry getEntry(UUID id) {
+    public KeyEntry getEntry(UUID id) {
         try {
             VaultKey key = getVaultKey(id);
             if (key == null) return null;
@@ -57,7 +57,7 @@ public class CherryMVaultSource extends MLog implements MutableVaultSource {
     }
 
     @Override
-    public VaultEntry getEntry(String name) {
+    public KeyEntry getEntry(String name) {
         try {
             VaultKey key = getVaultKey(name);
             if (key == null) return null;
@@ -145,7 +145,7 @@ public class CherryMVaultSource extends MLog implements MutableVaultSource {
     }
 
     @Override
-    public void addEntry(VaultEntry entry) throws MException {
+    public void addEntry(KeyEntry entry) throws MException {
         VaultKey key =
                 new VaultKey(
                         entry.getId().toString(),
@@ -157,7 +157,7 @@ public class CherryMVaultSource extends MLog implements MutableVaultSource {
     }
 
     @Override
-    public void updateEntry(VaultEntry entry) throws MException {
+    public void updateEntry(KeyEntry entry) throws MException {
         VaultKey key = getVaultKey(entry.getId());
         if (key == null) throw new NotFoundException("entry not found", entry.getId());
 

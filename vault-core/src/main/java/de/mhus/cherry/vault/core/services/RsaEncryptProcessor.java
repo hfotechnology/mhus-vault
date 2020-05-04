@@ -28,8 +28,8 @@ import de.mhus.lib.core.crypt.pem.PemBlock;
 import de.mhus.lib.core.crypt.pem.PemBlockList;
 import de.mhus.lib.core.crypt.pem.PemPub;
 import de.mhus.lib.core.crypt.pem.PemUtil;
-import de.mhus.lib.core.vault.MVault;
-import de.mhus.lib.core.vault.MVaultUtil;
+import de.mhus.lib.core.keychain.MKeychain;
+import de.mhus.lib.core.keychain.MKeychainUtil;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;
 import de.mhus.osgi.crypt.api.CryptApi;
@@ -53,8 +53,8 @@ public class RsaEncryptProcessor implements TargetProcessor {
                 api.getCipher(
                         processorConfig.getString("cipherService", CFG_CIPHER_DEFAULT.value()));
 
-        MVault vault = MVaultUtil.loadDefault();
-        de.mhus.lib.core.vault.VaultEntry keyValue = vault.getEntry(keyId);
+        MKeychain vault = MKeychainUtil.loadDefault();
+        de.mhus.lib.core.keychain.KeyEntry keyValue = vault.getEntry(keyId);
         if (keyValue == null) throw new NotFoundException("key not found", keyId);
 
         PemPub key = PemUtil.toKey(keyValue.getValue().value());
@@ -74,8 +74,8 @@ public class RsaEncryptProcessor implements TargetProcessor {
 
         UUID keyId = UUID.fromString(processorConfig.getString("keyId"));
         out.println("Key: " + keyId);
-        MVault vault = MVaultUtil.loadDefault();
-        de.mhus.lib.core.vault.VaultEntry keyValue = vault.getEntry(keyId);
+        MKeychain vault = MKeychainUtil.loadDefault();
+        de.mhus.lib.core.keychain.KeyEntry keyValue = vault.getEntry(keyId);
         if (keyValue == null) throw new NotFoundException("key not found", keyId);
         out.println("Key value: " + keyValue);
 
