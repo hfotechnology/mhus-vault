@@ -13,7 +13,7 @@
  */
 package de.mhus.cherry.vault.client;
 
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import de.mhus.lib.core.crypt.pem.PemBlockList;
 

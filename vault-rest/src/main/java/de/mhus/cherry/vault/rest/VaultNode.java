@@ -16,8 +16,9 @@ package de.mhus.cherry.vault.rest;
 import java.util.Date;
 import java.util.List;
 
-import org.codehaus.jackson.node.ObjectNode;
 import org.osgi.service.component.annotations.Component;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import de.mhus.cherry.vault.api.CherryVaultApi;
 import de.mhus.cherry.vault.api.model.VaultEntry;
