@@ -165,7 +165,7 @@ public class CVaultCmd extends AbstractCmd {
                     query.asc("name");
                     ConsoleTable out = new ConsoleTable(tblOpt);
                     out.setHeaderValues(
-                            "Name", "Processor", "Config", "Condition", "Config", "Id", "Modified");
+                            "Name", "Processor", "Config", "Condition", "Config", "Id", "Modified","Description");
                     for (VaultTarget item :
                             StaticAccess.db.getManager().getByQualification(query)) {
                         if (filter == null || filter.contains(item.getName()))
@@ -176,7 +176,8 @@ public class CVaultCmd extends AbstractCmd {
                                     item.getConditionNames(),
                                     item.getConditionConfig(null),
                                     item.getId(),
-                                    item.getModifyDate());
+                                    item.getModifyDate(),
+                                    item.getDescription());
                     }
                     out.print();
                 }
