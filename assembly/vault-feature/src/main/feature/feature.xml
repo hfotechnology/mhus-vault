@@ -46,58 +46,8 @@
 	<feature name='cherry-vault' description='cherry-vault' version='${project.version}'>
 		<details>${project.description}</details>
 		
-		<feature>scr</feature>
-		<feature>jdbc</feature>
-		<feature>openjpa</feature>
-		<feature>jndi</feature>
-		<feature>activemq-client</feature>
+        <feature>mhu-base</feature>
 
-		<!-- mhu-lib -->
-		
-        <bundle>mvn:commons-codec/commons-codec/${commons-codec.version}</bundle>
-        <bundle>mvn:org.jsoup/jsoup/${org.jsoup.version}</bundle>
-        <bundle>mvn:mysql/mysql-connector-java/${mysql.version}</bundle>
-		
-        <bundle>mvn:org.apache.commons/commons-jexl/${commons-jexl.version}</bundle>
-        <bundle><![CDATA[wrap:mvn:org.w3c.css/sac/${w3c.css.sac}/$Bundle-SymbolicName=sac&Bundle-Version=${w3c.css.sac}&Export-Package=org.w3c.css.sac;version="${w3c.css.sac}",!*]]></bundle>
-
-        <bundle>mvn:org.codehaus.jackson/jackson-core-asl/${jackson.asl.version}</bundle>
-        <bundle>mvn:org.codehaus.jackson/jackson-mapper-asl/${jackson.asl.version}</bundle>
-        <bundle><![CDATA[wrap:mvn:org.apache.commons/commons-io/${commons-io.version}/$Bundle-SymbolicName=commons-io&Bundle-Version=${commons-io.version}&Export-Package=org.apache.commons.io;version="${commons-io.version}",!*]]></bundle>
-
-        <bundle>mvn:de.mhus.lib/lib-annotations/${mhus-lib.version}</bundle>
-        <bundle>mvn:de.mhus.lib/lib-core/${mhus-lib.version}</bundle>
-        <bundle>mvn:de.mhus.lib/lib-persistence/${mhus-lib.version}</bundle>
-        <bundle>mvn:de.mhus.lib/lib-jms/${mhus-lib.version}</bundle>
-
-		<!-- osgi tools -->
-		
-        <bundle>mvn:org.bouncycastle/bcprov-jdk16/${bouncycastle.version}</bundle>
-		
-        <bundle>mvn:de.mhus.osgi/osgi-api/${mhus-osgi-tools.version}</bundle>
-        <bundle>mvn:de.mhus.osgi/osgi-services/${mhus-osgi-tools.version}</bundle>
-        <bundle>mvn:de.mhus.osgi/karaf-commands/${mhus-osgi-tools.version}</bundle>
-        <bundle>mvn:de.mhus.osgi/karaf-xdb/${mhus-osgi-tools.version}</bundle>
-
-
-<!--
-		<bundle>mvn:org.mongodb/mongo-java-driver/${mongo.version}</bundle>
-    	<bundle>wrap:mvn:com.thoughtworks.proxytoys/proxytoys/1.0</bundle>
-    	<bundle>mvn:org.mongodb.morphia/morphia/${mongo.morphia.version}</bundle>	
-		<bundle>mvn:de.mhus.osgi/mhu-karaf-mongo/${osgitools.version}</bundle>
--->		
-		<bundle>mvn:de.mhus.osgi/osgi-crypt-api/${mhus-crypt.version}</bundle>
-		<bundle>mvn:de.mhus.osgi/osgi-crypt-bc/${mhus-crypt.version}</bundle>
-		<bundle>mvn:de.mhus.osgi/karaf-crypt/${mhus-crypt.version}</bundle>
-		
-		<!-- sop -->
-
-        <bundle>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcomponents.httpcore.version}</bundle>
-		<!-- 
-		<bundle>mvn:de.mhus.osgi/mhu-sop-api/${mhus-sop.version}</bundle>
-		<bundle>mvn:de.mhus.osgi/mhu-sop-core/${mhus-sop.version}</bundle>
-		 -->
-		
 		<!-- vault -->
 		
 		<bundle>mvn:de.mhus.cherry.vault/vault-api/${cherry-vault.version}</bundle>

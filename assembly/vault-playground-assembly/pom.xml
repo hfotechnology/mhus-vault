@@ -88,6 +88,24 @@ https://raw.githubusercontent.com/pentaho/pentaho-karaf-assembly/master/pentaho-
 	      </exclusions>
 	    </dependency>
 	    
+	    <dependency>
+	       <groupId>org.apache.shiro</groupId>
+	       <artifactId>shiro-features</artifactId>
+	       <version>${shiro.version}</version>
+            <classifier>features</classifier>
+            <type>xml</type>
+            <scope>runtime</scope>
+	    </dependency>
+	    
+        <dependency>
+           <groupId>de.mhus.osgi</groupId>
+           <artifactId>mhus-features</artifactId>
+           <version>${mhus-parent.version}</version>
+            <classifier>features</classifier>
+            <type>xml</type>
+            <scope>runtime</scope>
+        </dependency>
+        
         <dependency>
 	        <groupId>de.mhus.cherry.vault</groupId>
 	        <artifactId>vault-feature</artifactId>
@@ -123,19 +141,28 @@ https://raw.githubusercontent.com/pentaho/pentaho-karaf-assembly/master/pentaho-
                         <repository>mvn:org.apache.karaf.features/enterprise-legacy/4.2.8/xml/features</repository>
                         <repository>mvn:org.apache.karaf.features/spring/4.2.8/xml/features</repository>
                         <repository>mvn:org.apache.karaf.features/spring-legacy/4.2.8/xml/features</repository>
-                        
+
                         <repository>mvn:org.apache.karaf.features/framework/4.2.7/xml/features</repository>
                         <repository>mvn:org.apache.karaf.features/standard/4.2.7/xml/features</repository>
                         <repository>mvn:org.apache.karaf.features/enterprise/4.2.7/xml/features</repository>
                         <repository>mvn:org.apache.karaf.features/enterprise-legacy/4.2.7/xml/features</repository>
                         <repository>mvn:org.apache.karaf.features/spring/4.2.7/xml/features</repository>
                         <repository>mvn:org.apache.karaf.features/spring-legacy/4.2.7/xml/features</repository>
-                        
+				    
 				        <repository>mvn:org.apache.karaf.features/framework/4.3.0-SNAPSHOT/xml/features</repository>
 				        <repository>mvn:org.apache.karaf.features/standard/4.3.0-SNAPSHOT/xml/features</repository>
 				        <repository>mvn:org.apache.karaf.features/enterprise/4.3.0-SNAPSHOT/xml/features</repository>
 				        <repository>mvn:org.apache.karaf.features/enterprise-legacy/4.3.0-SNAPSHOT/xml/features</repository>
 				        <repository>mvn:org.apache.karaf.features/spring/4.3.0-SNAPSHOT/xml/features</repository>
+				        
+                        <repository>mvn:org.apache.karaf.features/framework/4.3.0.RC1/xml/features</repository>
+                        <repository>mvn:org.apache.karaf.features/standard/4.3.0.RC1/xml/features</repository>
+                        <repository>mvn:org.apache.karaf.features/enterprise/4.3.0.RC1/xml/features</repository>
+                        <repository>mvn:org.apache.karaf.features/enterprise-legacy/4.3.0.RC1/xml/features</repository>
+                        <repository>mvn:org.apache.karaf.features/spring/4.3.0.RC1/xml/features</repository>
+                        <repository>mvn:org.apache.karaf.features/spring-legacy/4.3.0.RC1/xml/features</repository>
+                        <repository>mvn:org.apache.karaf.features/org.apache.karaf.features.extension/4.3.0.RC1</repository>
+				        
 				        <!--
 				        <repository>mvn:org.apache.karaf.features/spring-legacy/4.3.0-SNAPSHOT/xml/features</repository>
 				        <repository>mvn:org.ops4j.pax.web/pax-web-features/7.2.10/xml/features</repository>
