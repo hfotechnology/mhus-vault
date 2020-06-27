@@ -59,7 +59,7 @@ import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;
 import de.mhus.lib.errors.UsageException;
 import de.mhus.lib.xdb.XdbService;
-import de.mhus.osgi.api.services.MOsgi;
+import de.mhus.osgi.api.MOsgi;
 import de.mhus.osgi.crypt.api.CryptApi;
 import io.opentracing.Scope;
 
