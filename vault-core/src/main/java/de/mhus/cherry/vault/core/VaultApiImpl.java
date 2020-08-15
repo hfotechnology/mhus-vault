@@ -89,51 +89,59 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
     public String createSecret(
             String groupName, Date validFrom, Date validTo, IProperties properties, String[] index)
             throws MException {
-    	try (Scope scope = ITracer.get().enter("createSecret", 
-    			"group", groupName, 
-    			"validFrom",validFrom,
-    			"validTo",validTo,
-    			"properties",properties,
-    			"index", index)) {
-	        if (validFrom == null) validFrom = new Date();
-	        if (validTo == null) validTo = END_OF_DAYS;
-	
-	        // get group
-	        VaultGroup group = getGroup(groupName);
-	
-	        // check write access
-	        List<String> acl = group.getWriteAcl();
-	        if (!AccessUtil.isPermitted(acl, VaultGroup.class, Ace.UPDATE, group.getName()))
-	            throw new AccessDeniedException("Write access to group denied", groupName);
-	
-	        // get and execute secret generation
-	        String generatorName = group.getSecretGeneratorName();
-	        if (MString.isEmpty(generatorName))
-	            throw new UsageException("Group can't generate secrets", groupName);
-	
-	        SecretGenerator generator = getGenerator(generatorName);
-	
-	        SecretContent secret = generator.generateSecret(group, properties);
-	        if (secret == null) throw new MException("Secret is null");
-	
-	        // create entries by targets
-	        String secretId = UUID.randomUUID().toString();
-	        log().d("create secret", groupName, secretId);
-	
-	        // -- cache entries to save. Save if everything target was ok
-	        LinkedList<VaultEntry> entriesToSave = new LinkedList<>();
-	        processGroupTargets(group, properties, secretId, secret, entriesToSave);
-	
-	        if (entriesToSave.size() == 0) return null;
-	
-	        updateIndexes(entriesToSave, index, properties);
-	
-	        // save entries
-	        saveEntries(groupName, entriesToSave, validFrom, validTo);
-	        
-	        scope.span().setTag("secretId", secretId);
-	        return secretId;
-    	}
+        try (Scope scope =
+                ITracer.get()
+                        .enter(
+                                "createSecret",
+                                "group",
+                                groupName,
+                                "validFrom",
+                                validFrom,
+                                "validTo",
+                                validTo,
+                                "properties",
+                                properties,
+                                "index",
+                                index)) {
+            if (validFrom == null) validFrom = new Date();
+            if (validTo == null) validTo = END_OF_DAYS;
+
+            // get group
+            VaultGroup group = getGroup(groupName);
+
+            // check write access
+            List<String> acl = group.getWriteAcl();
+            if (!AccessUtil.isPermitted(acl, VaultGroup.class, Ace.UPDATE, group.getName()))
+                throw new AccessDeniedException("Write access to group denied", groupName);
+
+            // get and execute secret generation
+            String generatorName = group.getSecretGeneratorName();
+            if (MString.isEmpty(generatorName))
+                throw new UsageException("Group can't generate secrets", groupName);
+
+            SecretGenerator generator = getGenerator(generatorName);
+
+            SecretContent secret = generator.generateSecret(group, properties);
+            if (secret == null) throw new MException("Secret is null");
+
+            // create entries by targets
+            String secretId = UUID.randomUUID().toString();
+            log().d("create secret", groupName, secretId);
+
+            // -- cache entries to save. Save if everything target was ok
+            LinkedList<VaultEntry> entriesToSave = new LinkedList<>();
+            processGroupTargets(group, properties, secretId, secret, entriesToSave);
+
+            if (entriesToSave.size() == 0) return null;
+
+            updateIndexes(entriesToSave, index, properties);
+
+            // save entries
+            saveEntries(groupName, entriesToSave, validFrom, validTo);
+
+            scope.span().setTag("secretId", secretId);
+            return secretId;
+        }
     }
 
     public void updateIndexes(
@@ -177,59 +185,67 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
             String secretId, Date validFrom, Date validTo, IProperties properties, String[] index)
             throws MException {
 
-    	try (Scope scope = ITracer.get().enter("createUpdate", 
-    			"secretId", secretId, 
-    			"validFrom",validFrom,
-    			"validTo",validTo,
-    			"properties",properties,
-    			"index", index)) {
-    	
-	        if (validFrom == null) validFrom = new Date();
-	        if (validTo == null) validTo = END_OF_DAYS;
-	
-	        // get group
-	        String groupName = findGroupNameForSecretId(secretId);
-	        VaultGroup group = getGroup(groupName);
-	
-	        if (properties == null) properties = new MProperties();
-	        List<VaultEntry> secrets = getSecrets(secretId);
-	        if (secrets.size() > 0) {
-	            for (Map.Entry<String, Object> entry : secrets.get(0).getProperties().entrySet())
-	                if (!properties.containsKey(entry.getKey()))
-	                    properties.put(entry.getKey(), entry.getValue());
-	            index = fillIndex(index, secrets.get(0));
-	        }
-	        // check write access
-	        List<String> acl = group.getWriteAcl();
-	        if (!AccessUtil.isPermitted(acl, VaultGroup.class, Ace.UPDATE, group.getName()))
-	            throw new AccessDeniedException("Write access to group denied", groupName);
-	
-	        if (!group.isAllowUpdate())
-	            throw new AccessDeniedException("The group dos not allow updates", groupName);
-	
-	        // get and execute secret generation
-	        String generatorName = group.getSecretGeneratorName();
-	        if (MString.isEmpty(generatorName))
-	            throw new UsageException("Group can't generate secrets", groupName);
-	
-	        SecretGenerator generator = getGenerator(generatorName);
-	
-	        SecretContent secret = generator.generateSecret(group, properties);
-	        if (secret == null) throw new MException("Secret is null");
-	
-	        log().d("create update", groupName, secretId);
-	
-	        // -- cache entries to save. Save if everything target was ok
-	        LinkedList<VaultEntry> entriesToSave = new LinkedList<>();
-	        processGroupTargets(group, properties, secretId, secret, entriesToSave);
-	
-	        updateEntriesValidTo(secretId, validFrom);
-	
-	        updateIndexes(entriesToSave, index, properties);
-	
-	        // save entries
-	        saveEntries(groupName, entriesToSave, validFrom, validTo);
-    	}
+        try (Scope scope =
+                ITracer.get()
+                        .enter(
+                                "createUpdate",
+                                "secretId",
+                                secretId,
+                                "validFrom",
+                                validFrom,
+                                "validTo",
+                                validTo,
+                                "properties",
+                                properties,
+                                "index",
+                                index)) {
+
+            if (validFrom == null) validFrom = new Date();
+            if (validTo == null) validTo = END_OF_DAYS;
+
+            // get group
+            String groupName = findGroupNameForSecretId(secretId);
+            VaultGroup group = getGroup(groupName);
+
+            if (properties == null) properties = new MProperties();
+            List<VaultEntry> secrets = getSecrets(secretId);
+            if (secrets.size() > 0) {
+                for (Map.Entry<String, Object> entry : secrets.get(0).getProperties().entrySet())
+                    if (!properties.containsKey(entry.getKey()))
+                        properties.put(entry.getKey(), entry.getValue());
+                index = fillIndex(index, secrets.get(0));
+            }
+            // check write access
+            List<String> acl = group.getWriteAcl();
+            if (!AccessUtil.isPermitted(acl, VaultGroup.class, Ace.UPDATE, group.getName()))
+                throw new AccessDeniedException("Write access to group denied", groupName);
+
+            if (!group.isAllowUpdate())
+                throw new AccessDeniedException("The group dos not allow updates", groupName);
+
+            // get and execute secret generation
+            String generatorName = group.getSecretGeneratorName();
+            if (MString.isEmpty(generatorName))
+                throw new UsageException("Group can't generate secrets", groupName);
+
+            SecretGenerator generator = getGenerator(generatorName);
+
+            SecretContent secret = generator.generateSecret(group, properties);
+            if (secret == null) throw new MException("Secret is null");
+
+            log().d("create update", groupName, secretId);
+
+            // -- cache entries to save. Save if everything target was ok
+            LinkedList<VaultEntry> entriesToSave = new LinkedList<>();
+            processGroupTargets(group, properties, secretId, secret, entriesToSave);
+
+            updateEntriesValidTo(secretId, validFrom);
+
+            updateIndexes(entriesToSave, index, properties);
+
+            // save entries
+            saveEntries(groupName, entriesToSave, validFrom, validTo);
+        }
     }
 
     private String[] fillIndex(String[] index, VaultEntry vaultEntry) {
@@ -269,46 +285,54 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
             String[] index)
             throws MException {
 
-    	try (Scope scope = ITracer.get().enter("importSecret", 
-    			"group", groupName, 
-    			"validFrom",validFrom,
-    			"validTo",validTo,
-    			"properties",properties,
-    			"index", index)) {
+        try (Scope scope =
+                ITracer.get()
+                        .enter(
+                                "importSecret",
+                                "group",
+                                groupName,
+                                "validFrom",
+                                validFrom,
+                                "validTo",
+                                validTo,
+                                "properties",
+                                properties,
+                                "index",
+                                index)) {
 
-	        if (validFrom == null) validFrom = new Date();
-	        if (validTo == null) validTo = END_OF_DAYS;
-	
-	        // get group
-	        VaultGroup group = getGroup(groupName);
-	
-	        // check write access
-	        List<String> acl = group.getWriteAcl();
-	        if (!AccessUtil.isPermitted(acl, VaultGroup.class, Ace.UPDATE, group.getName()))
-	            throw new AccessDeniedException("Write access to group denied", groupName);
-	
-	        if (secret == null || secret.getContent() == null || secret.getContent().isNull())
-	            throw new MException("Secret is null");
-	        if (group.getMaxImportLength() > 0
-	                && secret.getContent().length() > group.getMaxImportLength())
-	            throw new MException("Secret out of bounds", group.getMaxImportLength());
-	
-	        // create entries by targets
-	        String secretId = UUID.randomUUID().toString();
-	        log().d("import secret", groupName, secretId);
-	
-	        // -- cache entries to save. Save if everything target was ok
-	        LinkedList<VaultEntry> entriesToSave = new LinkedList<>();
-	        processGroupTargets(group, properties, secretId, secret, entriesToSave);
-	
-	        updateIndexes(entriesToSave, index, properties);
-	
-	        // save entries
-	        saveEntries(groupName, entriesToSave, validFrom, validTo);
+            if (validFrom == null) validFrom = new Date();
+            if (validTo == null) validTo = END_OF_DAYS;
 
-	        scope.span().setTag("secretId", secretId);
-	        return secretId;
-    	}
+            // get group
+            VaultGroup group = getGroup(groupName);
+
+            // check write access
+            List<String> acl = group.getWriteAcl();
+            if (!AccessUtil.isPermitted(acl, VaultGroup.class, Ace.UPDATE, group.getName()))
+                throw new AccessDeniedException("Write access to group denied", groupName);
+
+            if (secret == null || secret.getContent() == null || secret.getContent().isNull())
+                throw new MException("Secret is null");
+            if (group.getMaxImportLength() > 0
+                    && secret.getContent().length() > group.getMaxImportLength())
+                throw new MException("Secret out of bounds", group.getMaxImportLength());
+
+            // create entries by targets
+            String secretId = UUID.randomUUID().toString();
+            log().d("import secret", groupName, secretId);
+
+            // -- cache entries to save. Save if everything target was ok
+            LinkedList<VaultEntry> entriesToSave = new LinkedList<>();
+            processGroupTargets(group, properties, secretId, secret, entriesToSave);
+
+            updateIndexes(entriesToSave, index, properties);
+
+            // save entries
+            saveEntries(groupName, entriesToSave, validFrom, validTo);
+
+            scope.span().setTag("secretId", secretId);
+            return secretId;
+        }
     }
 
     @Override
@@ -321,181 +345,187 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
             String[] index)
             throws MException {
 
-    	try (Scope scope = ITracer.get().enter("importUpdate", 
-    			"secretId", secretId, 
-    			"validFrom",validFrom,
-    			"validTo",validTo,
-    			"properties",properties,
-    			"index", index)) {
-    		
-	        if (validFrom == null) validFrom = new Date();
-	        if (validTo == null) validTo = END_OF_DAYS;
-	
-	        // get group
-	        String groupName = findGroupNameForSecretId(secretId);
-	        VaultGroup group = getGroup(groupName);
-	
-	        if (properties == null) properties = new MProperties();
-	
-	        List<VaultEntry> secrets = getSecrets(secretId);
-	        if (secrets.size() > 0) {
-	            for (Map.Entry<String, Object> entry : secrets.get(0).getProperties().entrySet())
-	                if (!properties.containsKey(entry.getKey()))
-	                    properties.put(entry.getKey(), entry.getValue());
-	            index = fillIndex(index, secrets.get(0));
-	        }
-	        System.out.println("Index: " + Arrays.toString(index) + " " + properties);
-	
-	        // check write access
-	        List<String> acl = group.getWriteAcl();
-	        if (!AccessUtil.isPermitted(acl, VaultGroup.class, Ace.UPDATE, group.getName()))
-	            throw new AccessDeniedException("Write access to group denied", groupName);
-	
-	        if (!group.isAllowUpdate())
-	            throw new AccessDeniedException("The group dos not allow updates", groupName);
-	
-	        if (secret == null || secret.getContent() == null || secret.getContent().isNull())
-	            throw new MException("Secret is null");
-	        if (group.getMaxImportLength() > 0
-	                && secret.getContent().length() > group.getMaxImportLength())
-	            throw new MException("Secret out of bounds", group.getMaxImportLength());
-	
-	        log().d("import update", groupName, secretId);
-	
-	        // -- cache entries to save. Save if everything target was ok
-	        LinkedList<VaultEntry> entriesToSave = new LinkedList<>();
-	        processGroupTargets(group, properties, secretId, secret, entriesToSave);
-	
-	        updateEntriesValidTo(secretId, validFrom);
-	
-	        updateIndexes(entriesToSave, index, properties);
-	
-	        // save entries
-	        saveEntries(groupName, entriesToSave, validFrom, validTo);
-    	}
+        try (Scope scope =
+                ITracer.get()
+                        .enter(
+                                "importUpdate",
+                                "secretId",
+                                secretId,
+                                "validFrom",
+                                validFrom,
+                                "validTo",
+                                validTo,
+                                "properties",
+                                properties,
+                                "index",
+                                index)) {
+
+            if (validFrom == null) validFrom = new Date();
+            if (validTo == null) validTo = END_OF_DAYS;
+
+            // get group
+            String groupName = findGroupNameForSecretId(secretId);
+            VaultGroup group = getGroup(groupName);
+
+            if (properties == null) properties = new MProperties();
+
+            List<VaultEntry> secrets = getSecrets(secretId);
+            if (secrets.size() > 0) {
+                for (Map.Entry<String, Object> entry : secrets.get(0).getProperties().entrySet())
+                    if (!properties.containsKey(entry.getKey()))
+                        properties.put(entry.getKey(), entry.getValue());
+                index = fillIndex(index, secrets.get(0));
+            }
+            System.out.println("Index: " + Arrays.toString(index) + " " + properties);
+
+            // check write access
+            List<String> acl = group.getWriteAcl();
+            if (!AccessUtil.isPermitted(acl, VaultGroup.class, Ace.UPDATE, group.getName()))
+                throw new AccessDeniedException("Write access to group denied", groupName);
+
+            if (!group.isAllowUpdate())
+                throw new AccessDeniedException("The group dos not allow updates", groupName);
+
+            if (secret == null || secret.getContent() == null || secret.getContent().isNull())
+                throw new MException("Secret is null");
+            if (group.getMaxImportLength() > 0
+                    && secret.getContent().length() > group.getMaxImportLength())
+                throw new MException("Secret out of bounds", group.getMaxImportLength());
+
+            log().d("import update", groupName, secretId);
+
+            // -- cache entries to save. Save if everything target was ok
+            LinkedList<VaultEntry> entriesToSave = new LinkedList<>();
+            processGroupTargets(group, properties, secretId, secret, entriesToSave);
+
+            updateEntriesValidTo(secretId, validFrom);
+
+            updateIndexes(entriesToSave, index, properties);
+
+            // save entries
+            saveEntries(groupName, entriesToSave, validFrom, validTo);
+        }
     }
 
     @Override
     public void deleteSecret(String secretId) throws MException {
 
-    	try (Scope scope = ITracer.get().enter("deleteSecret", 
-    			"secretId", secretId )) {
-	        // get group
-	        String groupName = findGroupNameForSecretId(secretId);
-	        VaultGroup group = getGroup(groupName);
-	
-	        // check write access
-	        List<String> acl = group.getWriteAcl();
-	        if (!AccessUtil.isPermitted(acl, VaultGroup.class, Ace.UPDATE, group.getName()))
-	            throw new AccessDeniedException("Write access to group denied", groupName);
-	
-	        log().d("delete secret", groupName, secretId);
-	
-	        //		MorphiaIterator<VaultEntry, VaultEntry> res =
-	        // StaticAccess.moManager.getManager().createQuery(VaultEntry.class).field("secretId").equal(secretId).fetch();
-	        DbCollection<VaultEntry> res =
-	                StaticAccess.db
-	                        .getManager()
-	                        .getByQualification(Db.query(VaultEntry.class).eq("secretid", secretId));
-	        for (VaultEntry entry : res) {
-	            VaultArchive archive = new VaultArchive(entry);
-	            StaticAccess.db.getManager().inject(archive).save();
-	            entry.delete();
-	        }
-	        res.close();
-    	}
+        try (Scope scope = ITracer.get().enter("deleteSecret", "secretId", secretId)) {
+            // get group
+            String groupName = findGroupNameForSecretId(secretId);
+            VaultGroup group = getGroup(groupName);
+
+            // check write access
+            List<String> acl = group.getWriteAcl();
+            if (!AccessUtil.isPermitted(acl, VaultGroup.class, Ace.UPDATE, group.getName()))
+                throw new AccessDeniedException("Write access to group denied", groupName);
+
+            log().d("delete secret", groupName, secretId);
+
+            //		MorphiaIterator<VaultEntry, VaultEntry> res =
+            // StaticAccess.moManager.getManager().createQuery(VaultEntry.class).field("secretId").equal(secretId).fetch();
+            DbCollection<VaultEntry> res =
+                    StaticAccess.db
+                            .getManager()
+                            .getByQualification(
+                                    Db.query(VaultEntry.class).eq("secretid", secretId));
+            for (VaultEntry entry : res) {
+                VaultArchive archive = new VaultArchive(entry);
+                StaticAccess.db.getManager().inject(archive).save();
+                entry.delete();
+            }
+            res.close();
+        }
     }
 
     @Override
     public void undeleteSecret(String secretId) throws MException {
 
-    	try (Scope scope = ITracer.get().enter("undeleteSecret", 
-    			"secretId", secretId )) {
-	        //		List<VaultArchive> res =
-	        // StaticAccess.moManager.getManager().createQuery(VaultArchive.class).field("secretId").equal(secretId).limit(1).asList();
-	
-	        VaultArchive res =
-	                StaticAccess.db
-	                        .getManager()
-	                        .getObjectByQualification(
-	                                Db.query(VaultArchive.class).eq("secretid", secretId));
-	        if (res == null) throw new NotFoundException("secretId not found", secretId);
-	        String groupName = res.getGroup();
-	        VaultGroup group = getGroup(groupName);
-	
-	        // check write access
-	        List<String> acl = group.getWriteAcl();
-	        if (!AccessUtil.isPermitted(acl, VaultGroup.class, Ace.UPDATE, group.getName()))
-	            throw new AccessDeniedException("Write access to group denied", groupName);
-	
-	        log().d("undelete secret", groupName, secretId);
-	
-	        //		MorphiaIterator<VaultArchive, VaultArchive> res2 =
-	        // StaticAccess.moManager.getManager().createQuery(VaultArchive.class).field("secretId").equal(secretId).fetch();
-	        DbCollection<VaultArchive> res2 =
-	                StaticAccess.db
-	                        .getManager()
-	                        .getByQualification(Db.query(VaultArchive.class).eq("secretid", secretId));
-	        for (VaultEntry archive : res2) {
-	            VaultEntry entry = new VaultEntry(archive);
-	            StaticAccess.db.getManager().inject(entry).save();
-	            archive.delete();
-	        }
-	        res2.close();
-    	}
+        try (Scope scope = ITracer.get().enter("undeleteSecret", "secretId", secretId)) {
+            //		List<VaultArchive> res =
+            // StaticAccess.moManager.getManager().createQuery(VaultArchive.class).field("secretId").equal(secretId).limit(1).asList();
+
+            VaultArchive res =
+                    StaticAccess.db
+                            .getManager()
+                            .getObjectByQualification(
+                                    Db.query(VaultArchive.class).eq("secretid", secretId));
+            if (res == null) throw new NotFoundException("secretId not found", secretId);
+            String groupName = res.getGroup();
+            VaultGroup group = getGroup(groupName);
+
+            // check write access
+            List<String> acl = group.getWriteAcl();
+            if (!AccessUtil.isPermitted(acl, VaultGroup.class, Ace.UPDATE, group.getName()))
+                throw new AccessDeniedException("Write access to group denied", groupName);
+
+            log().d("undelete secret", groupName, secretId);
+
+            //		MorphiaIterator<VaultArchive, VaultArchive> res2 =
+            // StaticAccess.moManager.getManager().createQuery(VaultArchive.class).field("secretId").equal(secretId).fetch();
+            DbCollection<VaultArchive> res2 =
+                    StaticAccess.db
+                            .getManager()
+                            .getByQualification(
+                                    Db.query(VaultArchive.class).eq("secretid", secretId));
+            for (VaultEntry archive : res2) {
+                VaultEntry entry = new VaultEntry(archive);
+                StaticAccess.db.getManager().inject(entry).save();
+                archive.delete();
+            }
+            res2.close();
+        }
     }
 
     @Override
     public VaultEntry getSecret(String secretId, String targetName) throws NotFoundException {
 
-    	try (Scope scope = ITracer.get().enter("getSecret", 
-    			"secretId", secretId,
-    			"targetName", targetName)) {
-	        VaultTarget target = getTarget(targetName);
-	        // check read access
-	        List<String> acl = target.getReadAcl();
-	        if (!AccessUtil.isPermitted(acl, VaultTarget.class, Ace.READ, target.getName()))
-	            throw new AccessDeniedException("Read access to target denied", targetName);
-	
-	        //		VaultEntry obj =
-	        // StaticAccess.moManager.getManager().createQuery(VaultEntry.class).field("secretId").equal(secretId).field("target").equal(targetName).get();
-	        try {
-	            VaultEntry obj =
-	                    StaticAccess.db
-	                            .getManager()
-	                            .getObjectByQualification(
-	                                    Db.query(VaultEntry.class)
-	                                            .eq("secretid", secretId)
-	                                            .eq("target", targetName));
-	            if (obj == null) throw new NotFoundException("secret not found", secretId, target);
-	            return obj;
-	        } catch (MException e) {
-	            throw new NotFoundException(secretId, target, e);
-	        }
-    	}
+        try (Scope scope =
+                ITracer.get().enter("getSecret", "secretId", secretId, "targetName", targetName)) {
+            VaultTarget target = getTarget(targetName);
+            // check read access
+            List<String> acl = target.getReadAcl();
+            if (!AccessUtil.isPermitted(acl, VaultTarget.class, Ace.READ, target.getName()))
+                throw new AccessDeniedException("Read access to target denied", targetName);
+
+            //		VaultEntry obj =
+            // StaticAccess.moManager.getManager().createQuery(VaultEntry.class).field("secretId").equal(secretId).field("target").equal(targetName).get();
+            try {
+                VaultEntry obj =
+                        StaticAccess.db
+                                .getManager()
+                                .getObjectByQualification(
+                                        Db.query(VaultEntry.class)
+                                                .eq("secretid", secretId)
+                                                .eq("target", targetName));
+                if (obj == null) throw new NotFoundException("secret not found", secretId, target);
+                return obj;
+            } catch (MException e) {
+                throw new NotFoundException(secretId, target, e);
+            }
+        }
     }
 
     @Override
     public List<VaultEntry> getSecrets(String secretId) throws MException {
 
-    	try (Scope scope = ITracer.get().enter("getSecrets", 
-    			"secretId", secretId )) {
-	        // check read access
-	        Date now = new Date();
-	        AQuery<VaultEntry> query =
-	                Db.query(VaultEntry.class).le("validfrom", now).gt("validto", now);
-	        query.eq("secretid", secretId);
-	
-	        LinkedList<VaultEntry> res = new LinkedList<>();
-	        for (VaultEntry entry : StaticAccess.db.getManager().getByQualification(query)) {
-	            String targetName = entry.getTarget();
-	            VaultTarget target = getTarget(targetName);
-	            List<String> acl = target.getReadAcl();
-	            if (AccessUtil.isPermitted(acl, VaultTarget.class, Ace.READ, target.getName()))
-	                res.add(entry);
-	        }
-	        return res;
-    	}
+        try (Scope scope = ITracer.get().enter("getSecrets", "secretId", secretId)) {
+            // check read access
+            Date now = new Date();
+            AQuery<VaultEntry> query =
+                    Db.query(VaultEntry.class).le("validfrom", now).gt("validto", now);
+            query.eq("secretid", secretId);
+
+            LinkedList<VaultEntry> res = new LinkedList<>();
+            for (VaultEntry entry : StaticAccess.db.getManager().getByQualification(query)) {
+                String targetName = entry.getTarget();
+                VaultTarget target = getTarget(targetName);
+                List<String> acl = target.getReadAcl();
+                if (AccessUtil.isPermitted(acl, VaultTarget.class, Ace.READ, target.getName()))
+                    res.add(entry);
+            }
+            return res;
+        }
     }
 
     public void saveEntries(
@@ -793,47 +823,43 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
     @Override
     public void indexUpdate(String secretId, String[] index) throws MException {
 
+        try (Scope scope =
+                ITracer.get().enter("indexUpdate", "secretId", secretId, "index", index)) {
 
-    	try (Scope scope = ITracer.get().enter("indexUpdate", 
-    			"secretId", secretId,
-    			"index", index)) {
-    		
-	    	Date now = new Date();
-	        XdbService manager = StaticAccess.db.getManager();
-	        DbCollection<VaultEntry> res =
-	                manager.getByQualification(
-	                        Db.query(VaultEntry.class)
-	                                .eq("secretid", secretId)
-	                                .le("validfrom", now)
-	                                .gt("validto", now));
-	        LinkedList<VaultEntry> entriesToSave = new LinkedList<>();
-	        for (VaultEntry item : res) entriesToSave.add(item);
-	        res.close();
-	
-	        updateIndexes(entriesToSave, index, null);
-	
-	        for (VaultEntry entry : entriesToSave) {
-	            try {
-	                entry.save();
-	            } catch (Throwable t) {
-	                log().w(entry, t);
-	            }
-	        }
-    	}
+            Date now = new Date();
+            XdbService manager = StaticAccess.db.getManager();
+            DbCollection<VaultEntry> res =
+                    manager.getByQualification(
+                            Db.query(VaultEntry.class)
+                                    .eq("secretid", secretId)
+                                    .le("validfrom", now)
+                                    .gt("validto", now));
+            LinkedList<VaultEntry> entriesToSave = new LinkedList<>();
+            for (VaultEntry item : res) entriesToSave.add(item);
+            res.close();
+
+            updateIndexes(entriesToSave, index, null);
+
+            for (VaultEntry entry : entriesToSave) {
+                try {
+                    entry.save();
+                } catch (Throwable t) {
+                    log().w(entry, t);
+                }
+            }
+        }
     }
 
     @Override
     public List<VaultEntry> search(
-            String group, String target, String[] index, int size, boolean all)
-            throws MException {
-    	try (Scope scope = ITracer.get().enter("search", 
-    			"group", group,
-    			"target", target,
-    			"index", index,
-    			"size", size,
-    			"all", all)) {
-    		return search(group, target, index, size, all, true);
-    	}
+            String group, String target, String[] index, int size, boolean all) throws MException {
+        try (Scope scope =
+                ITracer.get()
+                        .enter(
+                                "search", "group", group, "target", target, "index", index, "size",
+                                size, "all", all)) {
+            return search(group, target, index, size, all, true);
+        }
     }
 
     public List<VaultEntry> search(
@@ -875,118 +901,124 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
     @Override
     public String testGroup(String groupName, boolean execute, IProperties properties) {
 
-    	try (Scope scope = ITracer.get().enter("testGroup", 
-    			"groupName", groupName,
-    			"execute", execute,
-    			"properties", properties)) {
-	        ByteArrayOutputStream os = new ByteArrayOutputStream();
-	        PrintStream out = new PrintStream(os);
-	        try {
-	            // get group
-	            out.println("Group Name: " + groupName);
-	            VaultGroup group = getGroup(groupName);
-	            out.println("Group: " + group);
-	            List<String> acl = group.getWriteAcl();
-	            if (!AccessUtil.isPermitted(acl, VaultGroup.class, Ace.UPDATE, group.getName()))
-	                out.println("Access Denied");
-	            else
-	                out.println("Access Granted");
-	
-	            String generatorName = group.getSecretGeneratorName();
-	            out.println("Generator Name: " + generatorName);
-	
-	            SecretContent secret = null;
-	            UUID secretId = UUID.randomUUID();
-	            if (generatorName != null) {
-	                SecretGenerator generator = getGenerator(generatorName);
-	                out.println("---------------------------");
-	                out.println("Generator: " + generator);
-	                out.println("---------------------------");
-	                out.println(group.getSecretGeneratorConfig());
-	                generator.test(out, group, properties);
-	                if (execute) {
-	                    out.println(">>> Execute Generator");
-	                    secret = generator.generateSecret(group, properties);
-	                    out.println("=== Result:" + secret.getContent().value());
-	                    out.println("Properties: " + secret.getProperties());
-	                    out.println("<<< End Generator");
-	                }
-	            }
-	
-	            for (String targetName : group.getTargets()) {
-	                out.println();
-	                out.println("---------------------------");
-	                out.println("Target: " + targetName);
-	                out.println("---------------------------");
-	                VaultTarget target = getTarget(targetName);
-	                out.println("DB: " + target);
-	                String processorName = target.getProcessorName();
-	                out.println("Processor: " + processorName);
-	                TargetProcessor processor = getProcessor(processorName);
-	                out.println("Instance: " + processor);
-	
-	                out.println(target.getProcessorConfig());
-	                boolean cond = checkProcessConditions(group, properties, target);
-	                out.println("Condition: " + cond);
-	                processor.test(out, properties, target.getProcessorConfig());
-	                if (cond && execute) {
-	                    out.println(">>> Execute Target " + targetName);
-	                    WritableEntry entry = new WritableEntry();
-	                    entry.setSecretId(secretId.toString());
-	                    entry.setTarget(targetName);
-	                    entry.setGroup(groupName);
-	                    processor.process(properties, target.getProcessorConfig(), secret, entry);
-	                    out.println("=== Result:");
-	                    out.println("Secret:");
-	                    out.println(entry.getSecret());
-	                    out.println("Meta: " + entry.getMeta());
-	                    out.println("<<< End Target");
-	                }
-	            }
-	
-	            VaultGroup ever = getMustHaveGroup(group.getName());
-	            if (ever != null) {
-	                out.println();
-	                out.println("*****************************);");
-	                out.println("Must Have Group: " + ever);
-	                for (String targetName : ever.getTargets()) {
-	                    out.println();
-	                    out.println("---------------------------");
-	                    out.println("Target: " + targetName);
-	                    out.println("---------------------------");
-	                    VaultTarget target = getTarget(targetName);
-	                    out.println("DB: " + target);
-	                    String processorName = target.getProcessorName();
-	                    out.println("Processor: " + processorName);
-	                    TargetProcessor processor = getProcessor(processorName);
-	                    out.println("Instance: " + processor);
-	
-	                    out.println(target.getProcessorConfig());
-	                    boolean cond = checkProcessConditions(group, properties, target);
-	                    out.println("Condition: " + cond);
-	                    processor.test(out, properties, target.getProcessorConfig());
-	                    if (cond && execute) {
-	                        out.println(">>> Execute Default Target " + targetName);
-	                        WritableEntry entry = new WritableEntry();
-	                        entry.setSecretId(secretId.toString());
-	                        entry.setTarget(targetName);
-	                        entry.setGroup(groupName);
-	                        processor.process(properties, target.getProcessorConfig(), secret, entry);
-	                        out.println("=== Result:");
-	                        out.println("Secret:");
-	                        out.println(entry.getSecret());
-	                        out.println("Meta: " + entry.getMeta());
-	                        out.println("<<< End Default Target");
-	                    }
-	                }
-	            }
-	            out.append("############################################\n");
-	
-	        } catch (Throwable t) {
-	            out.println(t.toString());
-	        }
-	        return new String(os.toByteArray());
-    	}
+        try (Scope scope =
+                ITracer.get()
+                        .enter(
+                                "testGroup",
+                                "groupName",
+                                groupName,
+                                "execute",
+                                execute,
+                                "properties",
+                                properties)) {
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            PrintStream out = new PrintStream(os);
+            try {
+                // get group
+                out.println("Group Name: " + groupName);
+                VaultGroup group = getGroup(groupName);
+                out.println("Group: " + group);
+                List<String> acl = group.getWriteAcl();
+                if (!AccessUtil.isPermitted(acl, VaultGroup.class, Ace.UPDATE, group.getName()))
+                    out.println("Access Denied");
+                else out.println("Access Granted");
+
+                String generatorName = group.getSecretGeneratorName();
+                out.println("Generator Name: " + generatorName);
+
+                SecretContent secret = null;
+                UUID secretId = UUID.randomUUID();
+                if (generatorName != null) {
+                    SecretGenerator generator = getGenerator(generatorName);
+                    out.println("---------------------------");
+                    out.println("Generator: " + generator);
+                    out.println("---------------------------");
+                    out.println(group.getSecretGeneratorConfig());
+                    generator.test(out, group, properties);
+                    if (execute) {
+                        out.println(">>> Execute Generator");
+                        secret = generator.generateSecret(group, properties);
+                        out.println("=== Result:" + secret.getContent().value());
+                        out.println("Properties: " + secret.getProperties());
+                        out.println("<<< End Generator");
+                    }
+                }
+
+                for (String targetName : group.getTargets()) {
+                    out.println();
+                    out.println("---------------------------");
+                    out.println("Target: " + targetName);
+                    out.println("---------------------------");
+                    VaultTarget target = getTarget(targetName);
+                    out.println("DB: " + target);
+                    String processorName = target.getProcessorName();
+                    out.println("Processor: " + processorName);
+                    TargetProcessor processor = getProcessor(processorName);
+                    out.println("Instance: " + processor);
+
+                    out.println(target.getProcessorConfig());
+                    boolean cond = checkProcessConditions(group, properties, target);
+                    out.println("Condition: " + cond);
+                    processor.test(out, properties, target.getProcessorConfig());
+                    if (cond && execute) {
+                        out.println(">>> Execute Target " + targetName);
+                        WritableEntry entry = new WritableEntry();
+                        entry.setSecretId(secretId.toString());
+                        entry.setTarget(targetName);
+                        entry.setGroup(groupName);
+                        processor.process(properties, target.getProcessorConfig(), secret, entry);
+                        out.println("=== Result:");
+                        out.println("Secret:");
+                        out.println(entry.getSecret());
+                        out.println("Meta: " + entry.getMeta());
+                        out.println("<<< End Target");
+                    }
+                }
+
+                VaultGroup ever = getMustHaveGroup(group.getName());
+                if (ever != null) {
+                    out.println();
+                    out.println("*****************************);");
+                    out.println("Must Have Group: " + ever);
+                    for (String targetName : ever.getTargets()) {
+                        out.println();
+                        out.println("---------------------------");
+                        out.println("Target: " + targetName);
+                        out.println("---------------------------");
+                        VaultTarget target = getTarget(targetName);
+                        out.println("DB: " + target);
+                        String processorName = target.getProcessorName();
+                        out.println("Processor: " + processorName);
+                        TargetProcessor processor = getProcessor(processorName);
+                        out.println("Instance: " + processor);
+
+                        out.println(target.getProcessorConfig());
+                        boolean cond = checkProcessConditions(group, properties, target);
+                        out.println("Condition: " + cond);
+                        processor.test(out, properties, target.getProcessorConfig());
+                        if (cond && execute) {
+                            out.println(">>> Execute Default Target " + targetName);
+                            WritableEntry entry = new WritableEntry();
+                            entry.setSecretId(secretId.toString());
+                            entry.setTarget(targetName);
+                            entry.setGroup(groupName);
+                            processor.process(
+                                    properties, target.getProcessorConfig(), secret, entry);
+                            out.println("=== Result:");
+                            out.println("Secret:");
+                            out.println(entry.getSecret());
+                            out.println("Meta: " + entry.getMeta());
+                            out.println("<<< End Default Target");
+                        }
+                    }
+                }
+                out.append("############################################\n");
+
+            } catch (Throwable t) {
+                out.println(t.toString());
+            }
+            return new String(os.toByteArray());
+        }
     }
 
     @Override
@@ -996,23 +1028,22 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 
     @Override
     public void cleanup(String group) {
-    	try (Scope scope = ITracer.get().enter("cleanup", 
-    			"group", group )) {
+        try (Scope scope = ITracer.get().enter("cleanup", "group", group)) {
 
-	        Date now = new Date();
-	        AQuery<VaultEntry> query = Db.query(VaultEntry.class).le("validto", now);
-	        try {
-	            for (VaultEntry entry : StaticAccess.db.getManager().getByQualification(query)) {
-	                try {
-	                    log().i("cleanup", entry.getId());
-	                    entry.delete();
-	                } catch (Throwable t) {
-	                    log().e(entry, t);
-	                }
-	            }
-	        } catch (Throwable t) {
-	            log().e(t);
-	        }
-    	}
+            Date now = new Date();
+            AQuery<VaultEntry> query = Db.query(VaultEntry.class).le("validto", now);
+            try {
+                for (VaultEntry entry : StaticAccess.db.getManager().getByQualification(query)) {
+                    try {
+                        log().i("cleanup", entry.getId());
+                        entry.delete();
+                    } catch (Throwable t) {
+                        log().e(entry, t);
+                    }
+                }
+            } catch (Throwable t) {
+                log().e(t);
+            }
+        }
     }
 }

@@ -80,7 +80,8 @@ public class CherryMVaultSource extends MLog implements MutableVaultSource {
             if (key == null) return null;
             List<String> readAcl = key.getReadAcl();
             if (readAcl != null) {
-                if (!AccessUtil.isPermitted(readAcl, VaultKey.class, Ace.READ, key.getIdent())) return null;
+                if (!AccessUtil.isPermitted(readAcl, VaultKey.class, Ace.READ, key.getIdent()))
+                    return null;
             }
             return key;
         } catch (Exception e) {
@@ -101,7 +102,8 @@ public class CherryMVaultSource extends MLog implements MutableVaultSource {
             if (key == null) return null;
             List<String> readAcl = key.getReadAcl();
             if (readAcl != null) {
-                if (!AccessUtil.isPermitted(readAcl, VaultKey.class, Ace.READ, key.getIdent())) return null;
+                if (!AccessUtil.isPermitted(readAcl, VaultKey.class, Ace.READ, key.getIdent()))
+                    return null;
             }
             return key;
         } catch (Exception e) {
@@ -122,7 +124,8 @@ public class CherryMVaultSource extends MLog implements MutableVaultSource {
                             .getByQualification(Db.query(VaultKey.class).limit(100))) {
                 List<String> readAcl = obj.getReadAcl();
                 if (readAcl != null) {
-                    if (!AccessUtil.isPermitted(readAcl, VaultKey.class, Ace.READ, obj.getIdent())) return null;
+                    if (!AccessUtil.isPermitted(readAcl, VaultKey.class, Ace.READ, obj.getIdent()))
+                        return null;
                 }
                 out.add(UUID.fromString(obj.getIdent()));
             }

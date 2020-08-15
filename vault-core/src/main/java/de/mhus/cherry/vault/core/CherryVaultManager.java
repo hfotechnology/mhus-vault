@@ -65,5 +65,4 @@ public class CherryVaultManager extends AbstractCommonAdbConsumer {
 
     @Override
     public void doPostInitialize(XdbService manager) throws Exception {}
-
 }

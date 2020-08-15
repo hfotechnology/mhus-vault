@@ -165,7 +165,14 @@ public class CVaultCmd extends AbstractCmd {
                     query.asc("name");
                     ConsoleTable out = new ConsoleTable(tblOpt);
                     out.setHeaderValues(
-                            "Name", "Processor", "Config", "Condition", "Config", "Id", "Modified","Description");
+                            "Name",
+                            "Processor",
+                            "Config",
+                            "Condition",
+                            "Config",
+                            "Id",
+                            "Modified",
+                            "Description");
                     for (VaultTarget item :
                             StaticAccess.db.getManager().getByQualification(query)) {
                         if (filter == null || filter.contains(item.getName()))
@@ -234,7 +241,9 @@ public class CVaultCmd extends AbstractCmd {
                 {
                     ConsoleTable table = new ConsoleTable(tblOpt);
                     table.setHeaderValues("id", "SecretId", "Group", "Target", "From", "To");
-                    for (VaultEntry item : VaultApiImpl.instance.search(group, target, parameters, 100, all, false)) {
+                    for (VaultEntry item :
+                            VaultApiImpl.instance.search(
+                                    group, target, parameters, 100, all, false)) {
                         table.addRowValues(
                                 item.getId(),
                                 item.getSecretId(),

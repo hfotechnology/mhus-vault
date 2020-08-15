@@ -43,7 +43,9 @@ public class CherryVaultProcessContext extends SimplePemProcessContext {
         String privateKey = AccessUtil.getSessionAttribute("privateKey", "");
         if (!MCollection.contains(privateKey, ',', privId))
             throw new AccessDeniedException(
-                    "The private key is not owned by the current user", AccessUtil.getPrincipal(), privId);
+                    "The private key is not owned by the current user",
+                    AccessUtil.getPrincipal(),
+                    privId);
         de.mhus.lib.core.keychain.KeyEntry privKeyObj =
                 MKeychainUtil.loadDefault().getEntry(UUID.fromString(privId));
         if (privKeyObj == null) throw new NotFoundException("Private key not found", privId);
