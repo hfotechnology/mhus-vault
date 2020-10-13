@@ -521,10 +521,15 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
             LinkedList<VaultEntry> res = new LinkedList<>();
             for (VaultEntry entry : StaticAccess.db.getManager().getByQualification(query)) {
                 String targetName = entry.getTarget();
-                VaultTarget target = getTarget(targetName);
-                List<String> acl = target.getReadAcl();
-                if (AccessUtil.isPermitted(acl, VaultTarget.class, Ace.READ, target.getName()))
-                    res.add(entry);
+                try {
+                    VaultTarget target = getTarget(targetName);
+                    List<String> acl = target.getReadAcl();
+                    if (AccessUtil.isPermitted(acl, VaultTarget.class, Ace.READ, target.getName()))
+                        res.add(entry);
+                } catch (NotFoundException e) {
+                    log().d(entry, e.toString());
+                    log().t(e);
+                }
             }
             return res;
         }
