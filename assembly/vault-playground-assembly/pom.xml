@@ -213,8 +213,8 @@ https://raw.githubusercontent.com/pentaho/pentaho-karaf-assembly/master/pentaho-
                         <feature>wrap</feature>
                         <feature>wrapper</feature>
 
-                        <feature>cherry-vault-dev</feature>
-                        <feature>cherry-vault-manager</feature>
+                        <feature>mhus-vault-dev</feature>
+                        <feature>mhus-vault-manager</feature>
 
                     </bootFeatures>
                     <installedFeatures>

@@ -19,19 +19,19 @@
 <features name="${project.artifactId}-${project.version}"
 	xmlns="http://karaf.apache.org/xmlns/features/v1.3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://karaf.apache.org/xmlns/features/v1.3.0 http://karaf.apache.org/xmlns/features/v1.3.0">
 
-	<feature name='cherry-vault-dev' description='Development environment' version='${project.version}'>
+	<feature name='mhus-vault-dev' description='Development environment' version='${project.version}'>
 		<bundle>mvn:org.hsqldb/hsqldb/${hsqldb.version}</bundle>
-		<feature>cherry-vault</feature>
-        <feature>cherry-vault-rest</feature>
+		<feature>mhus-vault</feature>
+        <feature>mhus-vault-rest</feature>
 	</feature>
 
-    <feature name='cherry-vault-manager' description='cherry-vault-rest' version='${project.version}'>
+    <feature name='mhus-vault-manager' description='mhus-vault-rest' version='${project.version}'>
         <details>${project.description}</details>
-        <feature>cherry-vault</feature>
-        <bundle>mvn:de.mhus.cherry.vault/vault-manager/${cherry-vault.version}</bundle>
+        <feature>mhus-vault</feature>
+        <bundle>mvn:de.mhus.cherry.vault/vault-manager/${mhus-vault.version}</bundle>
     </feature>
     
-    <feature name='cherry-vault-rest' description='cherry-vault-rest' version='${project.version}'>
+    <feature name='mhus-vault-rest' description='mhus-vault-rest' version='${project.version}'>
         <details>${project.description}</details>
         <feature>http</feature>
         <feature>http-whiteboard</feature>
@@ -40,18 +40,18 @@
 
         <bundle>mvn:de.mhus.rest/rest-osgi/${mhus-rest.version}</bundle>
         <bundle>mvn:de.mhus.rest/rest-karaf/${mhus-rest.version}</bundle>
-        <bundle>mvn:de.mhus.cherry.vault/vault-rest/${cherry-vault.version}</bundle>
+        <bundle>mvn:de.mhus.cherry.vault/vault-rest/${mhus-vault.version}</bundle>
 	</feature>
 	
-	<feature name='cherry-vault' description='cherry-vault' version='${project.version}'>
+	<feature name='mhus-vault' description='mhus-vault' version='${project.version}'>
 		<details>${project.description}</details>
 		
         <feature>mhu-base</feature>
 
 		<!-- vault -->
 		
-		<bundle>mvn:de.mhus.cherry.vault/vault-api/${cherry-vault.version}</bundle>
-		<bundle>mvn:de.mhus.cherry.vault/vault-core/${cherry-vault.version}</bundle>
+		<bundle>mvn:de.mhus.cherry.vault/vault-api/${mhus-vault.version}</bundle>
+		<bundle>mvn:de.mhus.cherry.vault/vault-core/${mhus-vault.version}</bundle>
 		
 	</feature>
 		
