@@ -17,7 +17,7 @@
 
 cherryVersion=1.0.2-SNAPSHOT
 feature:repo-add activemq 5.12.1
-feature:repo-add mvn:de.mhus.cherry.vault/vault-feature/$cherryVersion/xml/features
+feature:repo-add mvn:de.mhus.app.vault/vault-feature/$cherryVersion/xml/features
 
 feature:install cherry-vault
 
@@ -52,7 +52,7 @@ vault create test
 
 Result: dbc02d77-0e70-4e30-9a28-110f55300e11
 
-service:invoke de.mhus.cherry.vault.api.CherryVaultApi getSecret dbc02d77-0e70-4e30-9a28-110f55300e11 test
+service:invoke de.mhus.app.vault.api.CherryVaultApi getSecret dbc02d77-0e70-4e30-9a28-110f55300e11 test
 
 or
 

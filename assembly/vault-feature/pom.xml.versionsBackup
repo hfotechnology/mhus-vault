@@ -22,7 +22,7 @@
 	<artifactId>vault-feature</artifactId>
 	<packaging>feature</packaging>
 	<parent>
-		<groupId>de.mhus.cherry.vault</groupId>
+		<groupId>de.mhus.app.vault</groupId>
 		<artifactId>cherry-vault</artifactId>
 		<version>1.0.1-SNAPSHOT</version>
 	</parent>

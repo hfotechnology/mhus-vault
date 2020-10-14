@@ -1,4 +1,4 @@
 VAULT_VERSION=1.6.1
 
-feature:repo-add mvn:de.mhus.cherry.vault/vault-feature/${VAULT_VERSION}/xml/features
+feature:repo-add mvn:de.mhus.app.vault/vault-feature/${VAULT_VERSION}/xml/features
 feature:install cherry-vault-dev

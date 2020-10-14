@@ -28,7 +28,7 @@
     <feature name='mhus-vault-manager' description='mhus-vault-rest' version='${project.version}'>
         <details>${project.description}</details>
         <feature>mhus-vault</feature>
-        <bundle>mvn:de.mhus.cherry.vault/vault-manager/${mhus-vault.version}</bundle>
+        <bundle>mvn:de.mhus.app.vault/vault-manager/${mhus-vault.version}</bundle>
     </feature>
     
     <feature name='mhus-vault-rest' description='mhus-vault-rest' version='${project.version}'>
@@ -40,7 +40,7 @@
 
         <bundle>mvn:de.mhus.rest/rest-osgi/${mhus-rest.version}</bundle>
         <bundle>mvn:de.mhus.rest/rest-karaf/${mhus-rest.version}</bundle>
-        <bundle>mvn:de.mhus.cherry.vault/vault-rest/${mhus-vault.version}</bundle>
+        <bundle>mvn:de.mhus.app.vault/vault-rest/${mhus-vault.version}</bundle>
 	</feature>
 	
 	<feature name='mhus-vault' description='mhus-vault' version='${project.version}'>
@@ -50,8 +50,8 @@
 
 		<!-- vault -->
 		
-		<bundle>mvn:de.mhus.cherry.vault/vault-api/${mhus-vault.version}</bundle>
-		<bundle>mvn:de.mhus.cherry.vault/vault-core/${mhus-vault.version}</bundle>
+		<bundle>mvn:de.mhus.app.vault/vault-api/${mhus-vault.version}</bundle>
+		<bundle>mvn:de.mhus.app.vault/vault-core/${mhus-vault.version}</bundle>
 		
 	</feature>
 		

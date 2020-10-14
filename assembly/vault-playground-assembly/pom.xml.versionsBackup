@@ -6,7 +6,7 @@ https://raw.githubusercontent.com/pentaho/pentaho-karaf-assembly/master/pentaho-
  -->
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>de.mhus.cherry.vault</groupId>
+        <groupId>de.mhus.app.vault</groupId>
         <artifactId>vault-docker</artifactId>
         <version>1.6.3-SNAPSHOT</version>
     </parent>
@@ -89,7 +89,7 @@ https://raw.githubusercontent.com/pentaho/pentaho-karaf-assembly/master/pentaho-
 	    </dependency>
 	    
         <dependency>
-	        <groupId>de.mhus.cherry.vault</groupId>
+	        <groupId>de.mhus.app.vault</groupId>
 	        <artifactId>vault-feature</artifactId>
 	        <version>${project.version}</version>
             <classifier>features</classifier>

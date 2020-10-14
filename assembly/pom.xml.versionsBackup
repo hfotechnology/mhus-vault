@@ -21,7 +21,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>de.mhus.cherry.vault</groupId>
+        <groupId>de.mhus.app.vault</groupId>
         <version>1.6.3-SNAPSHOT</version>
         <artifactId>cherry-vault</artifactId>
     </parent>
