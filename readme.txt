@@ -35,20 +35,20 @@ cp .../etc/aaa/accounts/* sop/aaa/accounts
 Examples
 =========
 
-crypt:cipher -ip -is -d "Rsa Transfer" AESWITHRSA-BC-01 create
+crypt:cipher-create -ip -is -d "Rsa Transfer" AESWITHRSA-BC-01
 
-crypt:cipher -ip -is -s CherryVaultLocalSource -d "Test Rsa Key" RSA-BC-01 create
+crypt:cipher-create -ip -is -s CherryVaultLocalSource -d "Test Rsa Key" RSA-BC-01
 
 
 Create test group and target:
 
-crypt:cipher -ip -is -s CherryVaultLocalSource -d "Test Rsa Key" RSA-BC-01 create|cut -m array -f Ident|setvar rsaPrivId rsaPubId
-crypt:signer -ip -is -s CherryVaultLocalSource DSA-BC-01 create|cut -m array -f Ident|setvar dsaPrivId dsaPubId
+crypt:cipher-create -ip -is -s CherryVaultLocalSource -d "Test Rsa Key" RSA-BC-01|cut -m array -f Ident|setvar rsaPrivId rsaPubId
+crypt:signer-create -ip -is -s CherryVaultLocalSource DSA-BC-01|cut -m array -f Ident|setvar dsaPrivId dsaPubId
 xdb:create VaultGroup name=test secretgeneratorname=password allowupdate=true targets.add=test writeacl.add=* enabled=true maximportlength=100
 xdb:create VaultTarget name=test enabled=true conditionnames=true processorname=cipher.rsa processorconfig.keyId=$rsaPubId processorconfig.signId=$dsaPrivId processorconfig.signService=DSA-BC-01 readacl.add=*
 
 
-vault create test
+vault-test
 
 Result: dbc02d77-0e70-4e30-9a28-110f55300e11
 
