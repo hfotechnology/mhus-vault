@@ -49,10 +49,20 @@ public class CmdVaultCreate extends AbstractCmd {
             multiValued = true)
     String[] indexValues;
 
-    @Option(name = "-f", aliases = "--from", description = "Valid From", required = false, multiValued = false)
+    @Option(
+            name = "-f",
+            aliases = "--from",
+            description = "Valid From",
+            required = false,
+            multiValued = false)
     String fromStr;
 
-    @Option(name = "-t", aliases = "--to", description = "Valid To", required = false, multiValued = false)
+    @Option(
+            name = "-t",
+            aliases = "--to",
+            description = "Valid To",
+            required = false,
+            multiValued = false)
     String toStr;
 
     @Option(name = "-p", description = "Properties", required = false, multiValued = true)

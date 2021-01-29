@@ -44,8 +44,8 @@ public class CmdSecret extends AbstractCmd {
     @Option(name = "-t", description = "Target", required = false, multiValued = false)
     String target;
 
-//    @Option(name = "-a", description = "All", required = false, multiValued = false)
-//    boolean all = false;
+    //    @Option(name = "-a", description = "All", required = false, multiValued = false)
+    //    boolean all = false;
 
     @Override
     public Object execute2() throws Exception {

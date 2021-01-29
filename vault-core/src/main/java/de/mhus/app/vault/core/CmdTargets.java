@@ -34,7 +34,7 @@ public class CmdTargets extends AbstractCmd {
 
     @Option(name = "-g", description = "Group", required = false, multiValued = false)
     String group;
-    
+
     @Option(name = "-a", description = "All", required = false, multiValued = false)
     boolean all = false;
 
@@ -48,8 +48,7 @@ public class CmdTargets extends AbstractCmd {
             VaultGroup g =
                     StaticAccess.db
                             .getManager()
-                            .getObjectByQualification(
-                                    Db.query(VaultGroup.class).eq("name", group));
+                            .getObjectByQualification(Db.query(VaultGroup.class).eq("name", group));
             if (g == null) return null;
             filter = g.getTargets();
         }
@@ -65,8 +64,7 @@ public class CmdTargets extends AbstractCmd {
                 "Id",
                 "Modified",
                 "Description");
-        for (VaultTarget item :
-                StaticAccess.db.getManager().getByQualification(query)) {
+        for (VaultTarget item : StaticAccess.db.getManager().getByQualification(query)) {
             if (filter == null || filter.contains(item.getName()))
                 out.addRowValues(
                         item.getName() + (item.isEnabled() ? "" : "\n[disabled]"),

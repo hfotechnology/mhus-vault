@@ -51,8 +51,7 @@ public class CmdVaultSearch extends AbstractCmd {
         ConsoleTable table = new ConsoleTable(tblOpt);
         table.setHeaderValues("id", "SecretId", "Group", "Target", "From", "To");
         for (VaultEntry item :
-                VaultApiImpl.instance.search(
-                        group, target, indexValues, 100, all, false)) {
+                VaultApiImpl.instance.search(group, target, indexValues, 100, all, false)) {
             table.addRowValues(
                     item.getId(),
                     item.getSecretId(),

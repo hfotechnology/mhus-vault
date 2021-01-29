@@ -36,7 +36,7 @@ public class CmdVaultRecreate extends AbstractCmd {
             description = "target",
             multiValued = false)
     String target;
-    
+
     @Argument(
             index = 1,
             name = "recoveryTarget",
@@ -44,7 +44,7 @@ public class CmdVaultRecreate extends AbstractCmd {
             description = "Recovery target",
             multiValued = false)
     String recTarget;
-    
+
     @Argument(
             index = 2,
             name = "recoveryPrivKey",
@@ -52,7 +52,7 @@ public class CmdVaultRecreate extends AbstractCmd {
             description = "recoveryPrivKey",
             multiValued = false)
     String recPrivKey;
-    
+
     @Argument(
             index = 3,
             name = "recoveryPrivPass",
@@ -60,7 +60,7 @@ public class CmdVaultRecreate extends AbstractCmd {
             description = "recoveryPrivPass",
             multiValued = false)
     String recPassphrase;
-    
+
     @Argument(
             index = 4,
             name = "filter",
@@ -71,18 +71,14 @@ public class CmdVaultRecreate extends AbstractCmd {
 
     @Override
     public Object execute2() throws Exception {
-        
+
         de.mhus.lib.core.keychain.KeyEntry recPrivEntry =
                 MKeychainUtil.loadDefault().getEntry(UUID.fromString(recPrivKey));
         if (recPrivEntry == null) throw new MException("key not found");
 
         new RecreateUtil()
                 .recreate(
-                        target,
-                        recTarget,
-                        recPrivEntry.getValue().value(),
-                        recPassphrase,
-                        filter);
+                        target, recTarget, recPrivEntry.getValue().value(), recPassphrase, filter);
         System.out.println("OK");
 
         return null;

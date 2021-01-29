@@ -29,7 +29,10 @@ import de.mhus.lib.core.MCast;
 import de.mhus.lib.core.MProperties;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 
-@Command(scope = "vault", name = "vault-import", description = "import an existing secret into a new entry")
+@Command(
+        scope = "vault",
+        name = "vault-import",
+        description = "import an existing secret into a new entry")
 @Service
 public class CmdVaultImport extends AbstractCmd {
 
@@ -40,7 +43,7 @@ public class CmdVaultImport extends AbstractCmd {
             description = "Name of the group",
             multiValued = false)
     String groupName;
-    
+
     @Argument(
             index = 1,
             name = "secret",
@@ -57,12 +60,22 @@ public class CmdVaultImport extends AbstractCmd {
             multiValued = true)
     String[] indexValues;
 
-    @Option(name = "-f", aliases = "--from", description = "Valid From", required = false, multiValued = false)
+    @Option(
+            name = "-f",
+            aliases = "--from",
+            description = "Valid From",
+            required = false,
+            multiValued = false)
     String fromStr;
 
-    @Option(name = "-t", aliases = "--to", description = "Valid To", required = false, multiValued = false)
+    @Option(
+            name = "-t",
+            aliases = "--to",
+            description = "Valid To",
+            required = false,
+            multiValued = false)
     String toStr;
-    
+
     @Option(name = "-p", description = "Properties", required = false, multiValued = true)
     String p[];
 
@@ -76,8 +89,7 @@ public class CmdVaultImport extends AbstractCmd {
 
         MProperties prop = IProperties.explodeToMProperties(p);
 
-        String id =
-                api.importSecret(groupName, from, to, secretId, prop, indexValues);
+        String id = api.importSecret(groupName, from, to, secretId, prop, indexValues);
         System.out.println(id);
 
         return id;

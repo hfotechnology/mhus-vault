@@ -29,7 +29,10 @@ import de.mhus.lib.core.MCast;
 import de.mhus.lib.core.MProperties;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 
-@Command(scope = "vault", name = "vault-update-import", description = "import a new secret into an existing entry")
+@Command(
+        scope = "vault",
+        name = "vault-update-import",
+        description = "import a new secret into an existing entry")
 @Service
 public class CmdVaultUpdateImport extends AbstractCmd {
 
@@ -48,7 +51,7 @@ public class CmdVaultUpdateImport extends AbstractCmd {
             description = "secret to import",
             multiValued = false)
     String secret;
-    
+
     @Argument(
             index = 1,
             name = "index",
@@ -57,10 +60,20 @@ public class CmdVaultUpdateImport extends AbstractCmd {
             multiValued = true)
     String[] indexValues;
 
-    @Option(name = "-f", aliases = "--from", description = "Valid From", required = false, multiValued = false)
+    @Option(
+            name = "-f",
+            aliases = "--from",
+            description = "Valid From",
+            required = false,
+            multiValued = false)
     String fromStr;
 
-    @Option(name = "-t", aliases = "--to", description = "Valid To", required = false, multiValued = false)
+    @Option(
+            name = "-t",
+            aliases = "--to",
+            description = "Valid To",
+            required = false,
+            multiValued = false)
     String toStr;
 
     @Option(name = "-p", description = "Properties", required = false, multiValued = true)

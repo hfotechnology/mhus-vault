@@ -61,11 +61,7 @@ public class CmdDbExport extends AbstractCmd {
             System.out.println("Key not found");
             return null;
         }
-        new ExportUtil()
-                .exportDb(
-                        key.getValue().value(),
-                        fileName,
-                        groupName);
+        new ExportUtil().exportDb(key.getValue().value(), fileName, groupName);
 
         return null;
     }

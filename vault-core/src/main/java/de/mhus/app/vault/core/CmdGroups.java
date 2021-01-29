@@ -29,7 +29,6 @@ import de.mhus.osgi.api.karaf.AbstractCmd;
 @Service
 public class CmdGroups extends AbstractCmd {
 
-
     @Option(name = "-a", description = "Print disabled", required = false, multiValued = false)
     boolean all = false;
 

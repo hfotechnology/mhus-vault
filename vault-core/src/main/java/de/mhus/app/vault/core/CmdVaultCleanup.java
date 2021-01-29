@@ -26,7 +26,7 @@ import de.mhus.osgi.api.karaf.AbstractCmd;
 @Command(scope = "vault", name = "vault-cleanup", description = "Remove expired entries")
 @Service
 public class CmdVaultCleanup extends AbstractCmd {
-    
+
     @Argument(
             index = 0,
             name = "group",

@@ -59,6 +59,5 @@ public class CmdVaultEntry extends AbstractCmd {
             System.out.println(res.getSecret());
             return res.getSecret();
         }
-
     }
 }

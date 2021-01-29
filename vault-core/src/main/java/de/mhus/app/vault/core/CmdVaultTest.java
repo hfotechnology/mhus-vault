@@ -54,8 +54,7 @@ public class CmdVaultTest extends AbstractCmd {
         CherryVaultApi api = M.l(CherryVaultApi.class);
 
         String out =
-                api.testGroup(
-                        groupName, execute, IProperties.explodeToMProperties(parameters));
+                api.testGroup(groupName, execute, IProperties.explodeToMProperties(parameters));
         System.out.println(out);
 
         return null;

@@ -45,7 +45,7 @@ public class CmdDbImport extends AbstractCmd {
             description = "File from where to import",
             multiValued = false)
     String fileName;
-    
+
     @Argument(
             index = 2,
             name = "passphrase",
@@ -53,8 +53,12 @@ public class CmdDbImport extends AbstractCmd {
             description = "Passphrase for private key, will be asked if not set",
             multiValued = false)
     String passphrase;
-    
-    @Option(name = "-a", description = "import targets and groups", required = false, multiValued = false)
+
+    @Option(
+            name = "-a",
+            description = "import targets and groups",
+            required = false,
+            multiValued = false)
     boolean all = false;
 
     @Override
@@ -67,11 +71,9 @@ public class CmdDbImport extends AbstractCmd {
             return null;
         }
 
-        if (passphrase == null)
-            passphrase = Console.get().readPassword();
+        if (passphrase == null) passphrase = Console.get().readPassword();
 
-        new ImportUtil()
-                .importDb(key.getValue().value(), passphrase, fileName, all);
+        new ImportUtil().importDb(key.getValue().value(), passphrase, fileName, all);
 
         return null;
     }

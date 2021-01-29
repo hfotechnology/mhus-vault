@@ -23,7 +23,10 @@ import de.mhus.app.vault.api.CherryVaultApi;
 import de.mhus.lib.core.M;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 
-@Command(scope = "vault", name = "vault-update-index", description = "modify index of an existing entry")
+@Command(
+        scope = "vault",
+        name = "vault-update-index",
+        description = "modify index of an existing entry")
 @Service
 public class CmdVaultUpdateIndex extends AbstractCmd {
 
