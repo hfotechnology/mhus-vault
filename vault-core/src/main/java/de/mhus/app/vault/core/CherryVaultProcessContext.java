@@ -27,7 +27,7 @@ import de.mhus.lib.core.util.SecureString;
 import de.mhus.lib.errors.AccessDeniedException;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;
-import de.mhus.osgi.crypt.api.util.SimplePemProcessContext;
+import de.mhus.crypt.api.util.SimplePemProcessContext;
 
 public class CherryVaultProcessContext extends SimplePemProcessContext {
 

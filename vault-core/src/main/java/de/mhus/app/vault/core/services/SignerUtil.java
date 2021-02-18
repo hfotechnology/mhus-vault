@@ -29,8 +29,8 @@ import de.mhus.lib.core.keychain.MKeychain;
 import de.mhus.lib.core.keychain.MKeychainUtil;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;
-import de.mhus.osgi.crypt.api.CryptApi;
-import de.mhus.osgi.crypt.api.signer.SignerProvider;
+import de.mhus.crypt.api.CryptApi;
+import de.mhus.crypt.api.signer.SignerProvider;
 
 public class SignerUtil {
 

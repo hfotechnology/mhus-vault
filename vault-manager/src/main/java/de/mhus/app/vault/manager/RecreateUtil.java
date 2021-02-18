@@ -28,7 +28,7 @@ import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.util.SecureString;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.xdb.XdbService;
-import de.mhus.osgi.crypt.api.util.CryptUtil;
+import de.mhus.crypt.api.util.CryptUtil;
 
 public class RecreateUtil {
 

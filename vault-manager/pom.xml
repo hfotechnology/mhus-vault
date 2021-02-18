@@ -82,7 +82,7 @@
 		</dependency>
        	<dependency>
 			<groupId>de.mhus.osgi</groupId>
-			<artifactId>osgi-crypt-api</artifactId>
+			<artifactId>osgi-api</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.osgi</groupId>

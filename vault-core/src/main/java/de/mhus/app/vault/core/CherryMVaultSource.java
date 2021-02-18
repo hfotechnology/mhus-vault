@@ -114,6 +114,7 @@ public class CherryMVaultSource extends MLog implements MutableVaultSource {
         }
     }
 
+    @SuppressWarnings("resource")
     @Override
     public Iterable<UUID> getEntryIds() {
         LinkedList<UUID> out = new LinkedList<>();
@@ -123,7 +124,7 @@ public class CherryMVaultSource extends MLog implements MutableVaultSource {
             for (VaultKey obj :
                     StaticAccess.db
                             .getManager()
-                            .getByQualification(Db.query(VaultKey.class).limit(100))) {
+                            .getByQualification(Db.query(VaultKey.class).limit(100)).toCacheAndClose()) {
                 List<String> readAcl = obj.getReadAcl();
                 if (readAcl != null) {
                     if (!AccessUtil.isPermitted(readAcl, VaultKey.class, Ace.READ, obj.getIdent()))

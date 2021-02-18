@@ -36,7 +36,7 @@ import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;
 import de.mhus.lib.xdb.XdbService;
 import de.mhus.lib.xdb.XdbType;
-import de.mhus.osgi.crypt.api.util.CryptUtil;
+import de.mhus.crypt.api.util.CryptUtil;
 
 public class ImportUtil extends MLog {
 

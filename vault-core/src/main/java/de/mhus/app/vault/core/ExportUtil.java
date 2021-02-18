@@ -31,7 +31,7 @@ import de.mhus.lib.core.MString;
 import de.mhus.lib.core.pojo.MPojo;
 import de.mhus.lib.core.pojo.PojoModelFactory;
 import de.mhus.lib.errors.MException;
-import de.mhus.osgi.crypt.api.util.CryptUtil;
+import de.mhus.crypt.api.util.CryptUtil;
 
 public class ExportUtil {
 

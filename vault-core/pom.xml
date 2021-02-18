@@ -82,8 +82,8 @@
 			<artifactId>osgi-api</artifactId>
 		</dependency>
        	<dependency>
-			<groupId>de.mhus.osgi</groupId>
-			<artifactId>osgi-crypt-api</artifactId>
+			<groupId>de.mhus.crypt</groupId>
+			<artifactId>crypt-api</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.osgi</groupId>
