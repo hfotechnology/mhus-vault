@@ -55,7 +55,7 @@ public class CherryVaultManager extends AbstractCommonAdbConsumer {
     }
 
     @Override
-    public void collectReferences(Object object, ReferenceCollector collector) {}
+    public void collectReferences(Object object, ReferenceCollector collector, String reason) {}
 
     @Override
     public void doCleanup() {}
