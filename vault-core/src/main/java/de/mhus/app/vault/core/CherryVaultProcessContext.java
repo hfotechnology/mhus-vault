@@ -19,10 +19,10 @@ import java.util.UUID;
 
 import de.mhus.lib.core.IReadProperties;
 import de.mhus.lib.core.MCollection;
+import de.mhus.lib.core.aaa.Aaa;
 import de.mhus.lib.core.crypt.pem.PemPriv;
 import de.mhus.lib.core.crypt.pem.PemUtil;
 import de.mhus.lib.core.keychain.MKeychainUtil;
-import de.mhus.lib.core.shiro.AccessUtil;
 import de.mhus.lib.core.util.SecureString;
 import de.mhus.lib.errors.AccessDeniedException;
 import de.mhus.lib.errors.MException;
@@ -42,11 +42,11 @@ public class CherryVaultProcessContext extends SimplePemProcessContext {
         PemPriv privKey = super.getPrivateKey(privId);
         if (privKey != null) return privKey;
 
-        String privateKey = AccessUtil.getSessionAttribute("privateKey", "");
+        String privateKey = Aaa.getSessionAttribute("privateKey", "");
         if (!MCollection.contains(privateKey, ',', privId))
             throw new AccessDeniedException(
                     "The private key is not owned by the current user",
-                    AccessUtil.getPrincipal(),
+                    Aaa.getPrincipal(),
                     privId);
         de.mhus.lib.core.keychain.KeyEntry privKeyObj =
                 MKeychainUtil.loadDefault().getEntry(UUID.fromString(privId));

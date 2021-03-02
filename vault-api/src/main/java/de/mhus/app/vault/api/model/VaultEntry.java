@@ -30,7 +30,7 @@ import de.mhus.lib.annotations.adb.DbType.TYPE;
 import de.mhus.lib.core.IReadProperties;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MSystem;
-import de.mhus.lib.core.shiro.AccessUtil;
+import de.mhus.lib.core.aaa.Aaa;
 import de.mhus.lib.core.util.ReadOnlyException;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.MRuntimeException;
@@ -105,8 +105,8 @@ public class VaultEntry extends DbMetadata {
             throws NoSuchAlgorithmException, UnsupportedEncodingException, ReadOnlyException {
 
         if (creator == null) {
-            Subject subject = AccessUtil.getSubject();
-            creator = AccessUtil.getPrincipal(subject);
+            Subject subject = Aaa.getSubject();
+            creator = Aaa.getPrincipal(subject);
         }
 
         MessageDigest md = MessageDigest.getInstance("SHA-256");

@@ -49,11 +49,11 @@ import de.mhus.lib.core.M;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MString;
+import de.mhus.lib.core.aaa.Aaa;
 import de.mhus.lib.core.cfg.CfgString;
 import de.mhus.lib.core.crypt.pem.PemBlockList;
 import de.mhus.lib.core.crypt.pem.PemUtil;
 import de.mhus.lib.core.logging.ITracer;
-import de.mhus.lib.core.shiro.AccessUtil;
 import de.mhus.lib.core.util.EmptyList;
 import de.mhus.lib.core.util.SecureString;
 import de.mhus.lib.errors.AccessDeniedException;
@@ -113,7 +113,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 
             // check write access
             List<String> acl = group.getWriteAcl();
-            if (!AccessUtil.isPermitted(acl, VaultGroup.class, Ace.UPDATE, group.getName()))
+            if (!Aaa.isPermitted(acl, VaultGroup.class, Ace.UPDATE, group.getName()))
                 throw new AccessDeniedException("Write access to group denied", groupName);
 
             // get and execute secret generation
@@ -219,7 +219,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
             }
             // check write access
             List<String> acl = group.getWriteAcl();
-            if (!AccessUtil.isPermitted(acl, VaultGroup.class, Ace.UPDATE, group.getName()))
+            if (!Aaa.isPermitted(acl, VaultGroup.class, Ace.UPDATE, group.getName()))
                 throw new AccessDeniedException("Write access to group denied", groupName);
 
             if (!group.isAllowUpdate())
@@ -310,7 +310,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 
             // check write access
             List<String> acl = group.getWriteAcl();
-            if (!AccessUtil.isPermitted(acl, VaultGroup.class, Ace.UPDATE, group.getName()))
+            if (!Aaa.isPermitted(acl, VaultGroup.class, Ace.UPDATE, group.getName()))
                 throw new AccessDeniedException("Write access to group denied", groupName);
 
             if (secret == null || secret.getContent() == null || secret.getContent().isNull())
@@ -382,7 +382,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 
             // check write access
             List<String> acl = group.getWriteAcl();
-            if (!AccessUtil.isPermitted(acl, VaultGroup.class, Ace.UPDATE, group.getName()))
+            if (!Aaa.isPermitted(acl, VaultGroup.class, Ace.UPDATE, group.getName()))
                 throw new AccessDeniedException("Write access to group denied", groupName);
 
             if (!group.isAllowUpdate())
@@ -419,7 +419,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 
             // check write access
             List<String> acl = group.getWriteAcl();
-            if (!AccessUtil.isPermitted(acl, VaultGroup.class, Ace.UPDATE, group.getName()))
+            if (!Aaa.isPermitted(acl, VaultGroup.class, Ace.UPDATE, group.getName()))
                 throw new AccessDeniedException("Write access to group denied", groupName);
 
             log().d("delete secret", groupName, secretId);
@@ -458,7 +458,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 
             // check write access
             List<String> acl = group.getWriteAcl();
-            if (!AccessUtil.isPermitted(acl, VaultGroup.class, Ace.UPDATE, group.getName()))
+            if (!Aaa.isPermitted(acl, VaultGroup.class, Ace.UPDATE, group.getName()))
                 throw new AccessDeniedException("Write access to group denied", groupName);
 
             log().d("undelete secret", groupName, secretId);
@@ -487,7 +487,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
             VaultTarget target = getTarget(targetName);
             // check read access
             List<String> acl = target.getReadAcl();
-            if (!AccessUtil.isPermitted(acl, VaultTarget.class, Ace.READ, target.getName()))
+            if (!Aaa.isPermitted(acl, VaultTarget.class, Ace.READ, target.getName()))
                 throw new AccessDeniedException("Read access to target denied", targetName);
 
             //		VaultEntry obj =
@@ -524,7 +524,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
                 try {
                     VaultTarget target = getTarget(targetName);
                     List<String> acl = target.getReadAcl();
-                    if (AccessUtil.isPermitted(acl, VaultTarget.class, Ace.READ, target.getName()))
+                    if (Aaa.isPermitted(acl, VaultTarget.class, Ace.READ, target.getName()))
                         res.add(entry);
                 } catch (NotFoundException e) {
                     log().d(entry, e.toString());
@@ -926,7 +926,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
                 VaultGroup group = getGroup(groupName);
                 out.println("Group: " + group);
                 List<String> acl = group.getWriteAcl();
-                if (!AccessUtil.isPermitted(acl, VaultGroup.class, Ace.UPDATE, group.getName()))
+                if (!Aaa.isPermitted(acl, VaultGroup.class, Ace.UPDATE, group.getName()))
                     out.println("Access Denied");
                 else out.println("Access Granted");
 

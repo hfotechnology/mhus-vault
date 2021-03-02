@@ -29,10 +29,10 @@ import de.mhus.lib.adb.query.Db;
 import de.mhus.lib.basics.Ace;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MSystem;
+import de.mhus.lib.core.aaa.Aaa;
 import de.mhus.lib.core.keychain.KeyEntry;
 import de.mhus.lib.core.keychain.KeychainSource;
 import de.mhus.lib.core.keychain.MutableVaultSource;
-import de.mhus.lib.core.shiro.AccessUtil;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;
 
@@ -82,7 +82,7 @@ public class CherryMVaultSource extends MLog implements MutableVaultSource {
             if (key == null) return null;
             List<String> readAcl = key.getReadAcl();
             if (readAcl != null) {
-                if (!AccessUtil.isPermitted(readAcl, VaultKey.class, Ace.READ, key.getIdent()))
+                if (!Aaa.isPermitted(readAcl, VaultKey.class, Ace.READ, key.getIdent()))
                     return null;
             }
             return key;
@@ -104,7 +104,7 @@ public class CherryMVaultSource extends MLog implements MutableVaultSource {
             if (key == null) return null;
             List<String> readAcl = key.getReadAcl();
             if (readAcl != null) {
-                if (!AccessUtil.isPermitted(readAcl, VaultKey.class, Ace.READ, key.getIdent()))
+                if (!Aaa.isPermitted(readAcl, VaultKey.class, Ace.READ, key.getIdent()))
                     return null;
             }
             return key;
@@ -127,7 +127,7 @@ public class CherryMVaultSource extends MLog implements MutableVaultSource {
                             .getByQualification(Db.query(VaultKey.class).limit(100)).toCacheAndClose()) {
                 List<String> readAcl = obj.getReadAcl();
                 if (readAcl != null) {
-                    if (!AccessUtil.isPermitted(readAcl, VaultKey.class, Ace.READ, obj.getIdent()))
+                    if (!Aaa.isPermitted(readAcl, VaultKey.class, Ace.READ, obj.getIdent()))
                         return null;
                 }
                 out.add(UUID.fromString(obj.getIdent()));
@@ -177,7 +177,7 @@ public class CherryMVaultSource extends MLog implements MutableVaultSource {
     public void removeEntry(UUID id) throws MException {
         VaultKey obj = getVaultKey(id);
         if (obj == null) return;
-        if (!AccessUtil.isAdmin()) throw new RuntimeException("only admin can delete entries");
+        if (!Aaa.isAdmin()) throw new RuntimeException("only admin can delete entries");
         //		StaticAccess.moManager.getManager().delete(obj);
         obj.delete();
     }
