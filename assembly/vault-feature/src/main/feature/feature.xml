@@ -47,6 +47,8 @@
 		<details>${project.description}</details>
 		
         <feature>mhu-base</feature>
+        <feature>mhu-jdbc</feature>
+        <feature>mhu-crypt</feature>
 
 		<!-- vault -->
 		
