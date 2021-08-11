@@ -124,7 +124,8 @@ public class CherryMVaultSource extends MLog implements MutableVaultSource {
             for (VaultKey obj :
                     StaticAccess.db
                             .getManager()
-                            .getByQualification(Db.query(VaultKey.class).limit(100)).toCacheAndClose()) {
+                            .getByQualification(Db.query(VaultKey.class).limit(100))
+                            .toCacheAndClose()) {
                 List<String> readAcl = obj.getReadAcl();
                 if (readAcl != null) {
                     if (!Aaa.isPermitted(readAcl, VaultKey.class, Ace.READ, obj.getIdent()))

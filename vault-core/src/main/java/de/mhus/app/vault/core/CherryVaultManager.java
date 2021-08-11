@@ -30,7 +30,10 @@ import de.mhus.db.osgi.api.adb.ReferenceCollector;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.xdb.XdbService;
 
-@Component(immediate = true, service = CommonDbConsumer.class, property = "commonService=common_adb")
+@Component(
+        immediate = true,
+        service = CommonDbConsumer.class,
+        property = "commonService=common_adb")
 public class CherryVaultManager extends AbstractCommonAdbConsumer {
 
     @Override
