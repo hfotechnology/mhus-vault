@@ -25,7 +25,7 @@ https://raw.githubusercontent.com/pentaho/pentaho-karaf-assembly/master/pentaho-
     <parent>
         <groupId>de.mhus.app.vault</groupId>
         <artifactId>assembly</artifactId>
-        <version>7.4.1</version>
+        <version>7.5.0-SNAPSHOT</version>
     </parent>
     <artifactId>vault-playground-docker</artifactId>
     <packaging>pom</packaging>
