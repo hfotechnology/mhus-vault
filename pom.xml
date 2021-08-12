@@ -30,7 +30,7 @@
 	<packaging>pom</packaging>
 	<name>Cherry Password Vault</name>
 	<description>Central password and security store for distributed applications</description>
-	<url>http://www.mhus.de</url>
+	<url>http://www.mhus.info</url>
     <properties>
         <mhus-vault.version>${project.version}</mhus-vault.version>
     </properties>
@@ -44,8 +44,8 @@
 	</licenses>
 	
 	<scm>
-		<url>https://github.com/mhus/mhus-vault</url>
-		<connection>scm:git:https://github.com/mhus/mhus-vault/</connection>
+		<url>https://github.com/mhus-info/mhus-vault</url>
+		<connection>scm:git:https://github.com/mhus-info/mhus-vault/</connection>
 	</scm>
 	
 	<developers>
