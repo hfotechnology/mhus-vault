@@ -27,13 +27,13 @@ import de.mhus.app.vault.api.model.VaultEntry;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MDate;
 import de.mhus.lib.core.MProperties;
-import de.mhus.lib.core.pojo.PojoModelFactory;
 import de.mhus.lib.core.util.EmptyList;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.UsageException;
 import de.mhus.rest.core.CallContext;
 import de.mhus.rest.core.annotation.RestAction;
 import de.mhus.rest.core.annotation.RestNode;
+import de.mhus.rest.core.annotation.RestTransformer;
 import de.mhus.rest.core.api.Node;
 import de.mhus.rest.core.api.RestNodeService;
 import de.mhus.rest.core.node.ObjectListNode;
@@ -41,6 +41,7 @@ import de.mhus.rest.core.result.JsonResult;
 
 @Component(immediate = true, service = RestNodeService.class)
 @RestNode(name = "vault", parent = Node.ROOT_PARENT)
+@RestTransformer(VaultNodeTransformer.class)
 public class VaultNode extends ObjectListNode<VaultEntry, VaultEntry> {
 
     @Override
@@ -149,11 +150,6 @@ public class VaultNode extends ObjectListNode<VaultEntry, VaultEntry> {
         CherryVaultApi api = M.l(CherryVaultApi.class);
 
         api.deleteSecret(secretId);
-    }
-
-    @Override
-    protected PojoModelFactory getPojoModelFactory() {
-        return M.l(CherryVaultApi.class).getManager().getPojoModelFactory();
     }
 
     @RestAction(name = "indexes")
