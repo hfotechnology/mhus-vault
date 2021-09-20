@@ -141,7 +141,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
             // save entries
             saveEntries(groupName, entriesToSave, validFrom, validTo);
 
-            scope.span().setTag("secretId", secretId);
+            ITracer.get().current().setTag("secretId", secretId);
             return secretId;
         }
     }
@@ -332,7 +332,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
             // save entries
             saveEntries(groupName, entriesToSave, validFrom, validTo);
 
-            scope.span().setTag("secretId", secretId);
+            ITracer.get().current().setTag("secretId", secretId);
             return secretId;
         }
     }
