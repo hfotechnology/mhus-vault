@@ -40,7 +40,11 @@
 						<Export-Package>
 							de.mhus.app.vault.client.*;version=${project.version}
 						</Export-Package>
-						<Import-Package>*</Import-Package>
+						<Import-Package>
+                        org.apache.http.client.*;version=${httpcomponents.httpclient.version},
+                        org.apache.http.*;version=${httpcomponents.httpcore.version},
+						*
+						</Import-Package>
 						<DynamicImport-Package>*</DynamicImport-Package>
 						<Service-Component>*</Service-Component>
 					</instructions>
