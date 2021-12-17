@@ -57,7 +57,19 @@ public class CmdSecret extends AbstractCmd {
         else {
             res = new LinkedList<>();
             VaultEntry r = api.getSecret(secretId, target);
-            if (r != null) res.add(r);
+            if (r != null) {
+                System.out.println("Creator   : " + r.getCreator());
+                System.out.println("Group     : " + r.getGroup());
+                System.out.println("Target    : "+r.getTarget());
+                System.out.println("ID        : "+r.getId());
+                System.out.println("Created   : "+r.getCreationDate());
+                System.out.println("Modified  : " + r.getModifyDate());
+                System.out.println("Valid from: "+r.getValidFrom());
+                System.out.println("Valid to  : "+r.getValidTo());
+                System.out.println("SecretId  : "+r.getSecretId());
+                System.out.println("Secret    : " + r.getSecret());
+            }
+            return null;
         }
         ConsoleTable table = new ConsoleTable(tblOpt);
         table.setHeaderValues("id", "Group", "Target", "From", "To");
