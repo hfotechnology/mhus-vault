@@ -26,6 +26,7 @@ import de.mhus.app.vault.api.model.VaultGroup;
 import de.mhus.app.vault.api.model.VaultKey;
 import de.mhus.app.vault.api.model.VaultTarget;
 import de.mhus.lib.adb.query.Db;
+import de.mhus.lib.basics.RC;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MString;
 import de.mhus.lib.core.pojo.MPojo;
@@ -49,7 +50,7 @@ public class ExportUtil {
         this.file = new File(file);
         this.group = group;
 
-        if (CryptUtil.getCipher(publicKey) == null) throw new MException("cipher not found");
+        if (CryptUtil.getCipher(publicKey) == null) throw new MException(RC.ERROR, "cipher not found for public key");
 
         factory = StaticAccess.db.getManager().getPojoModelFactory();
 

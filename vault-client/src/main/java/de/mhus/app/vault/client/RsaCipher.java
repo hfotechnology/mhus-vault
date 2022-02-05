@@ -25,6 +25,7 @@ import java.util.Date;
 
 import javax.crypto.Cipher;
 
+import de.mhus.lib.basics.RC;
 import de.mhus.lib.core.crypt.Blowfish;
 import de.mhus.lib.core.crypt.pem.PemBlock;
 import de.mhus.lib.core.crypt.pem.PemBlockModel;
@@ -74,7 +75,7 @@ public class RsaCipher {
             return out;
 
         } catch (Throwable t) {
-            throw new MException(t);
+            throw new MException(RC.ERROR, t);
         }
     }
 
@@ -108,7 +109,7 @@ public class RsaCipher {
             return new String(os.toByteArray(), stringEncoding);
 
         } catch (Exception e) {
-            throw new MException(e);
+            throw new MException(RC.ERROR, e);
         }
     }
 }

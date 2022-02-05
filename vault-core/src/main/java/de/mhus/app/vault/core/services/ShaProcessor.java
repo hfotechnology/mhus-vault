@@ -26,6 +26,7 @@ import org.osgi.service.component.annotations.Component;
 import de.mhus.app.vault.api.ifc.SecretContent;
 import de.mhus.app.vault.api.ifc.TargetProcessor;
 import de.mhus.app.vault.api.model.WritableEntry;
+import de.mhus.lib.basics.RC;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.IReadProperties;
 import de.mhus.lib.core.M;
@@ -71,7 +72,7 @@ public class ShaProcessor implements TargetProcessor {
             entry.setSecret(result.toString());
 
         } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-            throw new MException(e);
+            throw new MException(RC.ERROR, e);
         }
     }
 

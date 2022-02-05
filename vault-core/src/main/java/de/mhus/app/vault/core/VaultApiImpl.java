@@ -43,6 +43,7 @@ import de.mhus.lib.adb.DbCollection;
 import de.mhus.lib.adb.query.AQuery;
 import de.mhus.lib.adb.query.Db;
 import de.mhus.lib.basics.Ace;
+import de.mhus.lib.basics.RC;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.IReadProperties;
 import de.mhus.lib.core.M;
@@ -124,7 +125,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
             SecretGenerator generator = getGenerator(generatorName);
 
             SecretContent secret = generator.generateSecret(group, properties);
-            if (secret == null) throw new MException("Secret is null");
+            if (secret == null) throw new MException(RC.CONFLICT, "Secret is null");
 
             // create entries by targets
             String secretId = UUID.randomUUID().toString();
@@ -233,7 +234,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
             SecretGenerator generator = getGenerator(generatorName);
 
             SecretContent secret = generator.generateSecret(group, properties);
-            if (secret == null) throw new MException("Secret is null");
+            if (secret == null) throw new MException(RC.CONFLICT, "Secret is null");
 
             log().d("create update", groupName, secretId);
 
@@ -314,10 +315,10 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
                 throw new AccessDeniedException("Write access to group denied", groupName);
 
             if (secret == null || secret.getContent() == null || secret.getContent().isNull())
-                throw new MException("Secret is null");
+                throw new MException(RC.ERROR, "Secret is null");
             if (group.getMaxImportLength() > 0
                     && secret.getContent().length() > group.getMaxImportLength())
-                throw new MException("Secret out of bounds", group.getMaxImportLength());
+                throw new MException(RC.CONFLICT, "Secret out of bounds", group.getMaxImportLength());
 
             // create entries by targets
             String secretId = UUID.randomUUID().toString();
@@ -389,10 +390,10 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
                 throw new AccessDeniedException("The group dos not allow updates", groupName);
 
             if (secret == null || secret.getContent() == null || secret.getContent().isNull())
-                throw new MException("Secret is null");
+                throw new MException(RC.ERROR, "Secret is null");
             if (group.getMaxImportLength() > 0
                     && secret.getContent().length() > group.getMaxImportLength())
-                throw new MException("Secret out of bounds", group.getMaxImportLength());
+                throw new MException(RC.CONFLICT, "Secret out of bounds", group.getMaxImportLength());
 
             log().d("import update", groupName, secretId);
 
@@ -778,7 +779,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
             CherryVaultProcessContext context = new CherryVaultProcessContext(properties);
             crypta.processPemBlocks(context, encoded);
 
-            if (context.getLastSecret() == null) throw new MException("can't decode secret");
+            if (context.getLastSecret() == null) throw new MException(RC.ERROR, "can't decode secret");
 
             sec = new SecretContent(context.getLastSecret(), new MProperties());
         } else {
@@ -814,7 +815,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 
             crypta.processPemBlocks(context, encoded);
 
-            if (context.getLastSecret() == null) throw new MException("can't decode secret");
+            if (context.getLastSecret() == null) throw new MException(RC.ERROR, "can't decode secret");
 
             sec = new SecretContent(context.getLastSecret(), new MProperties());
 

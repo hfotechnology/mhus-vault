@@ -26,6 +26,7 @@ import de.mhus.app.vault.api.model.VaultEntry;
 import de.mhus.app.vault.api.model.VaultGroup;
 import de.mhus.app.vault.api.model.VaultKey;
 import de.mhus.app.vault.api.model.VaultTarget;
+import de.mhus.lib.basics.RC;
 import de.mhus.lib.core.MFile;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MProperties;
@@ -56,7 +57,7 @@ public class ImportUtil extends MLog {
         this.passphrase = passphrase;
         this.file = new File(file);
 
-        if (CryptUtil.getCipher(privateKey) == null) throw new MException("cipher not found");
+        if (CryptUtil.getCipher(privateKey) == null) throw new MException(RC.ERROR, "cipher not found for private key");
 
         factory = StaticAccess.db.getManager().getPojoModelFactory();
 
@@ -64,7 +65,7 @@ public class ImportUtil extends MLog {
 
         // load meta data
         MProperties meta = MProperties.loadFromString(loadPlain("meta.properties"));
-        if (!"export".equals(meta.getString("type"))) throw new MException("file is not an export");
+        if (!"export".equals(meta.getString("type"))) throw new MException(RC.ERROR, "file {1} is not an export package",file);
 
         // import entries
         importEntries();

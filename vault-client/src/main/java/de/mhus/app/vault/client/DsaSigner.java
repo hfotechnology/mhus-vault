@@ -20,6 +20,7 @@ import java.security.PublicKey;
 import java.security.Signature;
 import java.security.spec.X509EncodedKeySpec;
 
+import de.mhus.lib.basics.RC;
 import de.mhus.lib.core.crypt.pem.PemBlock;
 import de.mhus.lib.core.crypt.pem.PemPub;
 import de.mhus.lib.errors.MException;
@@ -43,7 +44,7 @@ public class DsaSigner {
             return sig.verify(sigToVerify);
 
         } catch (Exception e) {
-            throw new MException(e);
+            throw new MException(RC.ERROR, e);
         }
     }
 }

@@ -27,6 +27,7 @@ import de.mhus.lib.adb.DbMetadata;
 import de.mhus.lib.annotations.adb.DbIndex;
 import de.mhus.lib.annotations.adb.DbPersistent;
 import de.mhus.lib.annotations.adb.DbType.TYPE;
+import de.mhus.lib.basics.RC;
 import de.mhus.lib.core.IReadProperties;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MSystem;
@@ -186,7 +187,7 @@ public class VaultEntry extends DbMetadata {
         try {
             preChecksum();
         } catch (NoSuchAlgorithmException | UnsupportedEncodingException | ReadOnlyException e) {
-            throw new MRuntimeException(e);
+            throw new MRuntimeException(RC.ERROR, e);
         }
         super.doPreCreate(con);
     }
@@ -196,7 +197,7 @@ public class VaultEntry extends DbMetadata {
         try {
             preChecksum();
         } catch (NoSuchAlgorithmException | UnsupportedEncodingException | ReadOnlyException e) {
-            throw new MRuntimeException(e);
+            throw new MRuntimeException(RC.ERROR, e);
         }
         super.doPreSave(con);
     }

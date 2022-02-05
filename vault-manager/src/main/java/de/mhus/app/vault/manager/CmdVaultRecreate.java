@@ -21,6 +21,7 @@ import org.apache.karaf.shell.api.action.Argument;
 import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 
+import de.mhus.lib.basics.RC;
 import de.mhus.lib.core.keychain.MKeychainUtil;
 import de.mhus.lib.errors.MException;
 import de.mhus.osgi.api.karaf.AbstractCmd;
@@ -74,7 +75,7 @@ public class CmdVaultRecreate extends AbstractCmd {
 
         de.mhus.lib.core.keychain.KeyEntry recPrivEntry =
                 MKeychainUtil.loadDefault().getEntry(UUID.fromString(recPrivKey));
-        if (recPrivEntry == null) throw new MException("key not found");
+        if (recPrivEntry == null) throw new MException(RC.NOT_FOUND, "key not found");
 
         new RecreateUtil()
                 .recreate(

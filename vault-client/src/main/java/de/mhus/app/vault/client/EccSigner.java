@@ -23,6 +23,7 @@ import java.security.spec.X509EncodedKeySpec;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
+import de.mhus.lib.basics.RC;
 import de.mhus.lib.core.crypt.pem.PemBlock;
 import de.mhus.lib.core.crypt.pem.PemPub;
 import de.mhus.lib.errors.MException;
@@ -47,7 +48,7 @@ public class EccSigner {
             return sig.verify(sigToVerify);
 
         } catch (Exception e) {
-            throw new MException(e);
+            throw new MException(RC.ERROR, e);
         }
     }
 
