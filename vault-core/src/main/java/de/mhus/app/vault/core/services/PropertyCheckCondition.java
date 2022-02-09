@@ -35,7 +35,7 @@ public class PropertyCheckCondition extends MLog implements TargetCondition {
                 Condition c = new Condition(condition);
                 return c.matches(properties);
             } catch (MException e) {
-                log().e(conditionConfig, e);
+                log().e("match condition failed", conditionConfig, e);
             }
         }
         return false;

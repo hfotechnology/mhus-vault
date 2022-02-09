@@ -528,7 +528,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
                     if (Aaa.isPermitted(acl, VaultTarget.class, Ace.READ, target.getName()))
                         res.add(entry);
                 } catch (NotFoundException e) {
-                    log().d(entry, e.toString());
+                    log().d("get secrets failed", entry, e.toString());
                     log().t(e);
                 }
             }
@@ -852,7 +852,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
                 try {
                     entry.save();
                 } catch (Throwable t) {
-                    log().w(entry, t);
+                    log().w("save entry failed", entry, t);
                 }
             }
         }
@@ -1046,7 +1046,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
                         log().i("cleanup", entry.getId());
                         entry.delete();
                     } catch (Throwable t) {
-                        log().e(entry, t);
+                        log().e("delete entry failed", entry, t);
                     }
                 }
             } catch (Throwable t) {

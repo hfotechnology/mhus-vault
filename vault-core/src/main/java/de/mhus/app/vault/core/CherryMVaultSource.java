@@ -53,7 +53,7 @@ public class CherryMVaultSource extends MLog implements MutableVaultSource {
             if (key == null) return null;
             return new VaultKeyEntry(key);
         } catch (Exception e) {
-            log().t(id, e);
+            log().t("get entry {1} failed", id, e);
             return null;
         }
     }
@@ -87,7 +87,7 @@ public class CherryMVaultSource extends MLog implements MutableVaultSource {
             }
             return key;
         } catch (Exception e) {
-            log().t(id, e);
+            log().t("get fault key {1} failed", id, e);
             return null;
         }
     }
