@@ -57,7 +57,8 @@ public class ImportUtil extends MLog {
         this.passphrase = passphrase;
         this.file = new File(file);
 
-        if (CryptUtil.getCipher(privateKey) == null) throw new MException(RC.ERROR, "cipher not found for private key");
+        if (CryptUtil.getCipher(privateKey) == null)
+            throw new MException(RC.ERROR, "cipher not found for private key");
 
         factory = StaticAccess.db.getManager().getPojoModelFactory();
 
@@ -65,7 +66,8 @@ public class ImportUtil extends MLog {
 
         // load meta data
         MProperties meta = MProperties.loadFromString(loadPlain("meta.properties"));
-        if (!"export".equals(meta.getString("type"))) throw new MException(RC.ERROR, "file {1} is not an export package",file);
+        if (!"export".equals(meta.getString("type")))
+            throw new MException(RC.ERROR, "file {1} is not an export package", file);
 
         // import entries
         importEntries();

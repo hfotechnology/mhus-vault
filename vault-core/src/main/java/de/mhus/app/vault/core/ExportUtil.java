@@ -50,7 +50,8 @@ public class ExportUtil {
         this.file = new File(file);
         this.group = group;
 
-        if (CryptUtil.getCipher(publicKey) == null) throw new MException(RC.ERROR, "cipher not found for public key");
+        if (CryptUtil.getCipher(publicKey) == null)
+            throw new MException(RC.ERROR, "cipher not found for public key");
 
         factory = StaticAccess.db.getManager().getPojoModelFactory();
 

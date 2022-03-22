@@ -318,7 +318,8 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
                 throw new MException(RC.ERROR, "Secret is null");
             if (group.getMaxImportLength() > 0
                     && secret.getContent().length() > group.getMaxImportLength())
-                throw new MException(RC.CONFLICT, "Secret out of bounds", group.getMaxImportLength());
+                throw new MException(
+                        RC.CONFLICT, "Secret out of bounds", group.getMaxImportLength());
 
             // create entries by targets
             String secretId = UUID.randomUUID().toString();
@@ -393,7 +394,8 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
                 throw new MException(RC.ERROR, "Secret is null");
             if (group.getMaxImportLength() > 0
                     && secret.getContent().length() > group.getMaxImportLength())
-                throw new MException(RC.CONFLICT, "Secret out of bounds", group.getMaxImportLength());
+                throw new MException(
+                        RC.CONFLICT, "Secret out of bounds", group.getMaxImportLength());
 
             log().d("import update", groupName, secretId);
 
@@ -779,7 +781,8 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
             CherryVaultProcessContext context = new CherryVaultProcessContext(properties);
             crypta.processPemBlocks(context, encoded);
 
-            if (context.getLastSecret() == null) throw new MException(RC.ERROR, "can't decode secret");
+            if (context.getLastSecret() == null)
+                throw new MException(RC.ERROR, "can't decode secret");
 
             sec = new SecretContent(context.getLastSecret(), new MProperties());
         } else {
@@ -815,7 +818,8 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
 
             crypta.processPemBlocks(context, encoded);
 
-            if (context.getLastSecret() == null) throw new MException(RC.ERROR, "can't decode secret");
+            if (context.getLastSecret() == null)
+                throw new MException(RC.ERROR, "can't decode secret");
 
             sec = new SecretContent(context.getLastSecret(), new MProperties());
 
