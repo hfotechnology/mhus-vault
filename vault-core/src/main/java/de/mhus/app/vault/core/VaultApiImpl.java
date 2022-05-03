@@ -707,7 +707,7 @@ public class VaultApiImpl extends MLog implements CherryVaultApi {
                     StaticAccess.db
                             .getManager()
                             .getObjectByQualification(Db.query(VaultTarget.class).eq("name", name));
-            if (out == null) throw new NotFoundException("Target not exists", name);
+            if (out == null) throw new NotFoundException("Target not found", name);
             return out;
         } catch (MException e) {
             throw new NotFoundException(name, e);
